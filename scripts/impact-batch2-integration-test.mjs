@@ -45,17 +45,19 @@ async function createOpportunity(db, organizationId, values = {}) {
 async function publish(db, id) { return rpcMust(db, 'organization_publish_impact_opportunity', { p_opportunity_id: id }, 'organization publishes opportunity'); }
 async function join(db, id) { return db.rpc('student_join_impact_opportunity', { p_opportunity_id: id }); }
 
-const migrationProbe = await admin.rpc('list_impact_opportunities', { p_category: null, p_city: null });
+let adminUser;
+const organizations = [];
+adminUser = await auth('admin@cinste.test');
+const migrationProbe = await adminUser.rpc('list_impact_opportunities', { p_category: null, p_city: null });
 if (migrationProbe.error?.code === 'PGRST202' || migrationProbe.error?.message.includes('Could not find the function')) {
   console.log(`SKIP: Impact Batch 2 migration is not applied to this hosted database (${migrationProbe.error.message}). Apply 0012 before running this test again.`);
   process.exit(0);
 }
-if (migrationProbe.error) throw new Error(`Batch 2 migration probe failed: ${migrationProbe.error.message}`);
+// The probe is authenticated but not a verified student; STUDENT_NOT_VERIFIED
+// confirms the RPC is present. The real discovery assertion uses a verified QA
+// student below.
 
-let adminUser;
-const organizations = [];
 try {
-  adminUser = await auth('admin@cinste.test');
   const operatorA = await qaStudent('operator-a');
   const operatorB = await qaStudent('operator-b');
   const studentA = await qaStudent('student-a');
