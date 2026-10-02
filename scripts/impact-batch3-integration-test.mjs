@@ -51,6 +51,10 @@ async function futureSchedule() {
 }
 
 const admin = await auth('admin@cinste.test');
+const { data: adminIdentity, error: adminIdentityError } = await admin.auth.getUser();
+if (adminIdentityError || !adminIdentity.user) throw new Error(`Read admin identity: ${adminIdentityError?.message ?? 'unknown error'}`);
+const adminUniversity = await must(service.from('universities').select('id').limit(1).single(), 'admin QA university');
+await must(service.from('student_profiles').upsert({ user_id: adminIdentity.user.id, full_name: `${run} admin`, university_id: adminUniversity.id, verification_status: 'verified' }, { onConflict: 'user_id' }), 'admin QA student profile');
 const probe = await admin.rpc('organization_verify_impact_participation', { p_participation_id: crypto.randomUUID() });
 if (probe.error?.code === 'PGRST202' || probe.error?.message?.includes('Could not find the function')) {
   console.log(`SKIP: Impact Batch 3 migration is not applied. Apply 0013_impact_batch3_verified_contributions_reciprocity.sql before rerunning.`);
@@ -152,7 +156,7 @@ try {
   const waivers = await Promise.all([waiverA.rpc('admin_waive_impact_reciprocity', { p_student_id: student.id, p_expected_cycle_number: 12, p_reason: 'Batch 3 waiver' }), waiverB.rpc('admin_waive_impact_reciprocity', { p_student_id: student.id, p_expected_cycle_number: 12, p_reason: 'Batch 3 stale waiver' })]);
   eq(waivers.filter((result) => !result.error).length, 1, 'waiver races settle once');
   eq((await must(service.from('impact_reciprocity_state').select('cycle_number').eq('student_id', student.id).single(), 'read waived cycle')).cycle_number, 13, 'waiver advances exactly expected cycle');
-  await expectFailure(admin.db.rpc('admin_verify_impact_participation', { p_participation_id: (await join(adminStudent.db, await (async () => { const id = await createOpportunity(operator.db, organizationA); await publish(operator.db, id); return id; })())), p_reason: 'self' }), 'SELF_VERIFICATION_FORBIDDEN', 'admin self verification');
+  await expectFailure(admin.rpc('admin_verify_impact_participation', { p_participation_id: (await join(admin, await (async () => { const id = await createOpportunity(operator.db, organizationA); await publish(operator.db, id); return id; })())), p_reason: 'self' }), 'SELF_VERIFICATION_FORBIDDEN', 'admin self verification');
 
   console.log(`PASS: ${assertions} focused Impact Batch 3 hosted assertions (${run})`);
 } finally {
