@@ -55,9 +55,13 @@ Focused hosted coverage is prepared at
 `scripts/impact-batch1-integration-test.mjs` and skips until migration `0011`
 is applied.
 
-Batch 2+ remains: opportunity operator CRUD/publication, student join/cancel,
-participation resolution, contribution verification/revocation, reciprocity
-settlement, supply safeguards, Core claim/redemption integration, and UI.
+Batch 3+ remains: contribution verification/revocation, reciprocity settlement,
+supply safeguards, Core claim/redemption integration, and UI.
+
+Batch 2 implementation is prepared in migration
+`0012_impact_batch2_opportunity_participation.sql`, with focused hosted
+coverage at `scripts/impact-batch2-integration-test.mjs`. Hosted validation is
+pending application of migration `0012`.
 
 ## CURRENT NEXT STEP
 1. finalize repository memory/docs
