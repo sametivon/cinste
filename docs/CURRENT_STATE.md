@@ -40,7 +40,24 @@ Do not start unrelated Core redesign while adding Impact.
 ## IMPACT STATUS
 Product direction approved.
 Product rules being documented.
-Impact code has not been implemented.
+Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
+
+Added the additive organization and Impact backend schema, enums, constraints,
+indexes, RLS foundations, append-only organization assignment/audit history,
+and narrow admin RPCs for organization creation, activation/deactivation, and
+operator assignment/revocation. Active `organization_users` assignment plus
+active organization status is the organization access authority.
+
+Batch 1 authorization hardening is complete in the same un-applied migration:
+internal trigger helpers are non-executable by clients, Impact table privileges
+are explicit, and the reciprocity settlement reference has a foreign key.
+Focused hosted coverage is prepared at
+`scripts/impact-batch1-integration-test.mjs` and skips until migration `0011`
+is applied.
+
+Batch 2+ remains: opportunity operator CRUD/publication, student join/cancel,
+participation resolution, contribution verification/revocation, reciprocity
+settlement, supply safeguards, Core claim/redemption integration, and UI.
 
 ## CURRENT NEXT STEP
 1. finalize repository memory/docs
