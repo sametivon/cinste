@@ -1,0 +1,9 @@
+import { SymbolView } from 'expo-symbols';
+import { View, type ColorValue } from 'react-native';
+
+type IconName = 'discover' | 'cinste' | 'profile' | 'coffee' | 'cinema' | 'grooming' | 'beauty' | 'fitness' | 'entertainment' | 'activities' | 'education' | 'mobility' | 'other';
+const symbols: Record<IconName, { ios: any; android: any; web: any }> = {
+  discover: { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' }, cinste: { ios: 'ticket', android: 'confirmation_number', web: 'confirmation_number' }, profile: { ios: 'person', android: 'person', web: 'person' }, coffee: { ios: 'cup.and.saucer', android: 'coffee', web: 'coffee' }, cinema: { ios: 'film', android: 'movie', web: 'movie' }, grooming: { ios: 'scissors', android: 'content_cut', web: 'content_cut' }, beauty: { ios: 'sparkles', android: 'auto_awesome', web: 'auto_awesome' }, fitness: { ios: 'figure.run', android: 'directions_run', web: 'directions_run' }, entertainment: { ios: 'party.popper', android: 'celebration', web: 'celebration' }, activities: { ios: 'figure.play', android: 'hiking', web: 'hiking' }, education: { ios: 'book.closed', android: 'menu_book', web: 'menu_book' }, mobility: { ios: 'bicycle', android: 'directions_bike', web: 'directions_bike' }, other: { ios: 'circle.grid.2x2', android: 'grid_view', web: 'grid_view' },
+};
+export function AppIcon({ name, size = 24, color }: { name: IconName; size?: number; color: ColorValue }) { return <View accessible={false}><SymbolView name={symbols[name]} size={size} tintColor={color} /></View>; }
+export function categoryIcon(slug: string): IconName { return ({ 'food-drink': 'coffee', cinema: 'cinema', 'hair-grooming': 'grooming', beauty: 'beauty', fitness: 'fitness', entertainment: 'entertainment', activities: 'activities', education: 'education', mobility: 'mobility', other: 'other' } as Record<string, IconName>)[slug] ?? 'other'; }

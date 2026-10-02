@@ -1,0 +1,1 @@
+"use client"; import { useEffect,useState } from 'react'; import QRCode from 'qrcode'; export function QR({value}:{value:string}){const [src,setSrc]=useState('');useEffect(()=>{QRCode.toDataURL(value,{margin:1,width:280}).then(setSrc)},[value]);return src?<img className="mx-auto w-64 rounded-xl" src={src} alt="Cod QR CINSTE"/>:<p>Se generează codul…</p>}

@@ -1,0 +1,2 @@
+import { describe, expect, it } from 'vitest'; import { fulfillmentCopy, successCopy } from '@/lib/domain';
+describe('category-agnostic fulfillment language',()=>{it('does not make appointment or event copy food-specific',()=>{expect(fulfillmentCopy('appointment_required')).toBe('Necesită programare');expect(fulfillmentCopy('scheduled_event')).toBe('Eveniment programat');expect(successCopy('scheduled_event')).toBe('Distracție plăcută!')})});
