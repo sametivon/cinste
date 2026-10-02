@@ -81,6 +81,18 @@ Open CINSTE:
 
 Only authorized CINSTE administration should control Open vs Community classification.
 
+Existing campaigns default to `COMMUNITY`. `OPEN` is an explicit,
+Admin-controlled exception.
+
+## Organization access and onboarding
+
+Organization onboarding is Admin/CINSTE-controlled in V1. There is no public
+self-service organization onboarding.
+
+The same auth account may be both a verified student and an assigned
+organization operator. Product surfaces remain separate. The same user must
+never be able to verify their own contribution.
+
 ## Existing users
 Impact launch must not create retroactive contribution debt.
 
@@ -119,7 +131,11 @@ Additional redemptions during this supply waiver must not create multiple contri
 
 When eligible supply returns, one verified contribution settles the due state.
 
-Exact technical computation of "reasonable availability" is an architecture decision.
+For V1, reasonable supply exists when at least one active, published opportunity
+with capacity is reasonably available within the next 14 days. V1 considers
+remote opportunities and opportunities in Bucharest. User-caused restrictions,
+including active participation limits, cooldowns, or personal schedule overlap,
+do not count as platform supply failure.
 
 ## Impact Opportunities
 
@@ -137,6 +153,10 @@ Conceptual categories:
 Opportunity may be:
 - scheduled
 - flexible/remote
+
+Flexible/remote opportunities may be cancelled normally before `due_at`. They
+have no late-cancellation or no-show semantics. If incomplete after `due_at`,
+the participation becomes `expired_incomplete`.
 
 Student may:
 - browse
@@ -173,10 +193,12 @@ Reactivation must not resurrect old cancelled opportunities automatically.
 Conceptual states may include:
 - joined
 - cancelled
+- cancelled_by_organization
 - late_cancelled
 - completed
 - no_show
 - excused
+- expired_incomplete
 - disputed
 
 Exact technical state model should remain minimal.
@@ -276,9 +298,12 @@ Fraud may instead trigger administrative action.
 
 ## Organization cancellation
 If organization cancels:
+- participation outcome is `cancelled_by_organization`
 - student receives no penalty
 - no contribution is created
 - due state remains due if already due
+
+`excused` remains a separate student-specific outcome.
 
 ## Verification status changes
 If a verified student later becomes pending/unverified:
@@ -286,8 +311,7 @@ If a verified student later becomes pending/unverified:
 - no new Community claims
 - historical Impact remains visible
 - existing participation should not be destructively erased
-
-Exact continuation behavior for already-joined participation should preserve fairness and history.
+- an existing joined participation may still complete and be verified
 
 ## Claim interaction
 Reciprocity does not replace the existing rolling 24-hour claim rule.

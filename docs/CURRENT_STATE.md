@@ -63,13 +63,22 @@ Batch 2 implementation is prepared in migration
 coverage at `scripts/impact-batch2-integration-test.mjs`. Hosted validation is
 pending application of migration `0012`.
 
+Batch 3 implementation is prepared in additive migration
+`0013_impact_batch3_verified_contributions_reciprocity.sql`, with focused
+hosted coverage at `scripts/impact-batch3-integration-test.mjs`. The migration
+adds trusted completion provenance, one-time immutable contributions, the
+reciprocity settlement ledger, organization/admin verification and correction
+RPCs, cycle-safe waiver settlement, lock-ordered transactions, and direct
+write/private-helper protections. Batch 2 completion now routes through the
+trusted verification transaction, and a student cannot rejoin an opportunity
+after earning its lifetime contribution. Hosted validation is pending
+application of migration `0013` after the hosted database has migrations
+`0011` and `0012` applied.
+
 ## CURRENT NEXT STEP
-1. finalize repository memory/docs
-2. perform read-only Impact architecture audit
-3. review audit
-4. create small implementation batches
-5. implement using mostly GPT-5.6 Sol Medium
-6. use Astra only when a high-risk architecture/security review materially helps
+1. apply and validate Impact migrations `0011`, `0012`, and `0013` in the hosted database
+2. run the focused hosted suites for Impact Batches 1, 2, and 3
+3. review Batch 4 Core claim/redemption integration before implementation
 
 ## PRODUCTION READINESS LATER
 - real payments
