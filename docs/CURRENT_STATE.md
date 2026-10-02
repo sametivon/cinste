@@ -75,10 +75,19 @@ after earning its lifetime contribution. Hosted validation is pending
 application of migration `0013` after the hosted database has migrations
 `0011` and `0012` applied.
 
+Batch 4 backend implementation is prepared in additive migration
+`0014_impact_batch4_core_reciprocity.sql`. It adds the one-time explicit
+reciprocity-policy cutover, admin-only frozen campaign classification, Core
+`claim_campaign` and `redeem_claim` integration, append-only redemption
+accounting, non-persistent per-claim supply exceptions, Batch 3 no-banking
+completion-at-due correction, and aggregate stale-claim inventory restoration.
+Hosted validation is pending application after migrations `0011` through
+`0013`; Batch 4 must be validated together with the Core hosted suite.
+
 ## CURRENT NEXT STEP
-1. apply and validate Impact migrations `0011`, `0012`, and `0013` in the hosted database
-2. run the focused hosted suites for Impact Batches 1, 2, and 3
-3. review Batch 4 Core claim/redemption integration before implementation
+1. apply and validate Impact migrations `0011`, `0012`, `0013`, and `0014` in the hosted database
+2. run the focused hosted suites for Impact Batches 1 through 4 and the relevant Core integration suite
+3. do not start Impact Batch 5 or UI work until hosted validation passes
 
 ## PRODUCTION READINESS LATER
 - real payments

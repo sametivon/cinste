@@ -58,6 +58,10 @@ A contribution completed before `GIVE_BACK_DUE`:
 - counts toward Impact Profile
 - does not prepay or reset a future reciprocity cycle
 
+A contribution may settle a current due cycle only when its trusted completion
+provenance is at or after that cycle's `due_at`. Verification after `due_at`
+does not make an earlier completion eligible to settle the debt.
+
 One verified contribution may settle only one current reciprocity cycle.
 
 No contribution-credit banking.
@@ -84,6 +88,10 @@ Only authorized CINSTE administration should control Open vs Community classific
 Existing campaigns default to `COMMUNITY`. `OPEN` is an explicit,
 Admin-controlled exception.
 
+The campaign classification is frozen as soon as the campaign has any claim.
+Claims are counted using the classification effective at redemption; later
+classification changes cannot reinterpret existing claims.
+
 ## Organization access and onboarding
 
 Organization onboarding is Admin/CINSTE-controlled in V1. There is no public
@@ -99,6 +107,11 @@ Impact launch must not create retroactive contribution debt.
 Existing students begin the reciprocity program with a fresh cycle.
 
 Historical redemptions remain historical analytics only.
+
+Reciprocity enforcement begins only after an explicit, one-time server-admin
+policy activation. There is no historical redemption backfill and activation
+does not reset live reciprocity state. A pre-activation active Community claim
+redeemed after activation counts at redemption.
 
 ## Student reciprocity states
 
@@ -131,11 +144,21 @@ Additional redemptions during this supply waiver must not create multiple contri
 
 When eligible supply returns, one verified contribution settles the due state.
 
+The supply exception is evaluated afresh on each Community claim and is never
+stored as a blanket entitlement. The allowed claim is audited with the cycle,
+policy version, evaluation time, and supply-failure reason.
+
 For V1, reasonable supply exists when at least one active, published opportunity
 with capacity is reasonably available within the next 14 days. V1 considers
 remote opportunities and opportunities in Bucharest. User-caused restrictions,
 including active participation limits, cooldowns, or personal schedule overlap,
 do not count as platform supply failure.
+
+Scheduled supply requires a future start within 14 days and canonical
+Bucharest location. A joinable flexible/remote opportunity with a future
+deadline is supply even when its deadline is beyond 14 days. An opportunity
+where the student has already earned the lifetime contribution is not supply
+for that student.
 
 ## Impact Opportunities
 

@@ -16,7 +16,8 @@
     "test:integration": "node --env-file=.env.local scripts/integration-test.mjs",
     "test:integration:impact": "node --env-file=.env.local scripts/impact-batch1-integration-test.mjs",
     "test:integration:impact:batch2": "node --env-file=.env.local scripts/impact-batch2-integration-test.mjs",
-    "test:integration:impact:batch3": "node --env-file=.env.local scripts/impact-batch3-integration-test.mjs"
+    "test:integration:impact:batch3": "node --env-file=.env.local scripts/impact-batch3-integration-test.mjs",
+    "test:integration:impact:batch4": "node --env-file=.env.local scripts/impact-batch4-integration-test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
