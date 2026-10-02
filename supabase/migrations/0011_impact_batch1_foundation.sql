@@ -130,11 +130,14 @@ language plpgsql security definer set search_path = public
 as $$
 declare v_participation public.impact_participations%rowtype; v_organization_id uuid;
 begin
-  select p, o.organization_id into v_participation, v_organization_id
+  select p.* into v_participation
     from public.impact_participations p
-    join public.impact_opportunities o on o.id = p.opportunity_id
    where p.id = new.participation_id;
   if not found or v_participation.status <> 'completed' then raise exception 'PARTICIPATION_NOT_COMPLETED'; end if;
+  select o.organization_id into v_organization_id
+    from public.impact_opportunities o
+   where o.id = v_participation.opportunity_id;
+  if not found then raise exception 'OPPORTUNITY_NOT_FOUND'; end if;
   if new.student_id is distinct from v_participation.student_id or new.organization_id is distinct from v_organization_id then raise exception 'CONTRIBUTION_SCOPE_MISMATCH'; end if;
   return new;
 end;
