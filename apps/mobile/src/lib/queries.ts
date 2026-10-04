@@ -9,3 +9,5 @@ export async function getCampaigns(categoryId?: string) {
   return data as unknown as CampaignCard[];
 }
 export async function getCategories() { const { data, error } = await supabase.from('categories').select('id,name,slug').eq('active', true).order('sort_order'); if (error) throw error; return data; }
+export type ImpactOpportunity = { id: string; organization_id: string; organization_name: string; title: string; description: string; category: string; mode: 'scheduled' | 'flexible_remote'; city: string | null; starts_at: string | null; ends_at: string | null; due_at: string; expected_eligible_minutes: number; capacity: number; remaining_capacity: number };
+export async function getImpactOpportunities() { const { data, error } = await supabase.rpc('list_impact_opportunities'); if (error) throw error; return (data ?? []) as ImpactOpportunity[]; }

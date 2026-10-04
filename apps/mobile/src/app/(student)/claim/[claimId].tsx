@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, Text } from 'react-native';
-import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import QRCode from 'react-native-qrcode-svg';
 
 import { Button, Card, Loading, Pill, colors } from '@/components/ui';
@@ -23,6 +23,7 @@ export default function ClaimScreen() {
     <Card style={styles.info}><Text style={[styles.fulfillment, isRTL && styles.textRtl]}>{fulfillmentLabel(offer.fulfillment_type, t)}</Text>{offer.fulfillment_type === 'appointment_required' && <Text style={[styles.detail, isRTL && styles.textRtl]}>{t('offer.bookBefore')}</Text>}{offer.redemption_instructions && <Text style={[styles.detail, isRTL && styles.textRtl]}>{offer.redemption_instructions}</Text>}{offer.booking_url && <Button label={t('offer.openBooking')} variant="quiet" onPress={() => Linking.openURL(offer.booking_url!)}/>}</Card>
     {isActive && token && <Button label={t(showCode ? 'claim.hideManualCode' : 'claim.showManualCode')} variant="quiet" onPress={() => setShowCode(!showCode)}/>} 
     {showCode && <Text selectable style={styles.code}>{token}</Text>}
+    {claim.status === 'redeemed' && <Card style={styles.info}><Text style={[styles.fulfillment, isRTL && styles.textRtl]}>{({ ro: 'Cineva ți-a făcut ziua mai bună.', en: 'Someone made your day.', tr: 'Biri gününü güzelleştirdi.', ar: 'جعل شخص ما يومك أفضل.' } as const)[locale]}</Text><Text style={[styles.detail, isRTL && styles.textRtl]}>{({ ro: 'Vrei să dai mai departe?', en: 'Want to pass it forward?', tr: 'Bunu ileri taşımak ister misin?', ar: 'هل تريد أن تمررها للأمام؟' } as const)[locale]}</Text><Button label={t('impact.explore')} onPress={() => router.push('/(student)/(tabs)/impact' as any)}/></Card>}
   </ScrollView>;
 }
 const styles = StyleSheet.create({ page: { padding: 20, gap: 14, backgroundColor: colors.cream }, rtl: { direction: 'rtl' }, textRtl: { textAlign: 'right', writingDirection: 'rtl' }, title: { fontSize: 37, fontWeight: '900', letterSpacing: -1.3, color: colors.ink }, partner: { fontSize: 16, color: colors.muted, lineHeight: 23 }, qr: { alignItems: 'center', paddingVertical: 28 }, scan: { marginTop: 18, fontWeight: '900', color: colors.ink }, inactive: { fontSize: 16, color: colors.muted }, expiry: { textAlign: 'center', fontWeight: '800', color: colors.coral }, info: { gap: 8 }, fulfillment: { fontSize: 17, fontWeight: '900', color: colors.forest }, detail: { fontSize: 15, lineHeight: 22, color: colors.ink }, code: { fontSize: 12, color: colors.muted, textAlign: 'center', padding: 10, writingDirection: 'ltr' } });

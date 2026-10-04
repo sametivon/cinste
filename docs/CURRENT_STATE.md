@@ -88,8 +88,23 @@ uses an explicitly past due timestamp so client/server clock skew cannot
 invalidate its post-due settlement case.
 
 ## CURRENT NEXT STEP
-1. review the validated Batch 4 backend before beginning the next approved Impact scope
-2. do not start Impact Batch 5 or UI work without an explicit scoped request
+Impact Batch 5 UI implementation is complete against the validated Batch 1-4
+backend: verified-student mobile Impact browse/detail, join/cancel,
+participation/history, reciprocity and verified-contribution metrics, and the
+post-redemption pass-it-forward CTA; organization-operator and minimum Admin
+Impact operational pages reuse established RPCs and RLS. No Impact migration or
+authority/reciprocity/Core transaction change was made.
+
+Focused web and mobile TypeScript checks pass. Mobile Vitest could not start in
+this managed Windows sandbox because Vite failed to spawn a child process with
+`EPERM`; rerun it in an unrestricted local environment. Physical QA remains
+required for all newly wired student, operator, and admin workflows, especially
+self-verification rejection, cross-organization isolation, and post-redemption
+foreground refresh.
+
+## CURRENT NEXT STEP
+1. complete the listed manual/physical Batch 5 QA before production planning
+2. do not expand Impact beyond Batch 5 without an explicit scoped request
 
 ## PRODUCTION READINESS LATER
 - real payments
