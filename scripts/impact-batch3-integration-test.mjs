@@ -141,7 +141,10 @@ try {
   eq(raceResults.filter((result) => !result.error).length, 2, 'duplicate verification race is idempotent');
   eq((await must(service.from('impact_contributions').select('id').eq('participation_id', raceParticipation), 'race contribution count')).length, 1, 'duplicate verification race records one contribution');
 
-  await must(service.from('impact_reciprocity_state').upsert({ student_id: raceStudent.id, cycle_number: 8, community_redemption_count: 3, status: 'give_back_due', cycle_started_at: new Date(Date.now() - 60_000).toISOString(), due_at: new Date().toISOString() }, { onConflict: 'student_id' }), 'set due state');
+  // Keep the due transition safely before the server-side completion timestamp.
+  // The Batch 4 no-banking rule intentionally rejects completion before due,
+  // so using the client clock's exact "now" is vulnerable to clock skew.
+  await must(service.from('impact_reciprocity_state').upsert({ student_id: raceStudent.id, cycle_number: 8, community_redemption_count: 3, status: 'give_back_due', cycle_started_at: new Date(Date.now() - 120_000).toISOString(), due_at: new Date(Date.now() - 60_000).toISOString() }, { onConflict: 'student_id' }), 'set due state');
   const settleOpportunity = await createOpportunity(operator.db, organizationA); await publish(operator.db, settleOpportunity);
   const settleParticipation = await join(raceStudent.db, settleOpportunity);
   await rpc(operator.db, 'organization_verify_impact_participation', { p_participation_id: settleParticipation }, 'settle current due cycle');
@@ -151,7 +154,7 @@ try {
   eq(stateAfter.community_redemption_count, 0, 'settlement resets redemption count');
   eq((await must(service.from('impact_reciprocity_settlements').select('id').eq('student_id', raceStudent.id).eq('cycle_number', 8), 'read current settlement')).length, 1, 'current cycle has one settlement');
 
-  await must(service.from('impact_reciprocity_state').upsert({ student_id: student.id, cycle_number: 12, community_redemption_count: 3, status: 'give_back_due', cycle_started_at: new Date(Date.now() - 60_000).toISOString(), due_at: new Date().toISOString() }, { onConflict: 'student_id' }), 'set waiver cycle');
+  await must(service.from('impact_reciprocity_state').upsert({ student_id: student.id, cycle_number: 12, community_redemption_count: 3, status: 'give_back_due', cycle_started_at: new Date(Date.now() - 120_000).toISOString(), due_at: new Date(Date.now() - 60_000).toISOString() }, { onConflict: 'student_id' }), 'set waiver cycle');
   const waiverA = await auth('admin@cinste.test'); const waiverB = await auth('admin@cinste.test');
   const waivers = await Promise.all([waiverA.rpc('admin_waive_impact_reciprocity', { p_student_id: student.id, p_expected_cycle_number: 12, p_reason: 'Batch 3 waiver' }), waiverB.rpc('admin_waive_impact_reciprocity', { p_student_id: student.id, p_expected_cycle_number: 12, p_reason: 'Batch 3 stale waiver' })]);
   eq(waivers.filter((result) => !result.error).length, 1, 'waiver races settle once');

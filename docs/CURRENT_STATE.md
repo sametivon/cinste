@@ -81,13 +81,15 @@ reciprocity-policy cutover, admin-only frozen campaign classification, Core
 `claim_campaign` and `redeem_claim` integration, append-only redemption
 accounting, non-persistent per-claim supply exceptions, Batch 3 no-banking
 completion-at-due correction, and aggregate stale-claim inventory restoration.
-Hosted validation is pending application after migrations `0011` through
-`0013`; Batch 4 must be validated together with the Core hosted suite.
+Hosted validation completed on 2026-10-04 after migrations `0011` through
+`0014` were applied: Batch 1 (13 assertions), Batch 2 (19), Batch 3 (33),
+Batch 4 (10), and the relevant Core suite (113) passed. The Batch 3 fixture
+uses an explicitly past due timestamp so client/server clock skew cannot
+invalidate its post-due settlement case.
 
 ## CURRENT NEXT STEP
-1. apply and validate Impact migrations `0011`, `0012`, `0013`, and `0014` in the hosted database
-2. run the focused hosted suites for Impact Batches 1 through 4 and the relevant Core integration suite
-3. do not start Impact Batch 5 or UI work until hosted validation passes
+1. review the validated Batch 4 backend before beginning the next approved Impact scope
+2. do not start Impact Batch 5 or UI work without an explicit scoped request
 
 ## PRODUCTION READINESS LATER
 - real payments
