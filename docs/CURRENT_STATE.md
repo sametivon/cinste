@@ -100,7 +100,19 @@ the existing update RPC, Admin can revoke verified contributions with a reason,
 and the Admin dashboard links to the Impact workspace. These controls retain
 the existing RPC lifecycle, validation, authorization, and audit boundaries.
 
-Focused web and mobile TypeScript checks pass. Mobile Vitest could not start in
+Batch 5 operational UX remediation is complete: the Admin Impact workspace is
+now organized into Overview, Organizations, Participation Review,
+Contributions, and Reciprocity sections; account assignment uses an
+Admin-scoped name/email lookup rather than a visible UUID; contextual records
+precede Admin correction actions; destructive actions require a reason and
+browser confirmation; and both Admin and organization forms use persistent
+labels, readable status badges, responsive cards, and in-place action feedback.
+No migration, new RPC/view, direct Impact table-write path, or change to
+Impact/Core authorization or transaction semantics was made.
+
+Focused web TypeScript checks pass. The repository Vitest suite could not start
+in this managed Windows sandbox because Vite/esbuild failed to spawn a child
+process with `EPERM`; rerun it in an unrestricted local environment. Mobile Vitest could not start in
 this managed Windows sandbox because Vite failed to spawn a child process with
 `EPERM`; rerun it in an unrestricted local environment. Physical QA remains
 required for all newly wired student, operator, and admin workflows, especially
