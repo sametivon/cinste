@@ -13,7 +13,7 @@ export default async function AdminImpact({ searchParams }: { searchParams: Prom
   const q = (await searchParams).q?.trim() ?? '';
   const [{ data: organizations }, { data: assignments }, { data: participations }, { data: contributions }, { data: reciprocity }, { data: matches }] = await Promise.all([
     db.from('organizations').select('id,name,status,city,created_at').order('created_at', { ascending: false }),
-    db.from('organization_users').select('organization_id,user_id,assigned_at').is('revoked_at', null),
+    db.from('organization_users').select('organization_id,user_id,assigned_at'),
     db.from('impact_participations').select('id,student_id,opportunity_id,status,joined_at,completed_at').in('status', ['joined', 'overdue', 'disputed']).order('joined_at', { ascending: false }).limit(30),
     db.from('impact_contributions').select('id,student_id,organization_id,opportunity_id,participation_id,verified_minutes,verified_at,revoked_at').is('revoked_at', null).order('verified_at', { ascending: false }).limit(30),
     db.from('impact_reciprocity_state').select('student_id,cycle_number,status,due_at,updated_at').eq('status', 'give_back_due').order('updated_at', { ascending: false }).limit(30),
