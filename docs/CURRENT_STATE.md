@@ -95,6 +95,11 @@ post-redemption pass-it-forward CTA; organization-operator and minimum Admin
 Impact operational pages reuse established RPCs and RLS. No Impact migration or
 authority/reciprocity/Core transaction change was made.
 
+The remaining Batch 5 web UI gaps are complete: operators can edit drafts via
+the existing update RPC, Admin can revoke verified contributions with a reason,
+and the Admin dashboard links to the Impact workspace. These controls retain
+the existing RPC lifecycle, validation, authorization, and audit boundaries.
+
 Focused web and mobile TypeScript checks pass. Mobile Vitest could not start in
 this managed Windows sandbox because Vite failed to spawn a child process with
 `EPERM`; rerun it in an unrestricted local environment. Physical QA remains
