@@ -39,7 +39,7 @@ Do not start unrelated Core redesign while adding Impact.
 
 ## IMPACT STATUS
 Product direction approved.
-Product rules being documented.
+Approved V1 product rules are recorded in `docs/impact/IMPACT_SPEC.md`.
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
 Added the additive organization and Impact backend schema, enums, constraints,
@@ -48,22 +48,18 @@ and narrow admin RPCs for organization creation, activation/deactivation, and
 operator assignment/revocation. Active `organization_users` assignment plus
 active organization status is the organization access authority.
 
-Batch 1 authorization hardening is complete in the same un-applied migration:
+Batch 1 authorization hardening is complete in the applied migration:
 internal trigger helpers are non-executable by clients, Impact table privileges
 are explicit, and the reciprocity settlement reference has a foreign key.
-Focused hosted coverage is prepared at
-`scripts/impact-batch1-integration-test.mjs` and skips until migration `0011`
-is applied.
+Focused hosted coverage is at `scripts/impact-batch1-integration-test.mjs`;
+the recorded hosted validation results are below.
 
-Batch 3+ remains: contribution verification/revocation, reciprocity settlement,
-supply safeguards, Core claim/redemption integration, and UI.
-
-Batch 2 implementation is prepared in migration
+Batch 2 implementation is delivered in applied migration
 `0012_impact_batch2_opportunity_participation.sql`, with focused hosted
-coverage at `scripts/impact-batch2-integration-test.mjs`. Hosted validation is
-pending application of migration `0012`.
+coverage at `scripts/impact-batch2-integration-test.mjs`. Hosted validation
+passed as recorded below.
 
-Batch 3 implementation is prepared in additive migration
+Batch 3 implementation is delivered in applied additive migration
 `0013_impact_batch3_verified_contributions_reciprocity.sql`, with focused
 hosted coverage at `scripts/impact-batch3-integration-test.mjs`. The migration
 adds trusted completion provenance, one-time immutable contributions, the
@@ -71,11 +67,10 @@ reciprocity settlement ledger, organization/admin verification and correction
 RPCs, cycle-safe waiver settlement, lock-ordered transactions, and direct
 write/private-helper protections. Batch 2 completion now routes through the
 trusted verification transaction, and a student cannot rejoin an opportunity
-after earning its lifetime contribution. Hosted validation is pending
-application of migration `0013` after the hosted database has migrations
-`0011` and `0012` applied.
+after earning its lifetime contribution. Hosted validation passed as recorded
+below.
 
-Batch 4 backend implementation is prepared in additive migration
+Batch 4 backend implementation is delivered in applied additive migration
 `0014_impact_batch4_core_reciprocity.sql`. It adds the one-time explicit
 reciprocity-policy cutover, admin-only frozen campaign classification, Core
 `claim_campaign` and `redeem_claim` integration, append-only redemption
@@ -87,15 +82,17 @@ Batch 4 (10), and the relevant Core suite (113) passed. The Batch 3 fixture
 uses an explicitly past due timestamp so client/server clock skew cannot
 invalidate its post-due settlement case.
 
-## CURRENT NEXT STEP
-Impact Batch 5 UI implementation is complete against the validated Batch 1-4
+## BATCH 5 IMPLEMENTATION STATUS
+Impact Batch 5 UI implementation is present against the validated Batch 1-4
 backend: verified-student mobile Impact browse/detail, join/cancel,
-participation/history, reciprocity and verified-contribution metrics, and the
+active participations, reciprocity and verified-contribution metrics, and the
 post-redemption pass-it-forward CTA; organization-operator and minimum Admin
-Impact operational pages reuse established RPCs and RLS. No Impact migration or
-authority/reciprocity/Core transaction change was made.
+Impact operational pages reuse established RPCs and RLS. The original UI batch
+made no Impact migration or authority/reciprocity/Core transaction change;
+the later participation-read correction adds migration `0015` below.
+Batch 5 is not complete: the current-code gaps are recorded below.
 
-The remaining Batch 5 web UI gaps are complete: operators can edit drafts via
+The previously identified Batch 5 web controls are implemented: operators can edit drafts via
 the existing update RPC, Admin can revoke verified contributions with a reason,
 and the Admin dashboard links to the Impact workspace. These controls retain
 the existing RPC lifecycle, validation, authorization, and audit boundaries.
@@ -145,21 +142,68 @@ Additive migration `0015_impact_student_participation_read.sql` introduces the
 minimal authenticated, security-definer `list_my_impact_participations` read
 projection, scoped strictly to `student_id = auth.uid()`. The mobile Impact
 list and detail screen use it for self participation context while discovery
-continues to use `list_impact_opportunities`. The non-production database has
-not yet applied `0015`; apply it before physical validation of this fix.
+continues to use `list_impact_opportunities`. Migration `0015` is applied to
+non-production (owner-confirmed). Its hosted RPC was verified on 2026-10-05:
+13 focused read assertions passed using two existing QA student accounts,
+without changing domain data. Each account's returned participation set matched
+the privileged baseline exactly; cross-student filters returned no rows;
+student-ID override arguments and anonymous execution were rejected. Existing
+completed, disputed, and cancelled records retained opportunity/organization
+context for cancelled (non-published) opportunities. The response contained
+exactly the 16 declared projection fields and only linked own context, with no
+student identity/contact, payment, or claim fields. This checked existing
+post-cancellation records, not a newly executed cancellation transition.
 
-Focused web TypeScript checks pass. The repository Vitest suite could not start
-in this managed Windows sandbox because Vite/esbuild failed to spawn a child
-process with `EPERM`; rerun it in an unrestricted local environment. Mobile
-typecheck and the focused i18n/Impact Vitest suites pass (15 tests) when Vitest is run
-with the required local Windows child-process permission. Physical QA remains
-required for all newly wired student, operator, and admin workflows, especially
-self-verification rejection, cross-organization isolation, and post-redemption
-foreground refresh.
+## CURRENT-CODE COMPLETION CHECK (2026-10-05)
+Inspected branch `main`, HEAD `3ccdaea5eaa135b83f4ed0cbe6d66a8dbc10c569`;
+the working tree was clean before this documentation reconciliation.
+Commits `c2975c4` (RTL Discover list remount), `b08c8ae` (null participation
+relation guard), and `3ccdaea` (self-scoped participation RPC/0015) are present.
+
+Impact Batch 5 completion patch is implemented and validated. It changes no
+Core claim/redeem/payment behavior.
+
+- Mobile list/detail loads now have explicit loading, ready, and error states.
+  Every required RPC/query error is caught; contribution or reciprocity read
+  failure cannot appear as zero metrics or an open state. Retry remains safe
+  with the existing foreground refresh behavior.
+- Impact renders active joined/overdue work separately from all supported
+  historical statuses: completed, cancelled, late_cancelled, no_show, excused,
+  cancelled_by_organization, expired_incomplete, and disputed. The existing
+  unavailable-context fallback remains for legacy records.
+- Pending/rejected students route to a read-only Impact history screen instead
+  of the verified-student shell. Their participation history and verified
+  metrics remain readable and verification remains available; browse/join and
+  other normal verified-student capabilities remain unavailable.
+- Existing student disputes are exposed only for the status set accepted by
+  `student_dispute_impact_participation`. Applied migration `0016` adds the separate,
+  idempotent `student_request_impact_overdue_review` RPC for owned overdue
+  participations. It records an Admin-visible request and audit event without
+  changing participation, contribution, or reciprocity state; direct writes
+  remain denied.
+- The organization workspace accepts only a server-RLS-authorized organization
+  ID, defaults to the first permitted organization, and presents a selector
+  when an operator has multiple active assignments. All data continues to be
+  fetched under existing assignment RLS.
+
+Local validation: mobile TypeScript and web TypeScript checks passed; focused
+mobile Impact/routing tests passed (12 tests); `git diff --check` passed; and
+an iOS Metro bundle completed. The focused Vitest run required the local Windows
+child-process permission because the managed sandbox produced `EPERM`.
+
+Hosted validation passed on 2026-10-05 after `0016` was applied to
+non-production: `npm run test:integration:impact:batch5` passed 8 focused
+assertions covering ownership, overdue-only scope, idempotency, audit/Admin
+visibility, absence of settlement/contribution side effects, and direct-write
+rejection. Manual physical QA remains required for the new history/error/review
+states and multi-organization switching.
 
 ## CURRENT NEXT STEP
-1. complete the listed manual/physical Batch 5 QA before production planning
-2. do not expand Impact beyond Batch 5 without an explicit scoped request
+1. complete the listed manual/physical Batch 5 QA, including multi-organization
+   switching, verification-loss history, localized error states, and review
+   requests
+2. do not expand Impact beyond Batch 5 or begin production planning until those
+   acceptance checks pass
 
 ## PRODUCTION READINESS LATER
 - real payments

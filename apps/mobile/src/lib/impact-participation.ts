@@ -33,6 +33,15 @@ export function impactParticipationDisplay(participation: ImpactParticipation, u
   };
 }
 
+const activeImpactStatuses = new Set(['joined', 'overdue']);
+export function splitImpactParticipations(participations: ImpactParticipation[]) {
+  return { active: participations.filter((item) => activeImpactStatuses.has(item.status)), history: participations.filter((item) => !activeImpactStatuses.has(item.status)) };
+}
+
+export function canDisputeImpactParticipation(status: string) {
+  return ['no_show', 'late_cancelled', 'cancelled_by_organization', 'completed', 'excused'].includes(status);
+}
+
 export function impactParticipationFromReadModel(row: ImpactParticipationRead): ImpactParticipation {
   return {
     id: row.participation_id,

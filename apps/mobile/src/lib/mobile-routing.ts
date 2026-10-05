@@ -1,6 +1,6 @@
 import type { AppRole, VerificationStatus } from '@/lib/types';
 
-export type MobileDestination = 'loading' | 'login' | 'student' | 'verification' | 'role-boundary';
+export type MobileDestination = 'loading' | 'login' | 'student' | 'impact-history' | 'verification' | 'role-boundary';
 export type MobileRouteState = {
   hasSession: boolean;
   resolved: boolean;
@@ -14,7 +14,8 @@ export function resolveMobileDestination(state: MobileRouteState): MobileDestina
   if (!state.resolved) return 'loading';
   if (!state.hasSession) return 'login';
   if (state.role !== 'student') return 'role-boundary';
-  return state.verificationStatus === 'verified' ? 'student' : 'verification';
+  if (state.verificationStatus === 'verified') return 'student';
+  return state.verificationStatus === 'pending' || state.verificationStatus === 'rejected' ? 'impact-history' : 'verification';
 }
 
 export function mobileNavigationKey(userId: string | undefined) {

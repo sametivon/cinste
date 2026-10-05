@@ -10,10 +10,10 @@ describe('authoritative mobile account gate', () => {
     expect(canAccessVerifiedStudentRoute(state())).toBe(true);
   });
 
-  it('routes unverified, pending, and rejected students to verification', () => {
+  it('keeps verification available while routing pending and rejected students to read-only Impact history', () => {
     expect(resolveMobileDestination(state({ verificationStatus: null }))).toBe('verification');
-    expect(resolveMobileDestination(state({ verificationStatus: 'pending' }))).toBe('verification');
-    expect(resolveMobileDestination(state({ verificationStatus: 'rejected' }))).toBe('verification');
+    expect(resolveMobileDestination(state({ verificationStatus: 'pending' }))).toBe('impact-history');
+    expect(resolveMobileDestination(state({ verificationStatus: 'rejected' }))).toBe('impact-history');
     expect(canAccessVerifiedStudentRoute(state({ verificationStatus: 'pending' }))).toBe(false);
   });
 
@@ -31,7 +31,7 @@ describe('authoritative mobile account gate', () => {
   });
 
   it('updates the destination after a foreground verification decision', () => {
-    expect(resolveMobileDestination(state({ verificationStatus: 'pending' }))).toBe('verification');
+    expect(resolveMobileDestination(state({ verificationStatus: 'pending' }))).toBe('impact-history');
     expect(resolveMobileDestination(state({ verificationStatus: 'verified' }))).toBe('student');
   });
 

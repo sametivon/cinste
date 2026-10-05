@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { impactOpportunityFromParticipation, impactParticipationDisplay, impactParticipationFromReadModel, normalizeImpactParticipation } from '@/lib/impact-participation';
+import { canDisputeImpactParticipation, impactOpportunityFromParticipation, impactParticipationDisplay, impactParticipationFromReadModel, normalizeImpactParticipation, splitImpactParticipations } from '@/lib/impact-participation';
 
 const unavailableTitle = 'Opportunity details are unavailable';
 const unavailableOrganization = 'Your participation is still recorded.';
@@ -46,6 +46,19 @@ describe('Impact participation presentation', () => {
     expect(impactParticipationDisplay(joined, unavailableTitle, unavailableOrganization)).toMatchObject({ title: 'Food distribution', canOpenOpportunity: true });
     expect(historical).toMatchObject({ id: 'participation-history', status: 'completed', opportunity: { organization: { name: 'Helping Hands' } } });
     expect(impactOpportunityFromParticipation(ownParticipationRead)).toMatchObject({ id: 'opportunity-own', title: 'Food distribution', remaining_capacity: 4 });
+  });
+
+  it('separates active work from every supported historical outcome', () => {
+    const statuses = ['joined', 'overdue', 'completed', 'cancelled', 'late_cancelled', 'no_show', 'excused', 'cancelled_by_organization', 'expired_incomplete', 'disputed'];
+    const items = statuses.map((status) => ({ id: status, status, opportunity_id: status, opportunity: null }));
+    const { active, history } = splitImpactParticipations(items);
+    expect(active.map((item) => item.status)).toEqual(['joined', 'overdue']);
+    expect(history.map((item) => item.status)).toEqual(['completed', 'cancelled', 'late_cancelled', 'no_show', 'excused', 'cancelled_by_organization', 'expired_incomplete', 'disputed']);
+  });
+
+  it('only offers disputes for statuses accepted by the existing trusted RPC', () => {
+    expect(['no_show', 'late_cancelled', 'cancelled_by_organization', 'completed', 'excused'].every(canDisputeImpactParticipation)).toBe(true);
+    expect(['joined', 'overdue', 'cancelled', 'expired_incomplete', 'disputed'].some(canDisputeImpactParticipation)).toBe(false);
   });
 
 });
