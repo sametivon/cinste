@@ -205,6 +205,13 @@ states and multi-organization switching.
 2. do not expand Impact beyond Batch 5 or begin production planning until those
    acceptance checks pass
 
+## PUBLIC LANDING PAGE
+The public landing page has a presentation-only redesign using the provisional
+V1 brand and `docs/design/DESIGN_SYSTEM.md`. It explains experience funding,
+student discovery and redemption, and continuing community impact, with
+localized content for RO, EN, TR, and AR. Existing routes and product behavior
+are unchanged.
+
 ## PRODUCTION READINESS LATER
 - real payments
 - production scheduler
