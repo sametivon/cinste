@@ -1,8 +1,8 @@
 import i18next from 'i18next';
 import { describe, expect, it } from 'vitest';
 
-import { chooseInitialLocale, formatDate, formatNumber, formatRon, isRtlLocale, localizedAvailability, localizedCategory, localizedClaimError, localizedOffer, resolveSupportedLocale } from '@/i18n/core';
-import { translations } from '@/i18n/locales';
+import { applyLocaleChange, chooseInitialLocale, formatDate, formatNumber, formatRon, isRtlLocale, localizedAvailability, localizedCategory, localizedClaimError, localizedOffer, resolveSupportedLocale } from '@/i18n/core';
+import { translations, type SupportedLocale } from '@/i18n/locales';
 import { configureTranslationEngine } from '@/i18n/runtime';
 import { shouldRefreshOnForeground } from '@/lib/freshness';
 
@@ -46,6 +46,46 @@ describe('mobile i18n foundation', () => {
     translator.removeResourceBundle('tr', 'translation');
     expect(translator.t('profile.title')).toBe('Profilul meu');
     expect(translator.t('unknown.key')).toBe('⟪missing:unknown.key⟫');
+  });
+
+  it('updates current-screen, tab, and navigation copy live for Romanian, English, and Turkish', async () => {
+    const translator = await translatorFor('ro');
+    const saved: string[] = [];
+    let visibleLocale: SupportedLocale = 'ro';
+    const apply = (next: 'en' | 'tr') => applyLocaleChange(next, translator.changeLanguage.bind(translator), (locale) => { visibleLocale = locale; }, { setItemAsync: async (_key, value) => { saved.push(value); } }, 'cinste.locale.preference');
+
+    expect(translator.t('tabs.discover')).toBe('Descoperă');
+    await apply('en');
+    expect(visibleLocale).toBe('en');
+    expect(translator.t('tabs.myCinste')).toBe('My treats');
+    expect(translator.t('common.back')).toBe('Back');
+    expect(translator.t('impact.title')).toBe('Impact');
+    await apply('tr');
+    expect(visibleLocale).toBe('tr');
+    expect(translator.t('tabs.discover')).toBe('Keşfet');
+    expect(translator.t('profile.title')).toBe('Profilim');
+    expect(translator.t('impact.status.joined')).toBe('Katıldı');
+    expect(saved).toEqual(['en', 'tr']);
+  });
+
+  it('switches Arabic direction and restores LTR while keeping the selected locale after reload', async () => {
+    const translator = await translatorFor('tr');
+    let persisted: string | null = 'tr';
+    let visibleLocale: SupportedLocale = 'tr';
+    const save = { setItemAsync: async (_key: string, value: string) => { persisted = value; } };
+
+    await applyLocaleChange('ar', translator.changeLanguage.bind(translator), (locale) => { visibleLocale = locale; }, save, 'cinste.locale.preference');
+    expect(visibleLocale).toBe('ar');
+    expect(isRtlLocale(visibleLocale)).toBe(true);
+    expect(translator.t('tabs.profile')).toBe('الملف الشخصي');
+    expect(translator.t('impact.status.completed')).toBe('مكتمل');
+    expect(chooseInitialLocale(persisted, 'en')).toBe('ar');
+
+    await applyLocaleChange('ro', translator.changeLanguage.bind(translator), (locale) => { visibleLocale = locale; }, save, 'cinste.locale.preference');
+    expect(visibleLocale).toBe('ro');
+    expect(isRtlLocale(visibleLocale)).toBe(false);
+    expect(translator.t('tabs.profile')).toBe('Profil');
+    expect(chooseInitialLocale(persisted, 'ar')).toBe('ro');
   });
 
   it('pluralizes availability with a numeric count and locale-aware formatted value', async () => {

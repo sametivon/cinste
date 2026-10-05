@@ -115,11 +115,20 @@ client-side refresh, gives legacy reciprocity records an explicit no-due-date
 fallback, and prevents the narrow shared header from forcing horizontal page
 overflow. These are presentation-only changes.
 
+Mobile runtime localization now applies the i18n resource change before
+publishing the selected locale through context, so active student screens and
+navigation options rerender coherently for RO, EN, and TR. The selected locale
+continues to persist in SecureStore without replacing an explicit saved choice.
+Arabic uses the existing per-screen RTL text and row-layout handling live; no
+native direction restart is required. Invalid container `direction` styles
+were removed, and the Impact opportunity detail now translates participation
+status labels rather than rendering the stored enum.
+
 Focused web TypeScript checks pass. The repository Vitest suite could not start
 in this managed Windows sandbox because Vite/esbuild failed to spawn a child
-process with `EPERM`; rerun it in an unrestricted local environment. Mobile Vitest could not start in
-this managed Windows sandbox because Vite failed to spawn a child process with
-`EPERM`; rerun it in an unrestricted local environment. Physical QA remains
+process with `EPERM`; rerun it in an unrestricted local environment. Mobile
+typecheck and the focused i18n Vitest suite pass (10 tests) when Vitest is run
+with the required local Windows child-process permission. Physical QA remains
 required for all newly wired student, operator, and admin workflows, especially
 self-verification rejection, cross-organization isolation, and post-redemption
 foreground refresh.

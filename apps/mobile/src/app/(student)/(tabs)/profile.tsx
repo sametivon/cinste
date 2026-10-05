@@ -38,7 +38,7 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  page: { padding: 20, gap: 15, backgroundColor: colors.cream }, rtl: { direction: 'rtl' }, textRtl: { textAlign: 'right', writingDirection: 'rtl' },
+  page: { padding: 20, gap: 15, backgroundColor: colors.cream }, rtl: {}, textRtl: { textAlign: 'right', writingDirection: 'rtl' },
   title: { fontSize: 36, fontWeight: '900', letterSpacing: -1.2, color: colors.ink }, name: { fontSize: 23, fontWeight: '900', color: colors.ink, marginTop: 15 },
   email: { fontSize: 15, color: colors.muted, marginTop: 4 }, section: { fontSize: 18, fontWeight: '900', color: colors.ink },
   copy: { fontSize: 15, lineHeight: 23, color: colors.muted, marginTop: 8 }, languages: { gap: 8, marginTop: 14 },

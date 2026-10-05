@@ -4,7 +4,7 @@ import { type TFunction } from 'i18next';
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { type SupportedLocale } from './locales';
-import { chooseInitialLocale, isRtlLocale } from './core';
+import { applyLocaleChange, chooseInitialLocale, isRtlLocale } from './core';
 import { appI18n } from './runtime';
 export type { SupportedLocale } from './locales';
 const localeStorageKey = 'cinste.locale.preference';
@@ -22,19 +22,7 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
   const [locale, setCurrentLocale] = useState<SupportedLocale>('ro');
   const [ready, setReady] = useState(false);
-  const pendingPersistedLocale = useRef<SupportedLocale | null>(null);
-  const persistenceRunning = useRef(false);
-
-  const persistLatestLocale = async () => {
-    if (persistenceRunning.current) return;
-    persistenceRunning.current = true;
-    while (pendingPersistedLocale.current) {
-      const next = pendingPersistedLocale.current;
-      pendingPersistedLocale.current = null;
-      await SecureStore.setItemAsync(localeStorageKey, next);
-    }
-    persistenceRunning.current = false;
-  };
+  const latestLocaleRequest = useRef(0);
 
   useEffect(() => {
     (async () => {
@@ -47,10 +35,17 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setLocale = async (next: SupportedLocale) => {
-    setCurrentLocale(next);
-    await appI18n.changeLanguage(next);
-    pendingPersistedLocale.current = next;
-    await persistLatestLocale();
+    if (next === locale) return;
+    const request = ++latestLocaleRequest.current;
+    try {
+      await applyLocaleChange(next, appI18n.changeLanguage.bind(appI18n), (applied) => {
+        if (request === latestLocaleRequest.current) setCurrentLocale(applied);
+      }, SecureStore, localeStorageKey);
+    } catch (error) {
+      // Keep the current visible locale if the translation engine cannot apply
+      // the requested one. Storage failures are surfaced to the caller.
+      if (request === latestLocaleRequest.current) throw error;
+    }
   };
 
   const value = useMemo(() => ({ locale, isRTL: isRtlLocale(locale), ready, t: appI18n.t.bind(appI18n), setLocale }), [locale, ready]);

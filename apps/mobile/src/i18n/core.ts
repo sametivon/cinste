@@ -13,6 +13,22 @@ export function chooseInitialLocale(savedLocale?: string | null, deviceLanguage?
   return savedLocale ? resolveSupportedLocale(savedLocale) : detectDeviceLocale(deviceLanguage);
 }
 export function isRtlLocale(locale: SupportedLocale) { return locale === 'ar'; }
+export type LocalePersistence = { setItemAsync: (key: string, value: string) => Promise<void> };
+
+// Keep the translation engine ahead of React state. Consumers therefore never
+// render a newly selected locale against the previous resource bundle.
+export async function applyLocaleChange(
+  locale: SupportedLocale,
+  changeLanguage: (locale: SupportedLocale) => Promise<unknown>,
+  onApplied: (locale: SupportedLocale) => void,
+  persistence: LocalePersistence,
+  storageKey: string,
+) {
+  await changeLanguage(locale);
+  onApplied(locale);
+  await persistence.setItemAsync(storageKey, locale);
+  return locale;
+}
 export function formatDate(value: string | Date, locale: SupportedLocale, options: Intl.DateTimeFormatOptions = { dateStyle: 'medium', timeStyle: 'short' }) { return new Intl.DateTimeFormat(locale, options).format(new Date(value)); }
 export function formatNumber(value: number, locale: SupportedLocale) { return new Intl.NumberFormat(locale).format(value); }
 export function formatRon(bani: number, locale: SupportedLocale) { return new Intl.NumberFormat(locale, { style: 'currency', currency: 'RON' }).format(bani / 100); }
