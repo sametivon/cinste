@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { impactParticipationDisplay, normalizeImpactParticipation } from '@/lib/impact-participation';
+import { impactOpportunityFromParticipation, impactParticipationDisplay, impactParticipationFromReadModel, normalizeImpactParticipation } from '@/lib/impact-participation';
 
 const unavailableTitle = 'Opportunity details are unavailable';
 const unavailableOrganization = 'Your participation is still recorded.';
+const ownParticipationRead = {
+  participation_id: 'participation-own', participation_status: 'joined', opportunity_id: 'opportunity-own', organization_id: 'organization-own', organization_name: 'Helping Hands', title: 'Food distribution', description: 'Support a local distribution.', category: 'community', mode: 'flexible_remote' as const, city: 'București', starts_at: null, ends_at: null, due_at: '2026-10-12T10:00:00Z', expected_eligible_minutes: 60, capacity: 5, remaining_capacity: 4,
+};
 
 describe('Impact participation presentation', () => {
   it('keeps a populated participation navigable with its opportunity details', () => {
@@ -35,4 +38,14 @@ describe('Impact participation presentation', () => {
     expect(impactParticipationDisplay(immediatelyAfterJoin, unavailableTitle, unavailableOrganization).canOpenOpportunity).toBe(false);
     expect(impactParticipationDisplay(refreshed, unavailableTitle, unavailableOrganization)).toMatchObject({ title: 'Food distribution', canOpenOpportunity: true });
   });
+
+  it('uses the self-scoped participation projection for joined and historical opportunity context', () => {
+    const joined = impactParticipationFromReadModel(ownParticipationRead);
+    const historical = impactParticipationFromReadModel({ ...ownParticipationRead, participation_id: 'participation-history', participation_status: 'completed' });
+
+    expect(impactParticipationDisplay(joined, unavailableTitle, unavailableOrganization)).toMatchObject({ title: 'Food distribution', canOpenOpportunity: true });
+    expect(historical).toMatchObject({ id: 'participation-history', status: 'completed', opportunity: { organization: { name: 'Helping Hands' } } });
+    expect(impactOpportunityFromParticipation(ownParticipationRead)).toMatchObject({ id: 'opportunity-own', title: 'Food distribution', remaining_capacity: 4 });
+  });
+
 });

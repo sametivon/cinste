@@ -3,12 +3,13 @@ import { Alert, ScrollView, StyleSheet, Text, Pressable, View } from 'react-nati
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Card, Loading, Pill, colors } from '@/components/ui';
 import { formatDate, useAppLocale } from '@/i18n';
-import { getImpactOpportunities, type ImpactOpportunity } from '@/lib/queries';
+import { impactOpportunityFromParticipation } from '@/lib/impact-participation';
+import { getImpactOpportunities, getMyImpactParticipations, type ImpactOpportunity } from '@/lib/queries';
 import { supabase } from '@/lib/supabase';
 
 export default function ImpactOpportunityDetail() {
   const { opportunityId, participationId } = useLocalSearchParams<{ opportunityId: string; participationId?: string }>(); const { t, locale, isRTL } = useAppLocale(); const [item, setItem] = useState<ImpactOpportunity | null>(null); const [participation, setParticipation] = useState<{ id: string; status: string } | null>(participationId ? { id: participationId, status: 'joined' } : null); const [loading, setLoading] = useState(true); const [working, setWorking] = useState(false);
-  const load = useCallback(async () => { setLoading(true); try { const [items, result] = await Promise.all([getImpactOpportunities(), supabase.from('impact_participations').select('id,status').eq('opportunity_id', opportunityId).order('created_at', { ascending: false }).limit(1).maybeSingle()]); setItem(items.find((value) => value.id === opportunityId) ?? null); setParticipation(result.data); } finally { setLoading(false); } }, [opportunityId]);
+  const load = useCallback(async () => { setLoading(true); try { const [items, participationRows] = await Promise.all([getImpactOpportunities(), getMyImpactParticipations()]); const ownParticipation = participationRows.find((value) => value.opportunity_id === opportunityId); setItem(items.find((value) => value.id === opportunityId) ?? (ownParticipation ? impactOpportunityFromParticipation(ownParticipation) : null)); setParticipation(ownParticipation ? { id: ownParticipation.participation_id, status: ownParticipation.participation_status } : null); } finally { setLoading(false); } }, [opportunityId]);
   useFocusEffect(useCallback(() => { void load(); }, [load])); if (loading) return <Loading label={t('impact.loading')} />; if (!item) return <View style={styles.page}><Text style={styles.title}>{t('impact.notFound')}</Text></View>;
   const join = async () => { setWorking(true); const { error } = await supabase.rpc('student_join_impact_opportunity', { p_opportunity_id: item.id }); setWorking(false); if (error) return Alert.alert(t('impact.actionError'), error.message); await load(); };
   const cancel = async () => { if (!participation) return; setWorking(true); const { error } = await supabase.rpc('student_cancel_impact_participation', { p_participation_id: participation.id }); setWorking(false); if (error) return Alert.alert(t('impact.actionError'), error.message); await load(); };

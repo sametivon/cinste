@@ -32,3 +32,32 @@ export function impactParticipationDisplay(participation: ImpactParticipation, u
     canOpenOpportunity: participation.opportunity !== null,
   };
 }
+
+export function impactParticipationFromReadModel(row: ImpactParticipationRead): ImpactParticipation {
+  return {
+    id: row.participation_id,
+    status: row.participation_status,
+    opportunity_id: row.opportunity_id,
+    opportunity: row.title ? { title: row.title, organization: row.organization_name ? { name: row.organization_name } : null } : null,
+  };
+}
+
+export function impactOpportunityFromParticipation(row: ImpactParticipationRead): ImpactOpportunity {
+  return {
+    id: row.opportunity_id,
+    organization_id: row.organization_id,
+    organization_name: row.organization_name,
+    title: row.title,
+    description: row.description,
+    category: row.category,
+    mode: row.mode,
+    city: row.city,
+    starts_at: row.starts_at,
+    ends_at: row.ends_at,
+    due_at: row.due_at,
+    expected_eligible_minutes: row.expected_eligible_minutes,
+    capacity: row.capacity,
+    remaining_capacity: row.remaining_capacity,
+  };
+}
+import type { ImpactOpportunity, ImpactParticipationRead } from './queries';

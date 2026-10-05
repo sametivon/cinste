@@ -139,10 +139,19 @@ dereferencing the missing relation. Navigation to the opportunity is offered
 only while that relation is present. No RLS, RPC, schema, join, cancellation,
 or contribution behavior changed.
 
+The direct table read used by the original Impact screen cannot embed a linked
+opportunity for a student because opportunity-table RLS is discovery-only.
+Additive migration `0015_impact_student_participation_read.sql` introduces the
+minimal authenticated, security-definer `list_my_impact_participations` read
+projection, scoped strictly to `student_id = auth.uid()`. The mobile Impact
+list and detail screen use it for self participation context while discovery
+continues to use `list_impact_opportunities`. The non-production database has
+not yet applied `0015`; apply it before physical validation of this fix.
+
 Focused web TypeScript checks pass. The repository Vitest suite could not start
 in this managed Windows sandbox because Vite/esbuild failed to spawn a child
 process with `EPERM`; rerun it in an unrestricted local environment. Mobile
-typecheck and the focused i18n/Impact Vitest suites pass (14 tests) when Vitest is run
+typecheck and the focused i18n/Impact Vitest suites pass (15 tests) when Vitest is run
 with the required local Windows child-process permission. Physical QA remains
 required for all newly wired student, operator, and admin workflows, especially
 self-verification rejection, cross-organization isolation, and post-redemption
