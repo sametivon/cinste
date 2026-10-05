@@ -45,7 +45,7 @@ function ExperienceArt({ kind }: { kind: "cinema" | "care" | "activity" }) {
   </svg>;
 }
 
-export function Landing({ locale, appUrl }: { locale: WebLocale; appUrl: string }) {
+export function Landing({ locale }: { locale: WebLocale }) {
   const t = landingCopy[locale];
   const reduced = useReducedMotion();
   const experiences = [
@@ -62,7 +62,7 @@ export function Landing({ locale, appUrl }: { locale: WebLocale; appUrl: string 
             <p className="lp-eyebrow"><span className="lp-dot" />{t.eyebrow}</p>
             <h1 id="hero-title">{t.title}<br /><em>{t.accent}</em></h1>
             <p className="lp-intro">{t.intro}</p>
-            <div className="lp-actions"><a className="lp-button" href={appUrl}>{t.student}<span aria-hidden="true">↗</span></a><Link className="lp-button lp-secondary" href="/giver">{t.give}</Link></div>
+            <div className="lp-actions"><a className="lp-button" href="#how-it-works">{t.student}<span aria-hidden="true">↓</span></a><Link className="lp-button lp-secondary" href="/giver">{t.give}</Link></div>
             <p className="lp-caption">{t.note}</p>
             <a className="lp-text-link" href="#how-it-works">{t.how}<span aria-hidden="true"> ↓</span></a>
           </div>
@@ -102,12 +102,12 @@ export function Landing({ locale, appUrl }: { locale: WebLocale; appUrl: string 
 
         <section id="impact" className="lp-wrap lp-section lp-impact">
           <Reveal className="lp-impact-art"><Mark className="lp-impact-mark" /><div className="lp-story">{t.story.map((label, i) => <div key={label}><span aria-hidden="true">0{i + 1}</span>{label}</div>)}</div></Reveal>
-          <Reveal className="lp-impact-copy"><p className="lp-eyebrow">{t.impact}</p><h2>{t.impactTitle}</h2><p>{t.impactBody}</p><strong className="lp-impact-note">{t.impactNote}</strong><a className="lp-text-link" href={appUrl}>{t.student} <span aria-hidden="true">↗</span></a></Reveal>
+          <Reveal className="lp-impact-copy"><p className="lp-eyebrow">{t.impact}</p><h2>{t.impactTitle}</h2><p>{t.impactBody}</p><strong className="lp-impact-note">{t.impactNote}</strong><a className="lp-text-link" href="#how-it-works">{t.student} <span aria-hidden="true">↓</span></a></Reveal>
         </section>
 
         <section className="lp-wrap lp-section lp-roles"><h2>{t.rolesTitle}</h2>{t.roles.map(([title, body, link], i) => <Reveal className="lp-role" key={title}><span className="lp-role-index">0{i + 1}</span><h3>{title}</h3><p>{body}</p><Link className="lp-text-link" href={["/giver", "/partner", "/organization"][i]}>{link} <span aria-hidden="true">↗</span></Link></Reveal>)}<p className="lp-caption">{t.workspace}</p></section>
 
-        <section className="lp-wrap lp-final"><Mark /><p className="lp-eyebrow">CINSTE</p><h2>{t.finalTitle}</h2><p>{t.finalBody}</p><div className="lp-actions"><Link href="/giver" className="lp-button">{t.give}<span aria-hidden="true">↗</span></Link><a href={appUrl} className="lp-button lp-secondary">{t.student}</a></div></section>
+        <section className="lp-wrap lp-final"><Mark /><p className="lp-eyebrow">CINSTE</p><h2>{t.finalTitle}</h2><p>{t.finalBody}</p><div className="lp-actions"><Link href="/giver" className="lp-button">{t.give}<span aria-hidden="true">↗</span></Link><a href="#how-it-works" className="lp-button lp-secondary">{t.student}</a></div></section>
       </main>
       <footer className="lp-wrap lp-footer"><a href="/" className="lp-wordmark" aria-label="CINSTE"><Mark />CINSTE</a><p>{t.footer}</p><a href="#how-it-works" className="lp-text-link">{t.how}</a><span className="lp-caption">© {new Date().getFullYear()} CINSTE</span></footer>
     </div>
