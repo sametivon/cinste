@@ -124,6 +124,13 @@ native direction restart is required. Invalid container `direction` styles
 were removed, and the Impact opportunity detail now translates participation
 status labels rather than rendering the stored enum.
 
+The native Arabic Discover crash was corrected without a full-app restart.
+Discover's nested category `FlatList` now remains horizontal in both layout
+directions and is remounted only when its RTL inversion changes; it no longer
+mutates a mounted virtualized list from horizontal to vertical inside the
+vertical campaign list. Other student lists do not vary `horizontal` or
+`inverted` across locale changes.
+
 Focused web TypeScript checks pass. The repository Vitest suite could not start
 in this managed Windows sandbox because Vite/esbuild failed to spawn a child
 process with `EPERM`; rerun it in an unrestricted local environment. Mobile

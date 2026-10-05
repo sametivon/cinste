@@ -5,6 +5,7 @@ import { applyLocaleChange, chooseInitialLocale, formatDate, formatNumber, forma
 import { translations, type SupportedLocale } from '@/i18n/locales';
 import { configureTranslationEngine } from '@/i18n/runtime';
 import { shouldRefreshOnForeground } from '@/lib/freshness';
+import { directionalListKey } from '@/lib/rtl-list';
 
 async function translatorFor(locale: keyof typeof translations = 'ro') {
   const translator = i18next.createInstance();
@@ -86,6 +87,12 @@ describe('mobile i18n foundation', () => {
     expect(isRtlLocale(visibleLocale)).toBe(false);
     expect(translator.t('tabs.profile')).toBe('Profil');
     expect(chooseInitialLocale(persisted, 'ar')).toBe('ro');
+  });
+
+  it('uses a direction-specific remount boundary for the Discover category rail', () => {
+    expect(directionalListKey('discover-categories', false)).toBe('discover-categories-ltr');
+    expect(directionalListKey('discover-categories', true)).toBe('discover-categories-rtl');
+    expect(directionalListKey('discover-categories', false)).toBe('discover-categories-ltr');
   });
 
   it('pluralizes availability with a numeric count and locale-aware formatted value', async () => {
