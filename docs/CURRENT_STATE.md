@@ -212,6 +212,15 @@ student discovery and redemption, and continuing community impact, with
 localized content for RO, EN, TR, and AR. Existing routes and product behavior
 are unchanged.
 
+## STUDENT MOBILE UI
+The native student app has a presentation-only V1 polish pass. Its shared
+mobile tokens and primitives now use the provisional coral-led palette, Plus
+Jakarta Sans (with platform fallback for Arabic glyphs), V1 spacing/radius,
+semantic status treatment, and restrained press feedback. Discover, offer and
+claim detail, My CINSTE, Profile, verification, and Impact surfaces were
+updated without changing mobile routes, Supabase/RPC behavior, claim/redeem
+semantics, or Impact rules.
+
 ## PRODUCTION READINESS LATER
 - real payments
 - production scheduler
