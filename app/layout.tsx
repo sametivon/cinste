@@ -19,10 +19,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
     <body>
-      <header className="border-b border-stone-200 bg-cream">
-        <div className="shell flex items-center justify-between py-4">
+      <header className="site-header border-b border-stone-200 bg-cream">
+        <div className="site-header-inner shell flex items-center justify-between py-4">
           <Link href="/" className="text-2xl font-black tracking-tight">CINSTE<span className="text-coral">.</span></Link>
-          <nav className="flex items-center gap-4 text-sm font-bold">
+          <nav className="site-nav flex items-center gap-4 text-sm font-bold">
             <Link href="/">{webT(locale, "nav.discover")}</Link>
             <Link href="/giver">{webT(locale, "nav.give")}</Link>
             <WebLanguageSelector locale={locale} />

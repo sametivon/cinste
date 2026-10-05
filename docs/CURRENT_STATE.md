@@ -110,6 +110,11 @@ labels, readable status badges, responsive cards, and in-place action feedback.
 No migration, new RPC/view, direct Impact table-write path, or change to
 Impact/Core authorization or transaction semantics was made.
 
+Final Batch 5 web polish keeps mutation success feedback visible before a
+client-side refresh, gives legacy reciprocity records an explicit no-due-date
+fallback, and prevents the narrow shared header from forcing horizontal page
+overflow. These are presentation-only changes.
+
 Focused web TypeScript checks pass. The repository Vitest suite could not start
 in this managed Windows sandbox because Vite/esbuild failed to spawn a child
 process with `EPERM`; rerun it in an unrestricted local environment. Mobile Vitest could not start in
