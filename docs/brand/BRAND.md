@@ -1,8 +1,8 @@
 # CINSTE Brand Direction v1
 
 **Status:** Approved, provisional direction. This is CINSTE's current brand
-source of truth. The owner may revise the colors, logo, typography, or visual
-language later; exact design tokens are not locked yet.
+source of truth. The owner may revise colors, logo, typography, or visual
+language later; V1 implementation tokens remain provisional and may evolve.
 
 ## Brand positioning
 
@@ -22,6 +22,14 @@ natural.
 Youthful, warm, optimistic, social, modern, and trustworthy. It is energetic,
 approachable, generous, and light without becoming childish.
 
+### Active logo exploration direction
+
+**Ripple C / Soft Echo C** is the approved provisional V1 logo direction. It
+should feel warm, social, soft, alive, and modern: an ownable abstract symbol
+for generosity continuing forward. It is not the final production logo; final
+geometry and refinement will be revisited before launch. Current SVG
+explorations are direction references only, not production-final artwork.
+
 Avoid dark or bohemian aesthetics, charity framing, NGO-green clichés,
 corporate-heavy styling, and generic SaaS or AI aesthetics.
 
@@ -32,8 +40,13 @@ rounded warm shapes, soft gradients, and polished modern motion. The direction
 should feel alive and social while remaining trustworthy.
 
 The color direction is coral, peach, lilac, mint, sky, and cream/warm
-off-white. Exact color values are intentionally open. Avoid a dark primary
-identity, cold corporate blue, dominant NGO green, neon, and cyber styling.
+off-white. The long-term brand palette remains provisional. Avoid a dark
+primary identity, cold corporate blue, dominant NGO green, neon, and cyber
+styling.
+
+The provisional V1 implementation palette uses soft coral as its primary color,
+with lilac, mint, sky, and cream as supporting accents. Exact implementation
+tokens are defined by `docs/design/DESIGN_SYSTEM.md`.
 
 ## Logo direction
 
@@ -49,9 +62,10 @@ context mark, social avatar, and partner material.
 
 ## Typography direction
 
-Use a modern rounded or geometric sans-serif: friendly but not childish, and
-highly readable in both expressive marketing headings and product UI. The exact
-font family is not locked.
+Use **Plus Jakarta Sans** as the provisional V1 typeface: a modern geometric
+sans-serif that is friendly but not childish, and highly readable in expressive
+marketing headings and product UI. Its exact implementation scale and fallback
+guidance are defined by `docs/design/DESIGN_SYSTEM.md`.
 
 ## Landing-page direction
 
@@ -76,9 +90,9 @@ reward. Prefer language such as “Make someone's day,” “Pass it forward,”
 
 ## Still open for owner selection
 
-- Final logo and symbol geometry
-- Exact color values and design tokens
-- Exact typography family
+- Final logo geometry and refinement
+- Final long-term color values beyond provisional V1 implementation tokens
+- Final long-term typography choice beyond provisional Plus Jakarta Sans
 - Final motion implementation
 - Illustration and icon style
 
