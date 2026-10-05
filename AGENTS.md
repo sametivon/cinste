@@ -63,6 +63,15 @@ Ask for clarification only when:
 
 Do not stop between ordinary implementation steps to ask "should I continue?"
 
+## Design work
+For UI/UX or branding tasks:
+
+- Treat `docs/brand/BRAND.md` as the current brand source of truth.
+- When `docs/design/DESIGN_SYSTEM.md` exists, treat it as the implementation-level design source of truth.
+- Do not invent a new visual direction; preserve established product, business, security, authorization, and privacy behavior.
+- Inspect the current surface before redesigning it and prefer shared patterns over one-off styling.
+- Report material undefined design decisions instead of inventing them.
+
 ## Context usage
 Use context on demand.
 
