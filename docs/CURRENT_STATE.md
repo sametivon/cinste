@@ -131,10 +131,18 @@ mutates a mounted virtualized list from horizontal to vertical inside the
 vertical campaign list. Other student lists do not vary `horizontal` or
 `inverted` across locale changes.
 
+The native Impact return-from-join crash is corrected client-side. A student
+participation remains readable even when its embedded opportunity relation is
+temporarily null or filtered by the opportunity read policy; the app preserves
+its status and displays translated unavailable-details copy rather than
+dereferencing the missing relation. Navigation to the opportunity is offered
+only while that relation is present. No RLS, RPC, schema, join, cancellation,
+or contribution behavior changed.
+
 Focused web TypeScript checks pass. The repository Vitest suite could not start
 in this managed Windows sandbox because Vite/esbuild failed to spawn a child
 process with `EPERM`; rerun it in an unrestricted local environment. Mobile
-typecheck and the focused i18n Vitest suite pass (10 tests) when Vitest is run
+typecheck and the focused i18n/Impact Vitest suites pass (14 tests) when Vitest is run
 with the required local Windows child-process permission. Physical QA remains
 required for all newly wired student, operator, and admin workflows, especially
 self-verification rejection, cross-organization isolation, and post-redemption
