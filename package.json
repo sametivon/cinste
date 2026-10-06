@@ -18,7 +18,8 @@
     "test:integration:impact:batch2": "node --env-file=.env.local scripts/impact-batch2-integration-test.mjs",
     "test:integration:impact:batch3": "node --env-file=.env.local scripts/impact-batch3-integration-test.mjs",
     "test:integration:impact:batch4": "node --env-file=.env.local scripts/impact-batch4-integration-test.mjs",
-    "test:integration:impact:batch5": "node --env-file=.env.local scripts/impact-batch5-overdue-review-integration-test.mjs"
+    "test:integration:impact:batch5": "node --env-file=.env.local scripts/impact-batch5-overdue-review-integration-test.mjs",
+    "test:integration:giver-outcomes": "node --env-file=.env.local scripts/giver-outcomes-integration-test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
