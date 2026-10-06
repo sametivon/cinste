@@ -1,198 +1,324 @@
-# CINSTE Web Role UX Audit — V1
+# CINSTE Web Role UX Audit (V1)
 
-**Scope:** Product/UX and screen-architecture audit of the existing responsive-web role surfaces. This is not a redesign specification or implementation plan for data authority. It preserves the current Core and Impact rules, RLS, RPCs, payment model, and native-mobile-only student boundary.
+**Status:** Product and UX audit only. No screen implementation, behavior, or
+authorization change is implied by this document.
 
-**Evidence base:** `docs/PROJECT.md`, `docs/CURRENT_STATE.md`, the provisional V1 brand and design-system documents, the named web routes/actions, and the directly supporting Core/Impact schema and RPC contracts. The landing page and native student app are out of scope.
+## Scope and method
 
-## Audit conclusion
+This audit covers the existing web routes for Auth, Giver, Partner,
+Organization Operator, and Admin. It distinguishes presentation problems from
+missing frontend use of an existing contract and genuine backend gaps. Student
+web remains a mobile-app handoff and is intentionally out of scope.
 
-The web surfaces are not merely visually dated. The Core and Impact backends already cover most V1 operations, but the web product is unevenly exposed: Partner can technically redeem but is not optimized for a live counter; Organization and Impact Admin have a usable operational foundation; Giver ends immediately after checkout and cannot understand its continuing outcome; and login cannot reliably route an organization operator into the correct web workspace.
+The V1 design system applies to all future work: Giver may be warm and
+outcome-led; Partner, Organization, and Admin should be fast, restrained, and
+operational.
 
-The largest V1 gap is the **Giver outcome experience**: the backend safely records orders, funded campaigns, inventory, claims and redemptions, but a giver is not permitted to read the claim/redemption data needed to answer the outcome questions. The largest P0 interaction gap is the **Partner redemption flow**: the authority exists, but the current page makes the primary counter task slower and less decisive than it needs to be.
-
-## Auth / Login
+## Auth and login
 
 ### Current state
 
-`/login` combines sign-in and sign-up in two compact forms. It displays query-string errors, has no password-recovery path, no explicit loading/disabled state, no account/verification explanation, and retains the older visual language. Successful login routes only from `profiles.role`: Admin to `/admin`, Partner to `/partner`, Giver to `/giver`, otherwise `/student`.
+`/login` combines email/password sign-in and account creation. Errors return
+through a query parameter. `/account` and successful login route by the stored
+profile role: Admin, Partner, and Giver go to their role surface; Student goes
+to the native-app handoff. Signup currently leads to the same student
+onboarding/handoff path.
 
 ### Existing backend capabilities
 
-Supabase Auth supports email/password sign-in and sign-up. The `profiles.role` model supports student, giver, partner and admin. Organization access is intentionally additive: an authenticated account is authorized by an active `organization_users` assignment and active organization, so one account may also be a student. No new role system is needed.
+- Supabase password sign-in and signup are wired.
+- Profile-role routing is already authoritative in the application.
+- Organization access is an additive active `organization_users` assignment,
+  rather than a profile role; the existing authorization model can support an
+  assignment-aware destination without changing roles.
+- The existing roles are fixed by the product model; this is not an invitation
+  to add a second role system.
 
 ### UX gaps
 
-- An assigned organization operator can authenticate successfully but is not routed to `/organization`; the current destination helper cannot inspect organization assignment.
-- A web-only operational user has no clear post-login confirmation of where to go, especially where an account has more than one legitimate surface.
-- Password recovery is absent from the product flow.
-- Form errors are raw and transient, and loading, success, verification, and account-creation states are not communicated as product states.
-- The screen does not yet use the accepted landing-page brand direction or the design-system form/state patterns.
+- The combined form is visually and structurally older than the landing page.
+- It has limited guidance about which role should use which route.
+- Loading, field-level validation, retry, and success/confirmation states are
+  minimal.
+- There is no password-recovery flow in the application.
+- The current destination helper only reads `profiles.role`, so an assigned
+  Organization Operator with a student profile routes to the student handoff
+  instead of `/organization`.
+- The signup destination can be confusing for a prospective giver or partner;
+  self-service role selection should not be inferred.
 
 ### V1 screen architecture
 
-| Screen / view | Purpose | Primary user action | Critical information | Status | Implementation type | Priority |
-|---|---|---|---|---|---|---|
-| Sign in | Return an existing user to the right permitted surface | Sign in | Email, password, clear error/loading state, role/workspace destination | exists | presentation-only | P0 |
-| Create account | Create a basic account without implying an unsupported role | Sign up | Name, email, password, what happens next, verification expectation where relevant | partial | presentation-only | P1 |
-| Password recovery | Restore access without support intervention | Request reset and set a new password | Email acknowledgement, reset validity, safe error/loading states | missing | frontend behavior | P1 |
-| Access destination / workspace chooser | Resolve an account with organization access or multiple valid contexts | Continue to a workspace | Available workspaces and why they are available; no role mutation | missing | frontend behavior | P0 |
+| Screen/view | Purpose and primary action | Critical information | Status | Type | Priority |
+|---|---|---|---|---|---|
+| Sign in | Return an existing user to the correct role surface. | Email, password, error, loading, role-specific destination after sign-in. | exists | presentation-only | P1 |
+| Create account | Create a default account without implying a role change. | What signup does and does not grant; student app handoff. | partial | presentation-only | P1 |
+| Recovery request | Let a user request a password reset. | Email, confirmation, safe generic error. | missing | frontend behavior; verify hosted auth email configuration | P1 |
+| Workspace destination | Route an assigned operator, or let a legitimately multi-context account choose a workspace, without mutating a role. | Permitted workspaces and why they are available. | missing | frontend behavior | P0 |
+| Access boundary | Explain no-access/incorrect-role outcomes and give the safe next step. | No authorization detail or internal IDs. | partial | presentation-only | P1 |
 
-`/student` must remain an app handoff or explanatory state, not a new student web product.
+### What to defer
 
-### V1 implementation priority
-
-P0 is sign-in consistency plus assignment-aware destination selection. P1 is recovery and sign-up-state quality. No auth backend, role, RLS, or account-model change is required for this scope.
+Do not add a role picker, partner self-enrollment, or a student web product.
+Those would change product and authorization decisions rather than polish auth.
 
 ## Giver
 
 ### Current state
 
-`/giver` is an offer catalogue with quantity selection and mock checkout. `/checkout/[orderId]` simulates payment. `/giver/success/[orderId]` thanks the giver, states how many students could receive an experience, shows the order total and currently available inventory, and offers a return to the catalogue. There is no giver home/history after that moment.
+`/giver` lists active offers, lets a signed-in giver choose a quantity, and
+starts the trusted mock checkout. Checkout confirms payment and creates
+campaign inventory through the existing server-only path. The success page
+shows the immediate funded quantity and current available inventory, then
+returns the giver to funding.
 
 ### Existing backend capabilities
 
-The trusted checkout path derives price, items and campaign inventory server-side. A giver can read their own orders, items and payments. The payment confirmation creates campaigns linked to the giver order, retaining `quantity_total` and `quantity_available`. Claims and redemptions are separately recorded and server-authoritative. Active offers, partners and campaigns are readable for funding discovery.
+- Active offers, categories, partners, and trusted prices are readable.
+- A service-only checkout creates orders/items; payment confirmation creates
+  campaign inventory from trusted data.
+- A giver can read their own orders, items, and payments.
+- Campaigns retain `giver_order_id`, quantity totals, and availability.
 
 ### UX gaps
 
-- Funding is framed as selecting an offer rather than a clear, human campaign/outcome decision.
-- There is no contribution history, order status, retry/failed-payment return path, or durable “what I funded” record.
-- The success screen provides only a momentary inventory number, not a persistent, understandable outcome.
-- The product cannot currently show a giver how many of *their* funded experiences were claimed or redeemed: claim and redemption reads are restricted to students, assigned partners, and Admin. This is a real self-scoped read-model gap, not a charting problem.
-- The mock-only payment status must remain plainly labelled until a real provider exists; it should not be made to look like production checkout.
+- The catalog is functional but feels like a development form rather than an
+  experience-led funding choice.
+- There is no giver home/history, so a giver cannot revisit what they funded.
+- The success view is useful only immediately after checkout and does not
+  explain campaign progress over time.
+- The product does not currently expose claimed or redeemed outcomes to the
+  giver, so the emotional outcome loop stops at payment.
 
 ### V1 screen architecture
 
-| Screen / view | Purpose | Primary user action | Critical information | Status | Implementation type | Priority |
-|---|---|---|---|---|---|---|
-| Fund an experience | Select an active experience and quantity | Start checkout | Partner, experience, price, quantity, availability, mock-payment disclosure | exists | presentation-only | P1 |
-| Checkout | Confirm a funding attempt | Complete or abandon the mock payment | Items, total, mock status, clear success/failure result | exists | presentation-only | P1 |
-| Funding confirmation | Turn a completed payment into an outcome moment | View contribution or fund again | Funded quantity, experience, current availability, next destination | partial | presentation-only | P1 |
-| My contributions | Give a giver a durable, outcome-focused history | Open a contribution | Experience, partner, paid/failed state, quantity funded, remaining; claimed/redeemed counts when available | missing | backend gap | P0 |
-| Contribution detail | Explain one funded campaign without becoming a finance dashboard | Fund again or return to contributions | What was funded, inventory remaining, claimed, redeemed, simple outcome language | missing | backend gap | P1 |
+| Screen/view | Purpose and primary action | Critical information | Status | Type | Priority |
+|---|---|---|---|---|---|
+| Fund experiences | Choose an existing active offer and quantity. | Experience, partner, category, price, quantity, fulfillment context. | exists | presentation-only | P1 |
+| Checkout and confirmation | Confirm the existing trusted funding action and explain the immediate result. | Order summary, safe payment state, funded quantity, next step. | exists | presentation-only | P1 |
+| My giving | Return to previous contributions and fund again. | Own paid/pending/failed orders, items, funded quantity, and safe aggregate outcome counts. | missing | backend gap + frontend behavior | P0 |
+| Contribution outcome | Show an individual contribution's progress without student identity. | Funded, remaining, claimed, redeemed, and concise Impact outcome where authorized. | missing | backend gap for a self-scoped aggregate/read projection | P1 |
 
-### V1 implementation priority
+### Backend gap
 
-P0 is a self-scoped giver contribution/outcome projection that returns only the giver's own orders/campaign aggregates (funded, available, claimed, redeemed) and a simple history UI. It must not expose student identity, credentials, or partner operational data. Once that projection exists, the screens are frontend work. P1 is polish of discovery, checkout and confirmation. Real payments remain deferred production-readiness work.
+The current RLS model permits own orders/items/payments, but it does not grant a
+giver a safe historical view of the downstream claims and redemptions connected
+to their campaigns. A future solution should be a narrow self-scoped projection
+or RPC returning aggregate counts only; it must not relax claim, campaign, or
+redemption RLS and must not reveal student identities or redemption credentials.
+
+### What to implement now vs defer
+
+The P0 giver foundation is a narrow self-scoped outcome aggregate, then My
+giving and its detail view. It must return only the giver's own order/campaign
+totals and aggregate claimed/redeemed counts. Do not add financial analytics,
+social feeds, direct giver/student contact, or recurring funding in V1.
 
 ## Partner
 
 ### Current state
 
-`/partner` authenticates, checks `partner_users` membership, offers camera scanning and manual token entry, calls `inspect_redemption`, and exposes a `REDEEM` action only for `VALID`. It renders a recent-redemptions list. The scanner has a deliberate manual-code fallback and development-only diagnostics.
+`/partner` requires an authenticated `partner_users` membership. It already
+has camera scanning, manual credential entry, server-authoritative inspection,
+redeem confirmation for a valid credential, and a recent-redemption list.
+The current presentation exposes raw states and uses a single, vertically
+stacked page.
 
 ### Existing backend capabilities
 
-`inspect_redemption` returns the authoritative validation state and offer/partner context; `redeem_claim` rechecks authorization and validity server-side before atomically redeeming and writing a redemption event. It covers invalid code, already redeemed, expired, wrong partner, and (where applicable) not-yet-valid outcomes. `partner_users` supports assigned staff access, including more than one assignment, and Admin can assign/revoke access with an audit trail. Partner members can read their assigned claim/redemption context; active offers/campaigns expose live offer and availability data.
+- `inspect_redemption` returns validation state and safe offer/partner context.
+- `redeem_claim` is the authoritative, partner-authorized redemption boundary.
+- The server already differentiates valid, invalid, expired, already redeemed,
+  not-yet-valid, and wrong-partner outcomes.
+- `redemption_events` records the redeeming partner user and supports recent
+  partner history.
+- Staff access already exists: Admin assigns and revokes multiple
+  `partner_users` per partner. A staff-management product is not required for
+  this to work.
 
 ### UX gaps
 
-- The page is functionally present but not structured around the counter sequence: **scan or enter → understand the result → confirm → see success → immediately scan next**.
-- Raw uppercase server states and a generic `REDEEM` label do not make the safe action or the reason for refusal clear to staff.
-- Success currently redirects with a text result rather than preserving the just-redeemed offer, timestamp, and a prominent next-scan action.
-- The history is useful but lacks an explicit partner context, concise filters, and a clear empty/retry treatment.
-- There is no lightweight view of the assigned partner's currently redeemable offers/campaigns and remaining availability, even though relevant active records are readable.
-- Staff access already exists technically; the missing product work is a clear Admin assignment workflow handoff and, for multi-assigned users, a partner-context selector. No POS integration is justified.
+- The counter flow is functional but not optimized for a student waiting at a
+  counter: scan, result, confirmation, and return-to-scan are not visually
+  distinct enough.
+- Validation results are raw server labels rather than clear operational
+  states with the correct next action.
+- Camera permission, scanner failure, manual-entry format, and post-redeem
+  success feedback need explicit states.
+- Recent activity is present but not clearly scoped when a staff member has
+  more than one partner assignment.
+- There is no concise "my partner" offer/campaign availability context.
 
 ### V1 screen architecture
 
-| Screen / view | Purpose | Primary user action | Critical information | Status | Implementation type | Priority |
-|---|---|---|---|---|---|---|
-| Redeem CINSTE | Complete a counter redemption in seconds | Scan QR or enter short code | Camera permission/fallback, manual code, selected partner context | partial | presentation-only | P0 |
-| Validation result | Let staff decide safely before redemption | Confirm redemption when valid | Offer, partner, validity state, explicit invalid/expired/already-redeemed/wrong-partner explanation; no secret/token exposure | partial | presentation-only | P0 |
-| Redemption confirmation | Close the transaction and reset for the next customer | Scan next CINSTE | Redeemed offer, time, success confirmation, next-scan action | partial | frontend behavior | P0 |
-| Recent redemptions | Give staff minimal operational reassurance | Review recent activity | Offer, campaign, time, status; selected partner and empty/error states | exists | presentation-only | P1 |
-| Active offer availability | Help staff understand what can currently be redeemed | View current offer/campaign | Offer, campaign, remaining availability, validity window | missing | frontend behavior | P1 |
-| Partner context selector | Avoid ambiguity for a staff account assigned to multiple businesses | Switch current partner | Partner name and selected context; redemption remains server-authoritative | missing | frontend behavior | P1 |
+| Screen/view | Purpose and primary action | Critical information | Status | Type | Priority |
+|---|---|---|---|---|---|
+| Redeem | Fast default counter surface: scan or enter a code. | Partner context, camera/manual fallback, clear focus, permission/error state. | partial | presentation-only + frontend behavior | P0 |
+| Validation result | Decide whether to confirm redemption. | Explicit valid/invalid/expired/already redeemed/wrong partner/not-yet-valid result, offer and partner when safely returned. | partial | presentation-only | P0 |
+| Redemption confirmation | Perform the existing authoritative redeem action, then return to the next scan. | Clear success, duplicate-submit protection, no credential disclosure. | partial | presentation-only + frontend behavior | P0 |
+| Recent redemptions | Give staff confidence and a short operational trail. | Time, offer/campaign fallback, final state, partner scope. | exists | presentation-only | P1 |
+| Partner inventory context | Orient staff without turning this into a dashboard. | Assigned partner, active offers/campaigns, remaining availability where readable. | missing | frontend behavior | P1 |
+| Partner context selector | Avoid ambiguity for a staff account assigned to multiple businesses. | Selected partner and available assignments; redemption remains authoritative. | missing | frontend behavior | P1 |
+| Staff access | Enable staff assignments. | Assigned people and revocation audit. | partial (Admin only) | presentation-only for Admin; self-service is a product decision | P2 |
 
-### V1 implementation priority
+### What to implement now vs defer
 
-P0 is the operational core only: fast scan/manual entry, explicit validation result, confirm, success/reset. P1 adds recent-history quality, current offer visibility and multi-partner selection. The existing assignment model is sufficient for V1 staff access; a staff-management dashboard, POS integration, or complex analytics is intentionally deferred.
+Partner counter redemption is the only P0 in-person counter-flow gap. It needs no POS
+integration and no new redemption authority. Implement it as a responsive web
+or PWA-friendly workflow. Defer self-service staff administration, POS
+integration, settlement reporting, and a large partner analytics dashboard.
 
 ## Organization Operator
 
 ### Current state
 
-`/organization` is already a scoped Impact workspace. It selects from organizations authorized by RLS, supports multi-organization switching, creates/edits/publishes/cancels opportunity drafts, groups participants into action/review/history, and supports completion verification and excusal. It deliberately uses minimal participant identifiers and reasoned destructive actions.
+`/organization` is already a scoped Impact workspace. It selects an assigned
+organization, creates and edits drafts, publishes/cancels opportunities, and
+groups participants into action, review, and history. It supports completion
+verification and an excusal path. It also supports multi-organization
+selection.
 
 ### Existing backend capabilities
 
-Active organization plus active assignment is the access authority. Existing RPCs enforce draft-only editing, publishing/cancellation, capacity and lifecycle rules, completion verification, and eligible outcome resolution. The operator can read only its organizations, opportunities, necessary participations and its contribution context. Admin retains disputes, corrections and exceptions.
+- Organization-scoped create, update, publish, and cancel RPCs are present.
+- Organization users can verify completion and resolve permitted participation
+  outcomes; server rules enforce scope and prohibit self-verification.
+- Opportunity and participation lifecycle data is readable only in the
+  authorized organization context.
 
 ### UX gaps
 
-- The operational foundation is substantially V1-ready; its gap is not missing CRUD.
-- “Needs action” contains joined participants but does not foreground time/order or distinguish ordinary completion work from overdue operational risk.
-- Draft creation is always visually first, rather than an at-a-glance queue of published/upcoming opportunities and reviews.
-- The workspace does not explicitly show filled/remaining capacity, although it has capacity and participations to calculate it in the UI.
-- Organization history is present as a participant group but not a concise opportunity-level operational history.
+- The working surface is a single long page, so daily actions compete with
+  opportunity history and setup.
+- Participation cards show minimal context and lack stronger due/review
+  prioritization.
+- The UI exposes excusal but not the existing `no_show` resolution path.
+- Empty, error, and success patterns are improved but need a final operational
+  consistency pass rather than more domain features.
 
 ### V1 screen architecture
 
-| Screen / view | Purpose | Primary user action | Critical information | Status | Implementation type | Priority |
-|---|---|---|---|---|---|---|
-| Organization workspace / selector | Work in one permitted organization | Select organization | Organization status, active assignment, switcher where applicable | exists | presentation-only | P1 |
-| Opportunity list | See current work before creating more | Open or create an opportunity | Draft/published/cancelled state, timing, capacity/remaining slots, format | partial | frontend behavior | P1 |
-| Opportunity editor | Create, edit, publish or cancel within lifecycle rules | Save draft or publish | Required timing, mode, capacity, immutable-after-publish explanation, cancellation consequence | exists | presentation-only | P1 |
-| Participation action queue | Resolve the work that needs an operator decision | Verify completion or record allowed outcome | Opportunity, joined/completion context, status, overdue/disputed visibility, safe feedback | partial | presentation-only | P0 |
-| Participation and opportunity history | Provide traceable context without excess student data | Inspect completed/cancelled history | Outcome, dates, verified status, capacity/outcome context | partial | frontend behavior | P2 |
+| Screen/view | Purpose and primary action | Critical information | Status | Type | Priority |
+|---|---|---|---|---|---|
+| Organization switcher and overview | Establish the active organization and next action. | Organization status, drafts, published work, action/review counts. | partial | presentation-only | P1 |
+| Opportunity list/detail | Create, edit draft, publish, or cancel within existing lifecycle rules. | Status, capacity, timing/due date, mode, participant count, immutable-state guidance. | partial | presentation-only | P1 |
+| Participant work queue | Verify completion or resolve an eligible outcome quickly. | Opportunity, joined/due timing, status, required reason, self-verification boundary. | partial | frontend behavior + presentation-only | P0 |
+| Participation history | Find prior outcomes without crowding the action queue. | Status, completed/resolved time, opportunity context. | partial | presentation-only | P2 |
 
-### V1 implementation priority
+### What to implement now vs defer
 
-P0 is a clearer participation action/review queue. P1 is opportunity-list hierarchy and remaining-capacity presentation. P2 is a fuller historical view. No Impact backend gap blocks these changes; the existing authority model should remain untouched.
+No new backend capability blocks a V1 operator polish. Expose the already
+supported no-show outcome only after confirming its product copy and
+operational presentation. Defer exports, bulk actions, messaging, scheduling
+integrations, and organization self-onboarding.
 
 ## Admin
 
 ### Current state
 
-Admin is spread across `/admin` (headline counts and pending student verification), `/admin/manage` (catalogue, partners, offers, campaigns and partner assignments), `/admin/operations` (read-only claims, orders, payments, redemptions and access events), and `/admin/impact` (Impact overview, organizations, participation review, contributions and reciprocity). Core and Impact mutation actions already require the appropriate server/RPC authority and reasoned correction flows where required.
+Admin has four functional areas: a compact overview with verification review,
+catalog/partner/campaign management, read-only Core operations, and an Impact
+workspace for organizations, assignments, participation review, contributions,
+and reciprocity exceptions.
 
 ### Existing backend capabilities
 
-Admin can manage the Core catalogue and campaign lifecycle, approve/reject verification, manage partner assignments, inspect Core operations, create/activate/deactivate organizations, assign/revoke operators, review/verify Impact participations, revoke contributions, and waive a current reciprocity requirement. The schema already records campaigns/inventory, claims, redemptions, funding/payment states, access events, Impact audit records, participation review requests and reciprocity state.
+- Admin can review student verification, manage catalog records, partners,
+  partner assignments, and campaign scheduling/status through existing
+  protected actions/RPCs.
+- Read models already cover claims, orders, payments, redemptions, and partner
+  access history without exposing QR secrets.
+- Impact supports organization lifecycle and assignment, participation
+  verification, contribution correction, overdue review visibility, and
+  current-cycle reciprocity waivers.
 
 ### UX gaps
 
-- The routes are capability-complete in places but navigation is fragmented; Admin must know which of four pages holds the next action.
-- The home dashboard reports counts but not a prioritized operational queue: pending verification, failed/pending payment, low/empty active campaign inventory, active claims near expiry, unresolved Impact overdue/dispute requests, and assignment/access exceptions.
-- Core operations are audit-table views rather than a practical exception triage surface. This is an information architecture issue, not a need for a large generic dashboard.
-- Campaign inventory, claims and redemptions are visible but not connected in a single operational campaign view.
-- Current state correctly lists a production stale-claim scheduler and monitoring as later readiness work. A UI should not simulate live alerts before those sources exist.
+- The four areas are technically capable but feel like separate utilities,
+  rather than one clear operations workspace.
+- The overview does not prioritize a unified action queue: pending
+  verification, campaign/inventory attention, payments, and Impact exceptions
+  require manual navigation and interpretation.
+- Read-only tables are useful but have limited filters, record context, empty
+  states, and links to the action that can resolve an issue.
+- Catalog and partner assignment management are form-heavy and do not make the
+  operational consequences of deactivation or campaign state immediately
+  scannable.
 
 ### V1 screen architecture
 
-| Screen / view | Purpose | Primary user action | Critical information | Status | Implementation type | Priority |
-|---|---|---|---|---|---|---|
-| Admin operational home | Direct staff to the next actionable exception | Open a queue or management section | Pending verifications, funding/payment exceptions, inventory attention, Impact review/dispute/overdue counts | partial | frontend behavior | P0 |
-| Student verification queue | Decide verification safely | Approve or reject | Student/university, submitted time, private document only through existing protected route, reason on rejection | exists | presentation-only | P0 |
-| Core catalogue and partner management | Maintain partners, offers, campaigns and staff assignments | Create/edit/manage status | Lifecycle limits, campaign availability, assignment state, immutable transaction context | exists | presentation-only | P1 |
-| Core operations and exceptions | Investigate claims, funding, payments, redemption and assignment anomalies | Filter/open the relevant record | Status, time, related campaign/partner/order, safe empty/error states | partial | frontend behavior | P1 |
-| Impact operations | Operate organizations, reviews, contributions and reciprocity exceptions | Take the allowed reviewed action | Context, reason, audit consequence, existing state labels | exists | presentation-only | P0 |
-| Campaign inventory detail | See the operational state of one campaign without changing historical funding | Open campaign context | Funded, available, claim/redeem counts, schedule, offer, partner, lifecycle state | missing | frontend behavior | P1 |
-| Automated anomaly monitoring | Reliably surface scheduler/production-health events | Investigate a real alert | Source, time, severity, owning operation | missing | backend gap | P2 |
+| Screen/view | Purpose and primary action | Critical information | Status | Type | Priority |
+|---|---|---|---|---|---|
+| Operations overview | Direct staff to the smallest set of work needing attention. | Pending verifications, failed/pending funding, active inventory/campaign attention, redemption/Impact exceptions. | partial | presentation-only + frontend behavior | P0 |
+| Verification queue | Review a student verification safely. | Applicant context, protected document link, approve/reject reason, final state. | exists | presentation-only | P0 |
+| Catalog and campaign management | Maintain partners, offers, categories, availability state, and campaign scheduling. | Lifecycle constraints, remaining/total inventory, assignment status, impact classification where applicable. | exists | presentation-only | P1 |
+| Core operations history | Diagnose claims, orders, payments, redemptions, and partner access without secrets. | Safe identifiers, status, timestamps, partner/campaign context, filters. | exists | presentation-only | P1 |
+| Impact operations | Run organization, participation, contribution, and reciprocity exceptions. | Current context, documented reasons, limited exception actions. | exists | presentation-only | P0 |
+| Alerting/incident view | Surface persistent system failures or monitored anomalies. | Trusted event/monitoring data and ownership. | missing | backend/observability capability gap | P2 |
 
-### V1 implementation priority
+### What to implement now vs defer
 
-P0 is one navigable operational home that links existing Core verification and Impact queues, not a new enterprise analytics product. P1 connects existing operations into campaign and exception context. P2 depends on production scheduler/monitoring work already explicitly deferred; it is not a blocker for web UI completion.
+Prioritize information architecture, queues, links, filters, and consistent
+operational states over new Admin authority. Defer live monitoring, custom
+reporting, bulk lifecycle changes, and enterprise-style dashboards until a
+trusted observability/read model exists.
 
 ## Cross-role navigation model
 
-- **Entry:** Public landing calls to action should enter the intended surface: funding to `/giver`, partner staff to `/partner`, and organization operators to `/organization`. Admin is internal-only. Student actions continue to native mobile; web should not expose a student dashboard.
-- **Authentication:** An unauthenticated protected route redirects to `/login` and, after success, returns to the originally requested authorized route when safe. If there is no requested route, routing resolves role plus active organization assignment. Accounts with more than one eligible workspace see a small workspace chooser; choosing a workspace does not modify profile role or assignment.
-- **Role navigation:** Giver uses a small consumer navigation: Fund an experience / My contributions. Partner is task-first: Redeem / Recent / Offers, with partner context visible. Organization uses Workspace / Opportunities / Participants (these may initially be views on the existing route). Admin uses Overview / Verification / Core management / Core operations / Impact. Navigation must not expose a surface solely because a link exists; server/RLS remains the authority.
-- **Return paths:** After funding, return to contribution detail or My contributions. After redemption, reset to Redeem with the completed result briefly visible and a next-scan action. After organization or Admin mutation, remain in the affected queue with visible success feedback and refreshed authoritative data. No primary action should strand a user on a generic home page.
+- **Public entry:** Landing routes prospective givers to `/giver`, partner and
+  organization users to their operational routes, and students to the native
+  app explanation/handoff. It must not imply that students have a web product.
+- **Authentication:** An unauthenticated protected route returns to that route
+  after a safe successful login. Otherwise, `/login` and `/account` must use
+  profile role plus active organization assignment. An account with more than
+  one permitted workspace gets a small chooser; this never mutates a role or
+  assignment. A missing/invalid context is an access-boundary state, not a
+  generic dashboard.
+- **Giver:** Funding catalog -> checkout -> contribution confirmation -> My
+  giving (when available) -> fund again. Do not route to student claims.
+- **Partner:** Sign in -> partner context -> redeem -> validation -> confirm ->
+  success -> next scan; recent activity remains one step away.
+- **Organization:** Sign in -> selected organization -> action queue or
+  opportunities -> same selected-organization context after mutation.
+- **Admin:** Sign in -> operations overview -> the targeted queue/workspace ->
+  return to that queue after a completed action.
+- **Global navigation:** Public navigation should not become a role dashboard.
+  Authenticated operational surfaces need concise role-local navigation and a
+  visible account/logout path; preserve narrow-web usability.
 
 ## Recommended implementation order
 
-1. **Auth consistency and destination selection (P0):** bring login states into the accepted system and add assignment-aware, request-preserving routing/workspace choice. Do not change Auth or role authority.
-2. **Partner operational core (P0):** make validation, confirmation and reset a counter-speed flow using the existing inspect/redeem boundaries; add no POS integration.
-3. **Giver outcome foundation (P0):** first add the narrow self-scoped backend aggregate required for claimed/redeemed outcomes, then ship My contributions and its detail view. Keep it aggregate and human, never a financial dashboard.
-4. **Organization action queue (P0/P1):** improve hierarchy around participation decisions and capacity using existing organization RPCs/RLS.
-5. **Admin operational home (P0/P1):** unify links and actionable queues across existing Core and Impact workspaces, then add campaign exception context.
-6. **Cross-role consistency pass (P1):** shared form/state/navigation patterns, accessible loading/error/success states, narrow/tablet/desktop checks, localization and RTL checks. Preserve expressive warmth for Giver and restrained density for operational surfaces.
+1. **Auth consistency and destination selection (P0):** Apply V1 form and
+   state patterns, preserve requested-route return, and add
+   assignment-aware/workspace routing without changing authorization.
+2. **Partner operational core (P0):** Redesign the existing scan/manual-code,
+   validation, confirm, and success loop around the server-authoritative
+   redemption contract.
+3. **Giver outcome foundation (P0):** Specify and separately deliver the
+   narrow aggregate backend read model, then ship My giving and contribution
+   outcome views without exposing student or credential data.
+4. **Organization Operator (P0/P1):** Separate daily action/review work from
+   opportunity management and expose supported participation outcomes clearly.
+5. **Admin (P0/P1):** Unify navigation and triage across existing workspaces;
+   improve filters and record context without adding authority.
+6. **Cross-role consistency pass (P1):** Apply shared tokens, status states,
+   responsive behavior, keyboard/focus treatment, localization, and empty/
+   error/loading patterns.
 
-## Backend gaps and deliberate deferrals
+## Summary decisions
 
-The only UI-completion blocker identified is the **giver self-outcome aggregate**. It should be a minimal authenticated projection keyed to `auth.uid()` and return only the giver's own order/campaign totals and aggregate claimed/redeemed counts. It must not relax claim/redemption RLS or reveal student identity, redemption credentials, or unrelated campaign data.
-
-Password recovery can use existing Supabase Auth and is frontend integration work, not a new product-authority model. Organization-aware login routing and partner context are likewise frontend behavior backed by existing assignments. Production payment integration, stale-claim scheduling, monitoring/automated alerts, POS integration, advanced partner analytics, self-service organization onboarding, and a student web surface are intentionally deferred.
+- The role surfaces are not merely visually outdated: Giver lacks a
+  longitudinal outcome experience, Partner needs a counter-optimized
+  redemption flow, and login misses additive Organization Operator access.
+- **Giver** has the largest V1 product gap because meaningful claimed/redeemed
+  outcome reporting is unavailable under current safe read policies. Partner
+  has the largest immediate in-person operational UX gap, but its authoritative
+  backend contract is already sufficient.
+- P0 work is assignment-aware Auth destination, the Partner redemption loop,
+  the Giver outcome aggregate and views, the Organization participant queue,
+  and Admin operational navigation/queues. Existing verification and Impact
+  action screens are P0 surfaces to retain and polish, not missing authority.
+- No backend gap blocks Partner, Organization, Admin, or baseline Giver UI.
+  Giver claimed/redeemed outcome counts and Admin anomaly alerting require new
+  narrow, security-reviewed read capabilities before UI work should claim
+  those data points.
