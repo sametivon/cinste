@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { AdminNav } from '@/components/admin-nav';
 import { assignPartnerUser, createCampaign, createCategory, createOffer, createPartner, createUniversity, revokePartnerUser, setOperationalState, updateCampaign, updateOffer, updatePartner } from '../actions';
 
 type Choice = { id: string; name: string };
@@ -24,7 +25,7 @@ export default async function Manage() {
   const userChoices = (users ?? []).map((profile) => ({ id: profile.id, name: profile.email }));
   const defaults = { start: datetimeValue(new Date()), end: datetimeValue(new Date(Date.now() + 30 * 86400000)) };
 
-  return <main className="shell py-10">
+  return <main className="shell operational-shell admin-v1-page py-10"><span id="campaigns" className="sr-only">Campaign management</span><AdminNav current="/admin/manage" />
     <div className="flex flex-wrap gap-4"><Link href="/admin" className="font-bold text-forest">← Admin</Link><Link href="/admin/operations" className="font-bold text-forest">Vezi operațiunile</Link></div>
     <h1 className="mt-4 text-4xl font-black">Gestionare operațională</h1>
     <p className="mt-2 text-stone-600">Editează catalogul și planificarea. Tranzacțiile, cantitățile finanțate și istoricul rămân imuabile.</p>

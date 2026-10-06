@@ -262,6 +262,29 @@ browser switching remains a manual QA item because the available QA account
 had one active assignment; the existing selection tests cover server-authorized
 selection and invalid requested IDs.
 
+## ADMIN OPERATIONAL V1 UX
+The Admin workspace now uses a compact role-local navigation and an
+attention-first overview. It groups pending student verification, Impact Admin
+review, depleted active campaign inventory, and pending-review/suspended
+organizations using existing Admin-authorized reads only. Payment failures and
+pending payments remain a read-only operational watch because V1 has no Admin
+payment override.
+
+Student verification retains the protected document route and existing RPC,
+with explicit approval/rejection confirmation, loading, success, and error
+feedback. Core operations now keeps claim, redemption, funding, and partner
+access context while omitting student identifiers, claim IDs, QR credentials,
+and bearer secrets. Impact and catalog workspaces retain their existing
+authoritative actions under the shared Admin navigation; no schema, RLS, RPC
+authorization, or business semantics changed.
+
+Local validation passed web TypeScript, the focused verification/action tests,
+`git diff --check`, and authenticated Admin browser checks. The browser check
+confirmed all attention queues after correcting the existing organization
+`pending_review` status, protected verification controls, Core operational
+sections, existing Impact actions, and no horizontal overflow at 360px and
+768px. The QA Admin was logged out and the browser session cleared.
+
 ## GIVER OUTCOME FOUNDATION
 The Giver outcome foundation and V1 My Giving UI are implemented locally in
 additive migration `0017_giver_outcome_read.sql`. The new

@@ -26,10 +26,12 @@ async function admin() {
 function refresh() { revalidatePath('/admin'); revalidatePath('/admin/impact'); revalidatePath('/admin/manage'); revalidatePath('/admin/operations'); revalidatePath('/partner'); revalidatePath('/'); }
 function throwIf(error: { message: string } | null) { if (error) throw new Error(error.message); }
 
-export async function reviewVerification(form: FormData) {
-  const input = reviewVerificationInput.parse(Object.fromEntries(form)); const db = await admin();
-  const { error } = await db.rpc('review_student_verification', { p_verification_id: input.id, p_decision: input.decision, p_rejection_reason: input.decision === 'rejected' ? input.rejectionReason : null });
-  throwIf(error); refresh();
+export async function reviewVerification(_: OperationalActionState, form: FormData): Promise<OperationalActionState> {
+  return impactAction(async () => {
+    const input = reviewVerificationInput.parse(Object.fromEntries(form)); const db = await admin();
+    const { error } = await db.rpc('review_student_verification', { p_verification_id: input.id, p_decision: input.decision, p_rejection_reason: input.decision === 'rejected' ? input.rejectionReason : null });
+    throwIf(error); refresh();
+  }, 'Student verification updated.');
 }
 export async function createUniversity(form: FormData) { const v = z.object({ name: z.string().trim().min(2).max(120) }).parse(Object.fromEntries(form)); const db = await admin(); throwIf((await db.from('universities').insert({ name: v.name })).error); refresh(); }
 export async function createCategory(form: FormData) { const v = z.object({ name: z.string().trim().min(2), slug: z.string().regex(/^[a-z0-9-]+$/), icon: z.string().trim().min(1).max(40) }).parse(Object.fromEntries(form)); const db = await admin(); throwIf((await db.from('categories').insert({ name: v.name, slug: v.slug, icon_identifier: v.icon })).error); refresh(); }

@@ -1,0 +1,3 @@
+export default function Loading() {
+  return <main className="shell operational-shell admin-v1-page py-10" aria-label="Loading Admin workspace"><div className="page-heading"><div><p className="eyebrow">CINSTE operations</p><h1>Admin workspace</h1><p>Loading authorized operational records…</p></div></div><div className="admin-nav"><span>Overview</span><span>Student verification</span><span>Catalog &amp; partners</span><span>Core operations</span><span>Impact &amp; organizations</span></div><div className="admin-queue-grid section-block"><div className="card loading-card"/><div className="card loading-card"/><div className="card loading-card"/><div className="card loading-card"/></div></main>;
+}
