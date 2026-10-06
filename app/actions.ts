@@ -5,8 +5,6 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { adminDb } from "@/lib/supabase/admin";
-import { accountDestination } from "@/lib/auth-routing";
-import type { AppRole } from "@/lib/types";
 
 const credentials = z.object({
   email: z.string().email(), password: z.string().min(8), displayName: z.string().max(80).optional(),
@@ -16,8 +14,7 @@ export async function login(form: FormData) {
   const input = credentials.parse(Object.fromEntries(form)); const db = await createClient();
   const { data, error } = await db.auth.signInWithPassword({ email: input.email, password: input.password });
   if (error || !data.user) redirect(`/login?error=${encodeURIComponent(error?.message ?? "Login failed")}`);
-  const { data: profile } = await db.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
-  redirect(accountDestination(profile?.role as AppRole | undefined));
+  redirect("/account");
 }
 export async function logout() { const db = await createClient(); await db.auth.signOut(); redirect("/"); }
 export async function signup(form: FormData) {

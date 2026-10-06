@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { selectAssignedOrganization } from '@/lib/organization-selection';
+import { activeOrganizationWorkspaces } from '@/lib/organization-workspace';
+import type { AppRole } from '@/lib/types';
 import { OperationalForm, SubmitButton } from '@/components/operational-form';
 import { cancelOpportunity, createOpportunity, publishOpportunity, resolveParticipation, updateOpportunity, verifyParticipation } from './actions';
 
@@ -10,10 +12,10 @@ const localDate = (value: string | null) => value ? new Date(value).toISOString(
 const date = (value: string | null) => value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Not recorded';
 
 export default async function Organization({ searchParams }: { searchParams: Promise<{ organizationId?: string }> }) {
-  const db = await createClient(); const { data: { user } } = await db.auth.getUser(); if (!user) redirect('/login');
+  const db = await createClient(); const { data: { user } } = await db.auth.getUser(); if (!user) redirect('/login'); const { data: profile } = await db.from('profiles').select('role').eq('id', user.id).maybeSingle();
   const selectedOrganizationId = (await searchParams).organizationId;
-  const [{ data: organizations }, { data: opportunities }, { data: participations }] = await Promise.all([
-    db.from('organizations').select('id,name,status'),
+  const [organizations, { data: opportunities }, { data: participations }] = await Promise.all([
+    activeOrganizationWorkspaces(db, user.id, profile?.role as AppRole | undefined),
     db.from('impact_opportunities').select('id,organization_id,title,description,category,status,mode,city,starts_at,ends_at,due_at,expected_eligible_minutes,capacity').order('created_at', { ascending: false }),
     db.from('impact_participations').select('id,opportunity_id,student_id,status,joined_at').order('joined_at', { ascending: false }),
   ]);

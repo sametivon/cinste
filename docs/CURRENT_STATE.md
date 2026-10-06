@@ -221,6 +221,13 @@ claim detail, My CINSTE, Profile, verification, and Impact surfaces were
 updated without changing mobile routes, Supabase/RPC behavior, claim/redeem
 semantics, or Impact rules.
 
+## WEB AUTH ROUTING
+Post-login web destination resolution now considers both the existing profile
+role and active Organization Operator assignment. A single available workspace
+opens directly; an account with multiple legitimate surfaces receives a small
+workspace choice. Organization access remains assignment- and active-
+organization-based; no profile role, RLS, or auth behavior was changed.
+
 ## PRODUCTION READINESS LATER
 - real payments
 - production scheduler
