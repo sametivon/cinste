@@ -228,6 +228,32 @@ opens directly; an account with multiple legitimate surfaces receives a small
 workspace choice. Organization access remains assignment- and active-
 organization-based; no profile role, RLS, or auth behavior was changed.
 
+## GIVER OUTCOME FOUNDATION
+The Giver outcome foundation and V1 My Giving UI are implemented locally in
+additive migration `0017_giver_outcome_read.sql`. The new
+`list_my_giving_outcomes()` SECURITY DEFINER RPC is authenticated and
+self-scoped through `giver_orders.giver_id = auth.uid()` only; it accepts no
+giver parameter and does not provide Admin or Partner bypass. It returns only
+the reviewed order/item, offer, funded-quantity, outcome, aggregate activity,
+and coarse availability fields.
+
+An item receives outcome metrics only when its paid, succeeded order maps
+unambiguously to exactly one trusted matching campaign. Missing, duplicated,
+pooled, or otherwise inconsistent mappings return `unavailable` with all
+activity fields null. Exact outcome activity is suppressed unless both the
+funded quantity and distinct participating-student count are at least five;
+the RPC returns `privacy_suppressed` and nulls every activity-derived field
+together. It does not expose student, claim, credential, timestamp, payment,
+or Impact attribution data.
+
+`/giver` now retains the funding catalog and adds My Giving cards for available,
+privacy-suppressed, and unavailable outcomes. Local validation passed web
+TypeScript, the focused My Giving presentation test, `git diff --check`, and a
+public-browser rendering check. The migration is not yet applied to
+non-production, so authenticated hosted RPC assertions and authenticated
+browser outcome-state validation remain pending. After an owner-authorized
+non-production apply, run `npm run test:integration:giver-outcomes`.
+
 ## PARTNER REDEMPTION CORE
 The authorized Partner workspace now presents a counter-first V1 redemption
 flow: scan or enter a code, inspect the server-authoritative result, confirm a
