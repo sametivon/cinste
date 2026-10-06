@@ -16,6 +16,10 @@ export function participationAction(participation: OperatorParticipation, opport
   return opportunity.due_at && new Date(opportunity.due_at) > now ? 'verify_flexible' as const : 'history' as const;
 }
 
+export function isOperatorAction(action: ReturnType<typeof participationAction>) {
+  return action === 'resolve_scheduled' || action === 'verify_flexible';
+}
+
 export function groupOpportunities(opportunities: OperatorOpportunity[], now = new Date()) {
   return { drafts: opportunities.filter((item) => item.status === 'draft'), current: opportunities.filter((item) => item.status === 'published' && (!item.due_at || new Date(item.due_at) > now)), past: opportunities.filter((item) => item.status === 'published' && item.due_at && new Date(item.due_at) <= now), cancelled: opportunities.filter((item) => item.status === 'cancelled') };
 }
