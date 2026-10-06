@@ -32,24 +32,29 @@ Student web is intentionally a native-app handoff in V1. Redemption is always se
 
 ## Local setup
 
-1. Clone the repository and install both packages:
+1. Clone the repository and install web dependencies:
 
    ```bash
    npm install
+   ```
+
+2. Install mobile dependencies:
+
+   ```bash
    npm --prefix apps/mobile install
    ```
 
-2. Copy `.env.example` to `.env.local` and supply your own Supabase URL, publishable key, server-only service-role key, and local app URLs. Never commit `.env.local` or share its values.
+3. Copy `.env.example` to `.env.local` and supply your own Supabase URL, publishable key, server-only service-role key, and local app URLs. Never commit `.env.local` or share its values.
 
-3. Apply the SQL files in `supabase/migrations/` in numeric order through the approved Supabase workflow for your local or non-production project. There is no checked-in Supabase CLI project configuration. Do not use migrations or seeds against production without explicit authorization.
+4. Apply the SQL files in `supabase/migrations/` in numeric order through the approved Supabase workflow for your local or non-production project. There is no checked-in Supabase CLI project configuration. Do not use migrations or seeds against production without explicit authorization.
 
-4. Start the web app:
+5. Start the web app:
 
    ```bash
    npm run dev
    ```
 
-5. Start the mobile app from the repository root:
+6. Start the mobile app from the repository root:
 
    ```bash
    npm run mobile
@@ -67,19 +72,26 @@ The test-fixture password is intentionally not documented here. Obtain credentia
 
 ## Common commands
 
+### Web
+
 ```bash
-# Web
 npm run dev
 npm run build
 npm run typecheck
 npm test
+```
 
-# Mobile (from the repository root)
+### Mobile
+
+```bash
 npm run mobile
 npm --prefix apps/mobile run typecheck
 npm --prefix apps/mobile test
+```
 
-# Non-production QA and maintenance (requires .env.local)
+### Non-production QA / maintenance
+
+```bash
 npm run bootstrap:test-users
 npm run reset:test-verified-student
 npm run reset:test-unverified-student
@@ -110,7 +122,7 @@ For deeper decisions and constraints, start with [AGENTS.md](AGENTS.md), [the pr
 
 Core claim and redemption flows, student verification, partner assignment controls, and the native student app are implemented. Impact backend and V1 workflows are implemented through the current migration set, with remaining manual/physical QA for scenarios such as multi-organization switching, verification-loss history, localized error states, and overdue-review requests.
 
-The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. The Giver outcome migration is delivered locally, but its non-production application and hosted outcome-state validation remain pending.
+The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migration `0017_giver_outcome_read.sql` is applied to non-production, and `npm run test:integration:giver-outcomes` passed 11 hosted assertions. Authenticated `/giver` smoke checks passed for available, `privacy_suppressed`, and unavailable outcomes without exposing student-level data or rendering suppressed/unavailable metrics as zero; the workstream is ready to close.
 
 See [CURRENT_STATE.md](docs/CURRENT_STATE.md) for the authoritative validation record and next steps. The provisional Ripple C / Soft Echo C logo direction is not final production artwork; see [BRAND.md](docs/brand/BRAND.md).
 
