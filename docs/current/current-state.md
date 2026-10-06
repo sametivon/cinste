@@ -244,10 +244,14 @@ scheduled work in progress, and history/review. Completion verification is
 offered only for eligible existing `joined` records: flexible work before its
 due date, or scheduled work after its end. Excusal/no-show controls appear
 only for eligible completed scheduled work. Overdue and disputed records are
-clearly marked as CINSTE Admin review with no operator resolution control.
-Existing create/edit/publish/cancel and authoritative server actions are
-unchanged. Loading, query-error, empty, success, and action-eligibility copy
-are explicit; failures do not render as an empty action queue.
+clearly marked in a separate CINSTE Admin review group with no operator
+resolution control; they no longer appear as operator-actionable work. History
+also shows the existing organization-authorized contribution verification or
+revocation fact when available. A contribution-history read failure is explicit
+and does not hide participation history. Existing create/edit/publish/cancel
+and authoritative server actions are unchanged. Loading, query-error, empty,
+success, and action-eligibility copy are explicit; failures do not render as
+an empty action queue.
 
 Local validation passed web TypeScript, eight focused Organization workspace
 tests, `git diff --check`, and an authenticated browser check using an existing
