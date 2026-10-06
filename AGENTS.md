@@ -6,9 +6,9 @@
 Repository docs are persistent project memory. Do not rely on chat history being complete.
 
 Before changing code, read only the docs relevant to the task:
-- `docs/PROJECT.md`
-- `docs/CURRENT_STATE.md`
-- feature-specific specs such as `docs/impact/IMPACT_SPEC.md`
+- `docs/decisions/project.md`
+- `docs/current/current-state.md`
+- feature-specific specs such as `docs/decisions/impact-spec.md`
 
 If a directory contains a more specific `AGENTS.md`, follow it in addition to this file.
 
@@ -50,7 +50,7 @@ Do not:
 If you notice an unrelated issue, report it instead of fixing it.
 
 ## Product decisions
-`docs/PROJECT.md` and feature specs contain owner-approved decisions.
+`docs/decisions/project.md` and feature specs contain owner-approved decisions.
 
 You may flag a documented decision as risky, but do not silently replace it.
 
@@ -66,8 +66,8 @@ Do not stop between ordinary implementation steps to ask "should I continue?"
 ## Design work
 For UI/UX or branding tasks:
 
-- Treat `docs/brand/BRAND.md` as the current brand source of truth.
-- When `docs/design/DESIGN_SYSTEM.md` exists, treat it as the implementation-level design source of truth.
+- Treat `docs/decisions/brand.md` as the current brand source of truth.
+- When `docs/guides/design-system.md` exists, treat it as the implementation-level design source of truth.
 - Do not invent a new visual direction; preserve established product, business, security, authorization, and privacy behavior.
 - Inspect the current surface before redesigning it and prefer shared patterns over one-off styling.
 - Report material undefined design decisions instead of inventing them.
@@ -147,6 +147,6 @@ Each batch should have:
 - minimal validation
 - a stopping point
 
-After materially changing project state, update `docs/CURRENT_STATE.md`.
+After materially changing project state, update `docs/current/current-state.md`.
 
 Stop after completing the scoped task.

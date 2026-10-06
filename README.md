@@ -116,7 +116,7 @@ Stop the web development server before `npm run build`, since both use `.next`.
 - Organization access comes from active organization assignments, not a second mutable role system.
 - Giver outcomes are self-scoped and privacy-suppressed for small cohorts; Givers never receive direct student identity data.
 
-For deeper decisions and constraints, start with [AGENTS.md](AGENTS.md), [the project overview](docs/PROJECT.md), [the current state](docs/CURRENT_STATE.md), and the relevant feature documentation.
+For deeper decisions and constraints, start with [AGENTS.md](AGENTS.md), [the project overview](docs/decisions/project.md), [the current state](docs/current/current-state.md), and the relevant feature documentation.
 
 ## Current V1 status
 
@@ -124,7 +124,7 @@ Core claim and redemption flows, student verification, partner assignment contro
 
 The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migration `0017_giver_outcome_read.sql` is applied to non-production, and `npm run test:integration:giver-outcomes` passed 11 hosted assertions. Authenticated `/giver` smoke checks passed for available, `privacy_suppressed`, and unavailable outcomes without exposing student-level data or rendering suppressed/unavailable metrics as zero; the workstream is ready to close.
 
-See [CURRENT_STATE.md](docs/CURRENT_STATE.md) for the authoritative validation record and next steps. The provisional Ripple C / Soft Echo C logo direction is not final production artwork; see [BRAND.md](docs/brand/BRAND.md).
+See [current-state.md](docs/current/current-state.md) for the authoritative validation record and next steps. The provisional Ripple C / Soft Echo C logo direction is not final production artwork; see [brand.md](docs/decisions/brand.md).
 
 ## Production limitations
 

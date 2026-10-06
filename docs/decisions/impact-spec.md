@@ -1,4 +1,9 @@
-# docs/impact/IMPACT_SPEC.md
+---
+tur: adr
+durum: kabul
+tarih: 2026-10-02
+---
+# docs/decisions/impact-spec.md
 
 # CINSTE Impact — Product Spec V1
 

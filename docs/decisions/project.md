@@ -1,4 +1,9 @@
-# docs/PROJECT.md
+---
+tur: adr
+durum: kabul
+tarih: 2026-10-02
+---
+# docs/decisions/project.md
 
 # CINSTE Project
 

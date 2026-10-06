@@ -26,3 +26,4 @@ Thumbs.db
 # Temporary backup of previous nested mobile git repo
 apps/mobile/.git-mobile-backup/
 /.idea/
+.ai-kit/adopt-log.json

@@ -1,0 +1,20 @@
+schema_version = 1
+proje_adi = "cinste"
+dokuman_dili = "tr"
+dokuman_koku = "docs"
+mod = "sef"
+moduller = ["docs", "gates", "context", "flow"]
+kapali_moduller = []
+
+[kod]
+kokler = ["app", "components", "lib", "middleware.ts", "apps/mobile/src"]
+test_kokleri = ["tests", "apps/mobile/tests"]
+kaynak_uzantilari = [".ts", ".tsx", ".js", ".jsx"]
+
+[git]
+ana_dal = "main"
+docs_git_takibi = true
+
+[test]
+tam = ["sh", "-c", "npm test && npm --prefix apps/mobile test"]
+hedefli = ["sh", "-c", "f=$(printf %s \"$1\" | tr , ' '); npx vitest run --passWithNoTests $f && (cd apps/mobile && npx vitest run --passWithNoTests $f)", "ai-kit", "{siniflar}"]

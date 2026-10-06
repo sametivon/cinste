@@ -1,3 +1,8 @@
+---
+tur: adr
+durum: kabul
+tarih: 2026-10-05
+---
 # CINSTE Brand Direction v1
 
 **Status:** Approved, provisional direction. This is CINSTE's current brand
@@ -46,7 +51,7 @@ styling.
 
 The provisional V1 implementation palette uses soft coral as its primary color,
 with lilac, mint, sky, and cream as supporting accents. Exact implementation
-tokens are defined by `docs/design/DESIGN_SYSTEM.md`.
+tokens are defined by `docs/guides/design-system.md`.
 
 ## Logo direction
 
@@ -65,7 +70,7 @@ context mark, social avatar, and partner material.
 Use **Plus Jakarta Sans** as the provisional V1 typeface: a modern geometric
 sans-serif that is friendly but not childish, and highly readable in expressive
 marketing headings and product UI. Its exact implementation scale and fallback
-guidance are defined by `docs/design/DESIGN_SYSTEM.md`.
+guidance are defined by `docs/guides/design-system.md`.
 
 ## Landing-page direction
 

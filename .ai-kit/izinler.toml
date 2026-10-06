@@ -1,0 +1,43 @@
+# Eski docs yapısından ai-kit yapısına taşıma (içerik değişmedi)
+
+[[kayip]]
+yol = "docs/PROJECT.md"
+tur = "tasindi"
+hedef = "docs/decisions/project.md"
+neden = "ai-kit docs taksonomisine taşındı"
+
+[[kayip]]
+yol = "docs/impact/IMPACT_SPEC.md"
+tur = "tasindi"
+hedef = "docs/decisions/impact-spec.md"
+neden = "ai-kit docs taksonomisine taşındı"
+
+[[kayip]]
+yol = "docs/brand/BRAND.md"
+tur = "tasindi"
+hedef = "docs/decisions/brand.md"
+neden = "ai-kit docs taksonomisine taşındı"
+
+[[kayip]]
+yol = "docs/design/DESIGN_SYSTEM.md"
+tur = "tasindi"
+hedef = "docs/guides/design-system.md"
+neden = "ai-kit docs taksonomisine taşındı"
+
+[[kayip]]
+yol = "docs/CURRENT_STATE.md"
+tur = "tasindi"
+hedef = "docs/current/current-state.md"
+neden = "ai-kit docs taksonomisine taşındı"
+
+[[kayip]]
+yol = "docs/impact/IMPACT_ARCHITECTURE_AUDIT.md"
+tur = "tasindi"
+hedef = "docs/archive/impact-architecture-audit.md"
+neden = "ai-kit docs taksonomisine taşındı"
+
+[[kayip]]
+yol = "docs/design/WEB_ROLE_UX_AUDIT.md"
+tur = "tasindi"
+hedef = "docs/archive/web-role-ux-audit.md"
+neden = "ai-kit docs taksonomisine taşındı"

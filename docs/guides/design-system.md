@@ -1,3 +1,6 @@
+---
+tur: rehber
+---
 # CINSTE Design System v1
 
 **Status:** Provisional but authoritative for implementation.

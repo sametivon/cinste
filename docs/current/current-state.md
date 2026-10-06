@@ -1,4 +1,9 @@
-# docs/CURRENT_STATE.md
+---
+tur: mevcut
+durum: dogrulanmamis
+kod-kapsami: []
+---
+# docs/current/current-state.md
 
 # CINSTE Current State
 
@@ -39,7 +44,7 @@ Do not start unrelated Core redesign while adding Impact.
 
 ## IMPACT STATUS
 Product direction approved.
-Approved V1 product rules are recorded in `docs/impact/IMPACT_SPEC.md`.
+Approved V1 product rules are recorded in `docs/decisions/impact-spec.md`.
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
 Added the additive organization and Impact backend schema, enums, constraints,
@@ -207,7 +212,7 @@ states and multi-organization switching.
 
 ## PUBLIC LANDING PAGE
 The public landing page has a presentation-only redesign using the provisional
-V1 brand and `docs/design/DESIGN_SYSTEM.md`. It explains experience funding,
+V1 brand and `docs/guides/design-system.md`. It explains experience funding,
 student discovery and redemption, and continuing community impact, with
 localized content for RO, EN, TR, and AR. Existing routes and product behavior
 are unchanged.

@@ -1,3 +1,6 @@
+---
+tur: arsiv
+---
 # CINSTE Impact V1 Architecture Audit
 
 ## 1. Executive recommendation
@@ -186,7 +189,7 @@ Likely existing extensions: `app_role`/routing only if the owner insists on a ha
 
 ## 14. Open questions requiring owner decision
 
-The previously identified owner questions are resolved in `IMPACT_SPEC.md`:
+The previously identified owner questions are resolved in `impact-spec.md`:
 
 - Reasonable supply: active, published, capacitated opportunity within 14 days; remote or Bucharest; user-caused restrictions do not count as platform failure.
 - Existing campaigns default to `COMMUNITY`; `OPEN` is an explicit Admin-controlled exception.
