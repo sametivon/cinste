@@ -117,6 +117,27 @@ Never:
 - hardcode test-account behavior into production logic
 - trust client state for funding, claims, verification or redemption authority
 
+## Git / remote workflow
+The local repository remains the implementation source of truth. GitHub `origin`
+is CINSTE's shared collaboration remote, and the normal target branch is
+`main`.
+
+After a scoped task is complete, validated, and committed cleanly, push the
+resulting commit(s) to `origin/main` unless the work is explicitly experimental,
+owner-review-only, temporary, or intentionally local/untracked. Validated owner
+work may push directly to `main` until multiple active collaborators make
+feature branches and pull requests the preferred path.
+
+Never force-push or rewrite shared history. Never push secrets, credentials,
+`.env` files, temporary local artifacts, or comparison/review assets without
+explicit owner approval; no hardcoded credentials belong in repository
+documentation or commits.
+
+If a push is rejected because remote history changed, fetch and inspect first,
+then reconcile safely without overwriting remote work. Keep the working tree
+clean after completed scoped tasks, except for intentionally local owner-review
+assets.
+
 ## Working style
 Prefer small implementation batches.
 
