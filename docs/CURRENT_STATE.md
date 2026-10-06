@@ -228,6 +228,17 @@ opens directly; an account with multiple legitimate surfaces receives a small
 workspace choice. Organization access remains assignment- and active-
 organization-based; no profile role, RLS, or auth behavior was changed.
 
+## PARTNER REDEMPTION CORE
+The authorized Partner workspace now presents a counter-first V1 redemption
+flow: scan or enter a code, inspect the server-authoritative result, confirm a
+valid redemption once, and immediately return to the next scan. It surfaces
+invalid, expired, already-redeemed, wrong-partner, not-yet-valid, unavailable,
+and server-error states without exposing backend error detail. Existing QR
+technology, `inspect_redemption`/`redeem_claim` authority, partner protection,
+and redemption semantics are unchanged. The page includes a small existing-RLS
+recent-redemption list with nullable offer/campaign fallbacks. Physical camera
+permission and end-to-end authorized-partner QA remain pending.
+
 ## PRODUCTION READINESS LATER
 - real payments
 - production scheduler

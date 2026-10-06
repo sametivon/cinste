@@ -54,5 +54,5 @@ export async function completeMockPayment(form: FormData) {
 export async function redeem(form: FormData) {
   const token = z.string().min(32).max(128).parse(form.get("token")); const db = await createClient();
   const { data, error } = await db.rpc("redeem_claim", { p_token: token });
-  if (error) redirect(`/partner?error=${encodeURIComponent(error.message)}`); revalidatePath("/partner"); redirect(`/partner?result=${encodeURIComponent(data)}`);
+  if (error) redirect('/partner?result=ERROR'); revalidatePath("/partner"); redirect(`/partner?result=${encodeURIComponent(data)}`);
 }
