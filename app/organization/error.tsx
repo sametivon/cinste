@@ -1,0 +1,2 @@
+'use client';
+export default function OrganizationError({ reset }: { reset: () => void }) { return <main className="shell operational-shell py-10"><div className="card error-state"><h1>Organization workspace unavailable</h1><p>We could not load the authorized organization data. No action was taken.</p><button className="btn mt-4" onClick={reset}>Try again</button></div></main>; }

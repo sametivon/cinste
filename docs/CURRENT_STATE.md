@@ -228,6 +228,31 @@ opens directly; an account with multiple legitimate surfaces receives a small
 workspace choice. Organization access remains assignment- and active-
 organization-based; no profile role, RLS, or auth behavior was changed.
 
+## ORGANIZATION OPERATOR V1 UX
+The Organization Operator workspace has a presentation-only V1 completion
+pass. It queries opportunities and participations only after resolving the
+server-authorized selected organization, so switching context refreshes the
+scoped records instead of reusing a cross-organization client-side list.
+
+The workspace now separates the action queue, opportunity lifecycle groups,
+scheduled work in progress, and history/review. Completion verification is
+offered only for eligible existing `joined` records: flexible work before its
+due date, or scheduled work after its end. Excusal/no-show controls appear
+only for eligible completed scheduled work. Overdue and disputed records are
+clearly marked as CINSTE Admin review with no operator resolution control.
+Existing create/edit/publish/cancel and authoritative server actions are
+unchanged. Loading, query-error, empty, success, and action-eligibility copy
+are explicit; failures do not render as an empty action queue.
+
+Local validation passed web TypeScript, eight focused Organization workspace
+tests, `git diff --check`, and an authenticated browser check using an existing
+single-assignment QA operator. The browser check confirmed selected-organization
+rendering, empty-queue/history states, opportunity lifecycle grouping, the
+create form, and no horizontal overflow at 360px and 768px. Multi-organization
+browser switching remains a manual QA item because the available QA account
+had one active assignment; the existing selection tests cover server-authorized
+selection and invalid requested IDs.
+
 ## GIVER OUTCOME FOUNDATION
 The Giver outcome foundation and V1 My Giving UI are implemented locally in
 additive migration `0017_giver_outcome_read.sql`. The new
