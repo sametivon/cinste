@@ -1,73 +1,129 @@
-# CINSTE local MVP
+# CINSTE
 
-CINSTE is a local multi-category platform for funding and redeeming student treats. It models **Partner → Offer → Campaign → Claim → Redemption**, rather than restaurants or food delivery.
+CINSTE is a Romania-first, multi-category student experience and reciprocal-generosity platform. Givers fund experiences, verified students claim and redeem them, and students can pass that generosity forward through community Impact. It is not a food-only product.
 
-## Run locally
+Students use the native mobile app in V1. Funding and operational roles use the web application.
 
-1. Copy `.env.example` to `.env.local` and add your Supabase project URL, publishable key, service-role key, and `http://localhost:3000`.
-2. In Supabase SQL Editor, run `supabase/migrations/0001_cinste.sql`, then `supabase/migrations/0002_analytics_tracking.sql`, `supabase/migrations/0003_pgcrypto_schema_qualification.sql`, `supabase/migrations/0004_offer_localization_key.sql`, `supabase/migrations/0005_payment_claim_validity.sql`, `supabase/migrations/0006_verification_lifecycle_deactivation.sql`, `supabase/migrations/0007_fix_verification_lifecycle_trigger.sql`, `supabase/migrations/0008_campaign_read_policy_function_grant.sql`, `supabase/migrations/0009_admin_operations.sql`, `supabase/migrations/0010_final_core_hardening.sql`, then `supabase/seed.sql`.
-3. For a local Supabase CLI database only, run `supabase/seed-test-users.sql`. Do not run it against a hosted project because it writes to `auth.users`.
-4. `npm install`
-5. `npm run dev`
+## Product surfaces
 
-Open `http://localhost:3000`. The local fixture password is `cinste-local-2026`.
+- **Public web:** localized landing and product handoff.
+- **Student mobile:** verification, discovery, claims, QR, profile, and Impact participation.
+- **Giver web:** fund experiences and review My Giving outcomes.
+- **Partner web:** counter-first redemption with QR scanning and manual-code fallback.
+- **Organization Operator web:** manage authorized organizations, opportunities, and participation work.
+- **Admin web:** verification, catalog and partner operations, and Impact operations.
 
-## Web and mobile boundary
+Student web is intentionally a native-app handoff in V1. Redemption is always server-authoritative: partner scan/manual-code input is validated and redeemed through the protected backend flow.
 
-The public website is a multilingual CINSTE landing page. Student account, offer, claim, and verification URLs hand off to the student app through `NEXT_PUBLIC_STUDENT_APP_URL`, which defaults to the `cinste://` scheme declared by Expo. Set that value to the current Expo development URL while testing with Expo Go; use the stable `cinste://` scheme in a development build or future released app.
+## Tech stack
 
-Admin, Partner, Giver, and QR redemption workflows remain web-first operational workspaces. The public website does not load student marketplace inventory.
+- Next.js App Router, TypeScript, and Tailwind CSS
+- Supabase Auth, Postgres, RLS, Storage, and RPCs
+- Expo, React Native, Expo Router, and SecureStore
+- Zod, Vitest, and focused hosted integration runners
 
-## Hosted development test accounts
+## Repository structure
 
-Run `npm run bootstrap:test-users`. The command uses the server-only service-role key from your local environment; it never sends that key to the browser or creates a web endpoint. It refuses to run with `NODE_ENV=production`, only updates accounts marked `cinste_test_data`, and needs the seed partners/universities already present.
+- `app/` - Next.js web routes, server actions, and public/operational surfaces
+- `apps/mobile/` - Expo student application
+- `supabase/migrations/` - ordered database schema, RLS, and RPC migrations
+- `scripts/` - local maintenance, QA fixture, and hosted integration scripts
+- `docs/` - product, current-state, architecture, brand, and design references
 
-It creates these idempotent hosted-project accounts with password `cinste-local-2026`: verified student, pending student, resettable unverified student, giver, café partner, cinema partner, barber partner, and admin. Re-running the command resets only `unverified.student@cinste.test` to have no student profile or verification submission, so it is safe for the document-upload QA path. Open `/dev/testing` locally for account credentials, inventory, and direct workspace links. The route returns 404 in production.
+## Local setup
 
-For a fresh physical-device claim and QR smoke test, run `npm run reset:test-verified-student`. This development-only CLI requires the server-side service-role variable, refuses `NODE_ENV=production`, verifies the fixture's Auth `cinste_test_data` marker, and only removes `verified.student@cinste.test` claims. Any active reservation for that same fixture is released to its campaign before removal. It is not an application endpoint and is unavailable to web or mobile clients.
+1. Clone the repository and install both packages:
 
-Run `npm run test:integration` to exercise the hosted development project through real Auth sessions, RLS policies, and claim/redemption/payment RPCs. It creates timestamped `QA ·` campaigns and marked `qa.*@cinste.test` accounts, then deactivates the temporary campaigns after the run. It refuses `NODE_ENV=production`.
+   ```bash
+   npm install
+   npm --prefix apps/mobile install
+   ```
 
-Sign in as `admin@cinste.test` and use `/admin/manage` to add universities, categories, partners, offers, campaigns, and partner-user assignments.
+2. Copy `.env.example` to `.env.local` and supply your own Supabase URL, publishable key, server-only service-role key, and local app URLs. Never commit `.env.local` or share its values.
 
-| Role | Account |
-| --- | --- |
-| Verified student | `student.verified@cinste.local` |
-| Pending student | `student.pending@cinste.local` |
-| Giver | `giver@cinste.local` |
-| Café partner | `cafe@cinste.local` |
-| Cinema partner | `cinema@cinste.local` |
-| Barber partner | `barber@cinste.local` |
-| Admin | `admin@cinste.local` |
+3. Apply the SQL files in `supabase/migrations/` in numeric order through the approved Supabase workflow for your local or non-production project. There is no checked-in Supabase CLI project configuration. Do not use migrations or seeds against production without explicit authorization.
+
+4. Start the web app:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Start the mobile app from the repository root:
+
+   ```bash
+   npm run mobile
+   ```
+
+   This copies only the required public Supabase configuration into the mobile app's local environment file before starting Expo.
+
+## Development and QA data
+
+`npm run bootstrap:test-users` and the reset scripts create or reset marked QA fixtures in a configured non-production Supabase project. They require local server-only credentials and refuse `NODE_ENV=production`; still verify the target project before running them.
+
+The test-fixture password is intentionally not documented here. Obtain credentials through private onboarding or local setup, never from the repository README. `/dev/testing` is a development-only helper and is unavailable in production.
+
+`supabase/seed-test-users.sql` writes to `auth.users`; use it only with a local Supabase CLI database, never a hosted project. Hosted integration runners create QA data and should likewise be run only against approved non-production infrastructure.
+
+## Common commands
+
+```bash
+# Web
+npm run dev
+npm run build
+npm run typecheck
+npm test
+
+# Mobile (from the repository root)
+npm run mobile
+npm --prefix apps/mobile run typecheck
+npm --prefix apps/mobile test
+
+# Non-production QA and maintenance (requires .env.local)
+npm run bootstrap:test-users
+npm run reset:test-verified-student
+npm run reset:test-unverified-student
+npm run maintenance:expire-claims
+npm run test:integration
+npm run test:integration:impact
+npm run test:integration:impact:batch2
+npm run test:integration:impact:batch3
+npm run test:integration:impact:batch4
+npm run test:integration:impact:batch5
+npm run test:integration:giver-outcomes
+```
+
+Stop the web development server before `npm run build`, since both use `.next`.
 
 ## Architecture and security
 
-The App Router uses `@supabase/ssr` cookie clients. Server actions validate input with Zod and authenticate through Supabase Auth. The service-role key is not sent to the browser; it is used only by the trusted server action that initializes a pending payment record after it has authenticated the giver. Normal user mutations use RLS and database RPCs.
+- Supabase RLS and protected server actions/RPCs remain the authority boundary; clients do not authorize funding, claims, verification, or redemption.
+- A verified student claims available campaign inventory; authorized partners redeem the QR/manual-code credential through the server-authoritative flow.
+- QR and manual redemption codes are bearer credentials. Do not log, expose, or add them to fixtures or documentation.
+- Student verification documents are private. The service-role key is server-only and must never reach the browser or mobile bundle.
+- Organization access comes from active organization assignments, not a second mutable role system.
+- Giver outcomes are self-scoped and privacy-suppressed for small cohorts; Givers never receive direct student identity data.
 
-Student documents live in the private `student-documents` bucket. Storage enforces PDF/JPEG/PNG declarations and a 5 MB limit; the verification RPC also checks that the object exists, belongs to the submitting student, and matches its stored MIME/size metadata. Students can upload under their own folder; only admins can read documents. Auth registration does not confer student verification; only an admin can change verification state. Storage validates the declared MIME type, not file binary content: malware scanning and content-signature verification require separate processing infrastructure and are outside this local MVP.
+For deeper decisions and constraints, start with [AGENTS.md](AGENTS.md), [the project overview](docs/PROJECT.md), [the current state](docs/CURRENT_STATE.md), and the relevant feature documentation.
 
-RLS gives students their own profiles, verifications, claims and claim secret, givers their own orders, and partners claim/redemption visibility only for mapped partners. Admin policies permit operational management. A separate `claim_secrets` table prevents partner history reads from receiving bearer redemption tokens.
+## Current V1 status
 
-## Transaction design
+Core claim and redemption flows, student verification, partner assignment controls, and the native student app are implemented. Impact backend and V1 workflows are implemented through the current migration set, with remaining manual/physical QA for scenarios such as multi-organization switching, verification-loss history, localized error states, and overdue-review requests.
 
-`claim_campaign` runs in PostgreSQL, locks the student with an advisory transaction lock, checks verified state and the rolling 24-hour claim limit, locks the campaign, decrements availability, writes the claim and token hash, and records the bearer token only in the student-private secret table. It cannot produce negative inventory or double-allocate the final unit.
+The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. The Giver outcome migration is delivered locally, but its non-production application and hosted outcome-state validation remain pending.
 
-`expire_stale_claims` transitions permanently invalid active claims. An elapsed claim reservation restores inventory only while its campaign can still accept claims; a finished campaign or event never receives unusable inventory. It runs before claims and during redemption. Run `npm run maintenance:expire-claims` locally when needed; a future production scheduler should call the same service-only database function.
+See [CURRENT_STATE.md](docs/CURRENT_STATE.md) for the authoritative validation record and next steps. The provisional Ripple C / Soft Echo C logo direction is not final production artwork; see [BRAND.md](docs/brand/BRAND.md).
 
-`inspect_redemption` and `redeem_claim` hash the opaque 256-bit token server-side, check mapped-partner authorization, and lock the claim before changing it to redeemed. A second redemption returns `ALREADY REDEEMED`.
+## Production limitations
 
-## Payments and fulfillment
+- Payments remain mock-only; no live payment provider or webhook integration is complete.
+- Production deployment/domain, scheduler, monitoring, observability, release/signing, and final physical QA are still pending.
+- The V1 logo geometry, long-term palette, typography, motion, and illustration/icon direction remain provisional.
 
-`MockPaymentProvider` creates checkout, order items, and its pending payment through a service-only database function using trusted offer prices. The browser cannot execute payment confirmation directly. The authenticated server action verifies order ownership, then invokes the service-only confirmation function, which revalidates payment, totals, item prices, offer/partner activity, and idempotency before inventory is created. A provider webhook can later call this same trusted confirmation boundary.
+## Working on CINSTE
 
-Offers support `instant`, `appointment_required`, and `scheduled_event`. Booking and event information are display-only; CINSTE QR redemption remains authoritative.
-
-## Validation
-
-Run `npm run typecheck`, `npm test`, and `npm run build`. Stop `npm run dev` before building because both use `.next`.
-
-The migration contains the authoritative high-risk controls: role/RLS checks, atomic inventory decrement, claim expiry restoration, 24-hour limits, partner binding, and idempotent redemption. Manual QA should follow the Coffee, Cinema, Haircut, and Mock Giver Purchase flows in the build specification, including payment failure, sold-out/future/ended campaigns, expiry, and wrong-partner redemption.
-
-## Known MVP limits
-
-No production payments, scheduling, external analytics, or job scheduler is included. Camera scanning uses ZXing with manual token entry fallback. A future deployment should add a scheduled trusted service-role call to `expire_stale_claims`.
+1. Pull `main` and create a focused feature branch.
+2. Follow [AGENTS.md](AGENTS.md) and read only the docs relevant to the change.
+3. Keep the change scoped; preserve RLS, server-authoritative, privacy, and role boundaries.
+4. Run the smallest relevant validation set.
+5. Push the branch and open a pull request with the scope and validation results.
