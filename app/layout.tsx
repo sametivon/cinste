@@ -1,4 +1,5 @@
 import "./globals.css";
+import "@fontsource-variable/plus-jakarta-sans/wght.css";
 import Link from "next/link";
 import { cookies, headers } from "next/headers";
 
@@ -19,10 +20,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
     <body>
-      <header className="site-header border-b border-stone-200 bg-cream">
+      <header className="site-header">
         <div className="site-header-inner shell flex items-center justify-between py-4">
           <Link href="/" className="text-2xl font-black tracking-tight">CINSTE<span className="text-coral">.</span></Link>
-          <nav className="site-nav flex items-center gap-4 text-sm font-bold">
+          <nav className="site-nav flex items-center gap-4 text-sm font-bold" aria-label="CINSTE navigation">
             <Link href="/">{webT(locale, "nav.discover")}</Link>
             <Link href="/giver">{webT(locale, "nav.give")}</Link>
             <WebLanguageSelector locale={locale} />

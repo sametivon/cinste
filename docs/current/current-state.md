@@ -285,6 +285,28 @@ confirmed all attention queues after correcting the existing organization
 sections, existing Impact actions, and no horizontal overflow at 360px and
 768px. The QA Admin was logged out and the browser session cleared.
 
+## FINAL WEB PRESENTATION PASS
+The web auth/account views and shared base controls now use the V1 coral,
+cream, typography, radius, focus, and responsive spacing system. Login keeps
+the existing sign-in and sign-up behavior while adding clear form hierarchy,
+error treatment, native autocomplete, and submit-pending feedback. The
+assignment-aware workspace chooser remains unchanged in behavior and now uses
+clearer destination cards.
+
+Giver inherits the shared V1 baseline and no longer uses a nested generated
+layout; Partner keeps its counter-first treatment, while Organization and
+Admin retain their role-specific operational shells. Shared headers, forms,
+buttons, cards, focus states, narrow navigation, and organization loading/error
+states now use consistent V1 presentation tokens. No auth routing, role or
+assignment eligibility, backend authority, or product behavior changed.
+
+Local validation passed web TypeScript, 18 focused auth and role presentation
+tests, and `git diff --check`. Browser validation confirmed the login form and
+Giver presentation boundary with a local QA account and cleared the session.
+The available fixture routes to the student handoff and lacks an assigned
+Partner membership, so fully authenticated Partner, Organization, and Admin
+visual rechecks remain manual QA with suitable role fixtures.
+
 ## GIVER OUTCOME FOUNDATION
 The Giver outcome foundation and V1 My Giving UI are implemented locally in
 additive migration `0017_giver_outcome_read.sql`. The new

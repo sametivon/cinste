@@ -13,7 +13,7 @@ export default async function Giver() {
   const { data: outcomes, error: outcomesError } = outcomeResult;
   const giving = (outcomes ?? []) as GivingOutcome[];
 
-  return <main className="shell py-10">
+  return <main className="shell giver-v1-page py-10">
     <section className="max-w-3xl">
       <span className="tag">MY GIVING</span>
       <h1 className="mt-4 text-5xl font-black">Lucrurile bune merg mai departe.</h1>
