@@ -8,4 +8,6 @@
 | `guides/` | Rehberler |
 | `archive/` | Geçmiş; varsayılan bağlam değildir |
 
+Yeni başlıyorsan: [guides/ai-ile-calisma.md](guides/ai-ile-calisma.md)
+
 Akış: `ai-kit feature new <ad>` → `ai-kit next <id>` → adımı yap → `ai-kit done <id>`.

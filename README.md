@@ -132,6 +132,11 @@ See [current-state.md](docs/current/current-state.md) for the authoritative vali
 - Production deployment/domain, scheduler, monitoring, observability, release/signing, and final physical QA are still pending.
 - The V1 logo geometry, long-term palette, typography, motion, and illustration/icon direction remain provisional.
 
+## Working with AI agents
+
+Start from the repository root and follow [AGENTS.md](AGENTS.md).
+See the [Turkish AI workflow guide](docs/guides/ai-ile-calisma.md) for ai-kit setup, hooks, and daily commands.
+
 ## Working on CINSTE
 
 1. Pull `main` and create a focused feature branch.
