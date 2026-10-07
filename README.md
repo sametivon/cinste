@@ -135,7 +135,7 @@ workflows are implemented through the current migration set. The mobile app
 currently blocks every non-Student profile at a role-boundary screen, so native
 Giver, Partner, and Organization Operator journeys remain unimplemented.
 
-The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migrations through `0021` are owner-confirmed applied to hosted development/QA. The maintenance Cron registered by `0020` is intentionally inactive, and secure Giver provisioning in `0021` completed 57 hosted assertions. See the operational ledger for environment-specific evidence and remaining acceptance gaps.
+The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migrations through `0022` are owner-confirmed applied to hosted development/QA; hosted behavioral validation of `0022` remains pending. The maintenance Cron registered by `0020` is intentionally inactive, and secure Giver provisioning in `0021` completed 57 hosted assertions. See the operational ledger for environment-specific evidence and remaining acceptance gaps.
 
 See [current-state.md](docs/current/current-state.md) for the authoritative
 validation record and next step, and the

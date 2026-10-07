@@ -39,8 +39,10 @@ authority for that action.
   mobile router sends every non-Student profile to `role-boundary`; it does not
   resolve Partner or Organization assignments.
 - Migrations `0001` through `0022` exist in the repository and are pushed.
-  Owner-confirmed hosted DEV/QA state remains through `0021`; `0022` is not
-  applied or hosted-validated. No Production environment is evidenced.
+  Migrations through `0022` are owner-confirmed applied to hosted DEV/QA;
+  `0022` was applied manually through the Supabase SQL Editor and has not
+  received hosted behavioral validation. No Production environment is
+  evidenced.
 - Payments remain mock-only. The scheduler is registered but inactive. No EAS
   production/TestFlight release is evidenced.
 

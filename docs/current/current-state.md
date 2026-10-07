@@ -39,22 +39,25 @@ provisioning is unchanged.
 
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
-assertions passing. This repository reconciliation did not rerun hosted tests
-or independently inspect the remote project.
+assertions passing. The owner also confirms that `0022` was manually applied
+successfully to the same hosted environment through the Supabase SQL Editor;
+hosted behavioral validation of `0022` has not been completed. This repository
+reconciliation did not rerun the migration, run hosted tests, or independently
+inspect the remote project.
 
 ## Current active workstream
 
 No product implementation is active. Platform strategy reconciliation and the
-cross-platform audit are complete. Migration `0022` still awaits controlled
-DEV/QA application and hosted validation; this operational prerequisite remains
-separate from the next product-surface workstream.
+cross-platform audit are complete. Migration `0022` is applied to DEV/QA and
+awaits hosted behavioral validation; that validation remains separate from the
+next product-surface workstream.
 
 ## Hosted environments
 
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0021` are owner-confirmed applied; fixtures and focused hosted validation are allowed |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0022` are owner-confirmed applied; `0022` hosted behavioral validation remains pending; fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | Public and operational web surfaces | Repository application exists; no production Vercel/domain deployment is evidenced |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Expo app exists but is Student-only in implementation; all non-Student profile roles stop at `role-boundary`; no EAS production profile, signing, or TestFlight release evidence |
@@ -75,7 +78,7 @@ not imply Production status.
 | `0019_database_maintenance_runner.sql` | Yes | Yes | Yes, owner-confirmed | Partial: local atomic runner coverage passed; real concurrent hosted execution remains pending | No | Private runner present; no API-role execution grant |
 | `0020_database_maintenance_cron.sql` | Yes | Yes | Yes, owner-confirmed | Partial: registration/inactive state confirmed; live worker, timeout, concurrency, and monitoring checks pending | No | `cinste-maintenance-v1` intentionally inactive |
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
-| `0022_funding_eligibility.sql` | Yes | Yes | No | No; 6 disposable-PostgreSQL and 14 server-action assertions passed locally | No | Inactive until applied; no Production environment exists |
+| `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | No; 6 disposable-PostgreSQL and 14 server-action assertions passed locally only | No | Applied in DEV/QA; hosted behavioral validation pending; no Production environment exists |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -628,6 +631,7 @@ tests, and all 8 existing Giver-provisioning tests. Coverage includes Giver,
 Student, Partner, and Admin eligibility, cross-user confirmation, current-role
 recheck, direct RPC denial, all direct financial-table mutation verbs,
 service-only grants, fixed function ownership/search paths, and zero
-financial/inventory/event side effects on denial. Migration `0022` is not
-applied or validated on hosted DEV/QA and is not applied to Production; no
-Production environment exists.
+financial/inventory/event side effects on denial. Migration `0022` is
+owner-confirmed manually applied to hosted DEV/QA through the Supabase SQL
+Editor, but hosted behavioral validation has not been completed. It is not
+applied to Production; no separate Production environment exists.
