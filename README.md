@@ -44,7 +44,7 @@ Student web is intentionally a native-app handoff in V1. Redemption is always se
    npm --prefix apps/mobile install
    ```
 
-3. Copy `.env.example` to `.env.local` and supply your own Supabase URL, publishable key, server-only service-role key, and local app URLs. Never commit `.env.local` or share its values.
+3. Copy `.env.example` to `.env.local` and supply your own Supabase URL, publishable key, server-only service-role key, and local app URLs. Never commit `.env.local` or share its values. `NEXT_PUBLIC_*` values are browser-safe configuration; `SUPABASE_SERVICE_ROLE_KEY` is server-only. The mobile startup script copies only the two public Supabase values into its ignored local environment file.
 
 4. Apply the SQL files in `supabase/migrations/` in numeric order through the approved Supabase workflow for your local or non-production project. There is no checked-in Supabase CLI project configuration. Do not use migrations or seeds against production without explicit authorization.
 
@@ -131,6 +131,11 @@ See [current-state.md](docs/current/current-state.md) for the authoritative vali
 - Payments remain mock-only; no live payment provider or webhook integration is complete.
 - Production deployment/domain, scheduler, monitoring, observability, release/signing, and final physical QA are still pending.
 - The V1 logo geometry, long-term palette, typography, motion, and illustration/icon direction remain provisional.
+
+Production setup and migration ownership are documented in
+[docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md). Do not use local
+QA, seed, reset, integration, or maintenance commands against a production
+project.
 
 ## Working with AI agents
 

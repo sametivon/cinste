@@ -222,8 +222,121 @@ Environment separation must be explicit:
 | --- | --- | --- | --- |
 | Local | Local or disposable project | `.env.local`; mobile receives only public values | Local seed/test data only |
 | Hosted development/QA | Dedicated non-production Supabase project | QA Vercel/project configuration only | Fixture scripts and hosted assertions allowed |
-| Preview/staging | Separate project or tightly isolated staging project | Preview-specific URLs/keys; no production service role | Sanitized/recreated test data only |
+| Preview | Optional; do not create a staging tier solely for naming symmetry | If enabled, use isolated non-production URLs/keys and no production service role | Sanitized/recreated test data only |
 | Production | Dedicated production project | Production URLs, publishable keys, server-only secrets, provider secrets | No seeds, fixture resets, or hosted destructive test runners |
+
+No separate staging environment is required for V1 today. The current hosted
+non-production project is the development/QA environment. If Vercel Preview is
+enabled, it must remain private or use isolated non-production data; it must
+never use production secrets or mutate production data.
+
+## Production environment and deployment foundation
+
+### Ready in the repository
+
+- The root and mobile environment examples now label public configuration and
+  server-only configuration explicitly. The root ignore rules exclude local
+  environment files; the mobile startup script copies only the public Supabase
+  URL and publishable key into `apps/mobile/.env.local`.
+- The web app is a standard Next.js App Router application. Vercel can use the
+  existing `npm run build` and `npm run start` commands; no custom output mode
+  or `vercel.json` is required by the current application.
+- `/dev/testing` uses `NODE_ENV === 'production'` to return `404`. Vercel
+  Production and Preview builds run with `NODE_ENV=production`, so the fixture
+  page is not available from deployed builds. Its source still contains QA-only
+  fixture details and must not be treated as a production support tool.
+- The mobile app uses only `EXPO_PUBLIC_SUPABASE_URL` and
+  `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; native sessions use SecureStore. Its
+  `cinste` scheme matches the web student-handoff default. No web handoff
+  includes a claim or redemption bearer credential.
+- Existing migrations `0001` through `0017` remain the sole schema source of
+  truth. No historical migration was changed for this foundation.
+
+### Owner action required before any production deployment
+
+1. Create a new, empty production Supabase project. Do not copy the hosted QA
+   project, Auth users, Storage objects, service-role key, local seed data, or
+   QA fixtures.
+2. Create Vercel Production configuration with the production Supabase URL and
+   publishable key as public values, and the production service-role key only as
+   a server-side secret. Configure Preview separately against non-production;
+   do not grant Preview the production service-role key.
+3. Choose the canonical HTTPS web domain. Set it as Vercel's production domain,
+   set `NEXT_PUBLIC_APP_URL` to that origin, and add the exact origin plus only
+   required callback URLs to Supabase Auth. Add any required CORS/origin
+   configuration at the same time.
+4. Confirm Supabase Auth email/password settings match the existing flow. The
+   current sign-up action routes immediately to onboarding and has no email
+   confirmation callback or password-reset route. Enabling confirmation or
+   recovery therefore requires a separately scoped auth UX task before launch.
+5. For each Expo/EAS release profile, inject only the public production
+   Supabase URL/key. Keep the `cinste` scheme unless a separately reviewed
+   universal-link/associated-domain rollout changes it.
+6. Configure the private `student-documents` bucket and Auth redirect settings
+   in the production project before allowing verification uploads.
+
+### Environment-variable ownership
+
+| Variable | Local development | Hosted development/QA | Vercel Production | Expo/EAS iOS |
+| --- | --- | --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | `.env.local`, local/disposable project | QA project config | Production Supabase URL | Copied as `EXPO_PUBLIC_SUPABASE_URL` for the matching release profile |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | `.env.local` | QA project config | Production publishable key | Copied as `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` for the matching release profile |
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` only | Restricted QA server/script environment | Vercel server-side secret only | Never present |
+| `NEXT_PUBLIC_APP_URL` | Local web origin | QA web origin where used | Canonical HTTPS web origin | Never present |
+| `NEXT_PUBLIC_STUDENT_APP_URL` | `cinste://` | `cinste://` unless a reviewed change is made | `cinste://` unless a reviewed change is made | Scheme declared in `app.json` |
+| Future payment/monitoring secrets | Not set in templates | Platform secret store only when that work begins | Vercel server-side secret store only | Never present |
+
+The deployment owner, not the repository, owns actual production values. Do not
+commit production project references, service-role keys, payment keys, or
+monitoring tokens. A publishable Supabase key is public by design; its safety
+depends on the production project's RLS, Storage policies, and RPC grants.
+
+### Controlled Supabase production migration workflow
+
+This workflow is intentionally owner-operated. It does not authorize an agent
+or developer to apply migrations to a production project.
+
+1. Create the production Supabase project and record its project reference in
+   the deployment runbook or platform secret store, never in committed config.
+2. Take and verify a production backup before each release. Ensure the release
+   operator has a tested forward-recovery procedure; existing migrations are
+   additive/ordered and should not be edited after deployment.
+3. From a clean, reviewed commit, apply `supabase/migrations/0001` through
+   `0017` in numeric order using the owner-approved Supabase migration method.
+   Do not run `supabase/seed.sql`, `supabase/seed-test-users.sql`, QA bootstrap,
+   reset, integration, or local maintenance scripts.
+4. Record the commit, migration names, operator, UTC time, and Supabase result
+   in the release record. Verify the migration history before continuing.
+5. Perform authenticated, non-destructive post-migration smoke checks for
+   student self-access, Partner redemption authorization, Admin document access,
+   Organization assignment isolation, and Giver-outcome field suppression.
+   Confirm RLS is enabled where expected, SECURITY DEFINER functions retain
+   fixed search paths, execute grants match the tracked migrations, and the
+   `student-documents` bucket remains private with its tracked policies.
+6. For every future database change, add a new ordered migration, review it,
+   test it in hosted non-production first, then repeat this promotion and
+   verification sequence. Never use ad-hoc SQL Editor changes as a substitute
+   for a tracked migration.
+
+### QA and destructive-script boundary
+
+The current scripts fail when `NODE_ENV=production` and several reset paths
+also require marked fixture accounts. That is not sufficient target isolation:
+the scripts accept the Supabase URL and service-role key supplied by the local
+environment. The required non-production project allow-list/confirmation
+mechanism would define a new privileged safety boundary. Per the readiness
+review, it is deliberately **not implemented in this task** and requires an
+Astra review before implementation. Until then, production credentials must
+not be placed in a machine or CI environment that can run these commands.
+
+### Blocked for later phases
+
+- Real payment secrets, provider URLs, and webhooks: payment workstream only.
+- Scheduled maintenance execution identity and cron configuration: scheduler
+  workstream only.
+- Sentry/telemetry keys and data handling: observability workstream only.
+- Account deletion, email-confirmation/reset UX, universal links, and App Store
+  associated domains: separately scoped Auth/mobile release work as needed.
 
 ## Implementation phases
 
