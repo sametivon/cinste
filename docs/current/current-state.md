@@ -512,14 +512,14 @@ dictionary now rejects missing keys rather than falling back to Romanian, and
 the focused i18n test checks locale persistence precedence plus four-locale
 dictionary parity.
 
-The completed shared presentation batch localizes Giver outcome privacy and
-unavailable states, Partner redemption result states, and the account workspace
-chooser for RO, EN, TR, and AR. Repeated domain statuses now use a parity-tested
-presentation dictionary without changing stored enum values or dynamic partner,
-organization, offer, campaign, or user content. Focused validation passed web
-TypeScript plus 19 i18n, Giver outcome, Partner redemption, and workspace
-routing assertions. Literal Organization, Admin, scanner, QR, and remaining
-Giver catalog UI copy remain a separate follow-up migration.
+The completed shared presentation batch localizes the full Giver catalog,
+outcome, checkout-success, and signed-out/error/empty states; Partner redemption
+and scanner states; and the account workspace chooser for RO, EN, TR, and AR.
+Repeated domain statuses use a parity-tested presentation dictionary without
+changing stored enum values or dynamic partner, organization, offer, campaign,
+or user content. The later Giver/Partner completion passed web TypeScript plus
+10 focused i18n and Giver outcome assertions. Literal Admin workspace copy and
+the currently unused QR component remain separate follow-up work.
 
 ## AUTHENTICATED LOGO ROUTING (2026-10-07)
 

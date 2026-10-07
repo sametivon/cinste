@@ -41,6 +41,8 @@ describe('web i18n foundation', () => {
 
   it('interpolates common public copy and localizes controlled category slugs', () => {
     expect(webT('en', 'home.available', { count: 4 })).toBe('4 available');
+    expect(webT('tr', 'giver.fundedMany', { count: 4 })).toBe('4 deneyim finanse edildi');
+    expect(webT('ar', 'partner.cameraDetected')).toBe('تم اكتشاف رمز QR. جارٍ التحقق…');
     expect(localizedWebCategory('ar', 'cinema', 'Cinema')).toBe('سينما');
   });
 });

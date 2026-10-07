@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { tokenFromScannedCode } from '@/lib/redemption-code';
+import { webT, type WebLocale } from '@/lib/i18n/web';
 
 type ScannerControls = { stop: () => void };
 type Diagnostics = { streamActive: boolean; videoReady: boolean; decoderStarted: boolean; attempts: number; lastDecoderError: string; rawDecodeDetected: boolean };
 const emptyDiagnostics: Diagnostics = { streamActive: false, videoReady: false, decoderStarted: false, attempts: 0, lastDecoderError: '—', rawDecodeDetected: false };
 const isRetryableFrameError = (name: string) => ['NotFoundException', 'ChecksumException', 'FormatException'].includes(name);
 
-export function Scanner({ onToken }: { onToken: (token: string) => void }) {
+export function Scanner({ locale, onToken }: { locale: WebLocale; onToken: (token: string) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const controlsRef = useRef<ScannerControls | null>(null);
   const scanningRef = useRef(false);
@@ -46,23 +47,23 @@ export function Scanner({ onToken }: { onToken: (token: string) => void }) {
         if (result) {
           const token = tokenFromScannedCode(result.getText());
           if (!token) return;
-          setMessage('Cod QR detectat. Validăm…'); callbackControls.stop(); stopScanner(); onToken(token); return;
+          setMessage(webT(locale, 'partner.cameraDetected')); callbackControls.stop(); stopScanner(); onToken(token); return;
         }
-        if (error && !isRetryableFrameError(errorName)) { callbackControls.stop(); stopScanner(); setMessage(`Scannerul s-a oprit (${errorName}). Folosește codul manual sau pornește camera din nou.`); }
+        if (error && !isRetryableFrameError(errorName)) { callbackControls.stop(); stopScanner(); setMessage(webT(locale, 'partner.cameraStopped', { error: errorName })); }
       });
       if (!scanningRef.current) { controls.stop(); return; }
       controlsRef.current = controls;
       const stream = videoRef.current?.srcObject;
       setDiagnostics((current) => ({ ...current, decoderStarted: true, streamActive: stream instanceof MediaStream && stream.getVideoTracks().some((track) => track.readyState === 'live') }));
     } catch (error) {
-      stopScanner(); setMessage('Nu am putut porni camera. Verifică permisiunea și folosește codul manual dacă este nevoie.');
+      stopScanner(); setMessage(webT(locale, 'partner.cameraError'));
       setDiagnostics((current) => ({ ...current, lastDecoderError: error instanceof Error ? error.name : 'CameraStartError' }));
     }
   };
   return <div className="partner-camera">
-    <button type="button" className="partner-primary" onClick={scanning ? stopScanner : startScanner}>{scanning ? 'Închide scannerul' : 'Pornește camera'}</button>
-    <video ref={videoRef} className={scanning ? 'partner-camera-video' : 'hidden'} autoPlay muted playsInline onCanPlay={markVideoReady} onLoadedMetadata={markVideoReady} aria-label="Previzualizare cameră pentru scanarea codului QR" />
-    <p className={message ? 'partner-camera-error' : 'partner-camera-help'}>{message || (scanning ? 'Îndreaptă camera spre codul QR CINSTE.' : 'Camera pornește doar când alegi scannerul.')}</p>
+    <button type="button" className="partner-primary" onClick={scanning ? stopScanner : startScanner}>{webT(locale, scanning ? 'partner.cameraStop' : 'partner.cameraStart')}</button>
+    <video ref={videoRef} className={scanning ? 'partner-camera-video' : 'hidden'} autoPlay muted playsInline onCanPlay={markVideoReady} onLoadedMetadata={markVideoReady} aria-label={webT(locale, 'partner.cameraPreview')} />
+    <p className={message ? 'partner-camera-error' : 'partner-camera-help'}>{message || webT(locale, scanning ? 'partner.cameraHelp' : 'partner.cameraIdle')}</p>
     {isDevelopment && <dl className="partner-scanner-diagnostics"><dt>Stream activ</dt><dd>{diagnostics.streamActive ? 'da' : 'nu'}</dd><dt>Video pregătit</dt><dd>{diagnostics.videoReady ? 'da' : 'nu'}</dd><dt>Decoder pornit</dt><dd>{diagnostics.decoderStarted ? 'da' : 'nu'}</dd><dt>Încercări</dt><dd>{diagnostics.attempts}</dd><dt>Ultima eroare</dt><dd>{diagnostics.lastDecoderError}</dd><dt>Cod brut detectat</dt><dd>{diagnostics.rawDecodeDetected ? 'da' : 'nu'}</dd></dl>}
   </div>;
 }
