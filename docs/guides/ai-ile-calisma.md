@@ -120,7 +120,7 @@ ai-kit next ile adımı al, start ile başlat, yap ve done ile kapat;
 kapı düşerse düzelt. Sonraki adımı da açık skill çağrısıyla yürüt.
 docs/decisions içindeki onaylı ürün kararlarını değiştirme.
 RLS/yetkiyi zayıflatma; secret, QR sırrı veya servis anahtarı ifşa etme.
-Commit/push yalnız kullanıcı onayıyla. Bitince kısa özet ve kontrol sonucu ver.
+Commit/push için AGENTS.md içindeki güncel Git akışını uygula. Bitince kısa özet ve kontrol sonucu ver.
 ```
 
 Codex'e kopyala; `<id>` ve görev alanlarını doldur:
@@ -134,7 +134,7 @@ ai-kit next ile adımı al, start ile başlat, yap ve done ile kapat;
 kapı düşerse düzelt. Sonraki adımı da açık skill çağrısıyla yürüt.
 docs/decisions içindeki onaylı ürün kararlarını değiştirme.
 RLS/yetkiyi zayıflatma; secret, QR sırrı veya servis anahtarı ifşa etme.
-Commit/push yalnız kullanıcı onayıyla. Bitince kısa özet ve kontrol sonucu ver.
+Commit/push için AGENTS.md içindeki güncel Git akışını uygula. Bitince kısa özet ve kontrol sonucu ver.
 ```
 
 ## 9. Sorun giderme

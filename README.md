@@ -122,7 +122,7 @@ For deeper decisions and constraints, start with [AGENTS.md](AGENTS.md), [the pr
 
 Core claim and redemption flows, student verification, partner assignment controls, and the native student app are implemented. Impact backend and V1 workflows are implemented through the current migration set, with remaining manual/physical QA for scenarios such as multi-organization switching, verification-loss history, localized error states, and overdue-review requests.
 
-The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migration `0017_giver_outcome_read.sql` is applied to non-production, and `npm run test:integration:giver-outcomes` passed 11 hosted assertions. Authenticated `/giver` smoke checks passed for available, `privacy_suppressed`, and unavailable outcomes without exposing student-level data or rendering suppressed/unavailable metrics as zero; the workstream is ready to close.
+The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migrations through `0021` are owner-confirmed applied to hosted development/QA. The maintenance Cron registered by `0020` is intentionally inactive, and secure Giver provisioning in `0021` completed 57 hosted assertions. See the operational ledger for environment-specific evidence and remaining acceptance gaps.
 
 See [current-state.md](docs/current/current-state.md) for the authoritative validation record and next steps. The provisional Ripple C / Soft Echo C logo direction is not final production artwork; see [brand.md](docs/decisions/brand.md).
 
@@ -144,7 +144,7 @@ See the [Turkish AI workflow guide](docs/guides/ai-ile-calisma.md) for ai-kit se
 
 ## Working on CINSTE
 
-1. Pull `main` and create a focused feature branch.
+1. Reconcile `main` and follow the current Git workflow in [AGENTS.md](AGENTS.md); do not invent a conflicting branch or push policy.
 2. Follow [AGENTS.md](AGENTS.md) and read only the docs relevant to the change.
 3. Keep the change scoped; preserve RLS, server-authoritative, privacy, and role boundaries.
 4. Run the smallest relevant validation set.

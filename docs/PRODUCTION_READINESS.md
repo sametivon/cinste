@@ -71,9 +71,11 @@ Current evidence should be read as follows:
   production. `expire_impact_participations` is similarly invoked by selected
   Impact RPCs. New migrations `0018` through `0020` now implement explicit system
   attribution, restricted maintenance execution, an atomic private runner, and
-  one five-minute database-local Cron job, inactive by default. They have not
-  been deployed to a hosted project. Without an active scheduler or successful
-  opportunistic calls, expiration/restoration and overdue state remain stale.
+  one five-minute database-local Cron job, inactive by default. Migrations
+  `0018` through `0020` are owner-confirmed applied to hosted development/QA;
+  the job remains intentionally inactive. Without an active scheduler or
+  successful opportunistic calls, expiration/restoration and overdue state
+  remain stale.
 - **Required action:** follow `docs/guides/database-maintenance.md` for controlled
   promotion, real Cron/concurrency verification, monitoring, and separately
   authorized owner activation. Nine isolated PostgreSQL tests pass; the Cron
@@ -149,7 +151,7 @@ Current evidence should be read as follows:
 
 - **Affected surface:** Supabase schema, RLS, Storage policies, and privileged
   RPCs.
-- **Current state:** migrations `0001` through `0017` are ordered and include
+- **Current state:** migrations `0001` through `0021` are ordered and include
   explicit RLS policies plus many SECURITY DEFINER/execute-grant hardening
   steps. Current documentation records application and focused assertions in a
   non-production project, including the self-scoped Giver outcome RPC. There is
@@ -252,8 +254,8 @@ never use production secrets or mutate production data.
   `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; native sessions use SecureStore. Its
   `cinste` scheme matches the web student-handoff default. No web handoff
   includes a claim or redemption bearer credential.
-- Existing migrations `0001` through `0017` remain the sole schema source of
-  truth. No historical migration was changed for this foundation.
+- Ordered migrations `0001` through `0021` are the sole schema source of truth.
+  Historical migrations remain immutable.
 
 ### Owner action required before any production deployment
 
@@ -268,10 +270,12 @@ never use production secrets or mutate production data.
    set `NEXT_PUBLIC_APP_URL` to that origin, and add the exact origin plus only
    required callback URLs to Supabase Auth. Add any required CORS/origin
    configuration at the same time.
-4. Confirm Supabase Auth email/password settings match the existing flow. The
-   current sign-up action routes immediately to onboarding and has no email
-   confirmation callback or password-reset route. Enabling confirmation or
-   recovery therefore requires a separately scoped auth UX task before launch.
+4. Confirm Supabase Auth email/password settings match the existing flows.
+   Student sign-up routes immediately to onboarding. Giver sign-up handles a
+   confirmation-required null session with guidance, but the real confirmation
+   callback/browser return path remains an acceptance gap. There is no
+   password-reset route; recovery requires a separately scoped auth UX task
+   before launch.
 5. For each Expo/EAS release profile, inject only the public production
    Supabase URL/key. Keep the `cinste` scheme unless a separately reviewed
    universal-link/associated-domain rollout changes it.
@@ -305,7 +309,7 @@ or developer to apply migrations to a production project.
    operator has a tested forward-recovery procedure; existing migrations are
    additive/ordered and should not be edited after deployment.
 3. From a clean, reviewed commit, apply `supabase/migrations/0001` through
-   `0017` in numeric order using the owner-approved Supabase migration method.
+   `0021` in numeric order using the owner-approved Supabase migration method.
    Do not run `supabase/seed.sql`, `supabase/seed-test-users.sql`, QA bootstrap,
    reset, integration, or local maintenance scripts.
 4. Record the commit, migration names, operator, UTC time, and Supabase result
@@ -335,8 +339,9 @@ not be placed in a machine or CI environment that can run these commands.
 ### Blocked for later phases
 
 - Real payment secrets, provider URLs, and webhooks: payment workstream only.
-- Scheduled maintenance is implemented but inactive in migrations `0018`-`0020`;
-  hosted verification, monitoring, and owner activation remain pending.
+- Scheduled maintenance is implemented and applied to hosted development/QA but
+  inactive in migrations `0018`-`0020`; live worker/concurrency verification,
+  monitoring, and owner activation remain pending.
 - Sentry/telemetry keys and data handling: observability workstream only.
 - Account deletion, email-confirmation/reset UX, universal links, and App Store
   associated domains: separately scoped Auth/mobile release work as needed.
@@ -414,7 +419,7 @@ Mark every item **yes** only with production or production-like evidence.
 | --- | --- |
 | Separate production Supabase, Vercel, mobile, Auth, Storage, and secret configuration exists | No |
 | Production Auth URL/redirect allow-list and mobile deep links are verified | No |
-| Migrations `0001`–`0017` have been applied and post-apply RLS/RPC/Storage checks passed in production | No |
+| Migrations `0001`–`0021` have been applied and post-apply RLS/RPC/Storage checks passed in production | No |
 | Production backups and forward-recovery procedure are tested | No |
 | Claims and Impact expiry scheduler is running, monitored, and tested | No |
 | Real payment provider, signed webhooks, idempotency, and reconciliation are complete | No |

@@ -7,6 +7,129 @@ kod-kapsami: []
 
 # CINSTE Current State
 
+This document is the operational ledger for fresh sessions. The sections below
+this ledger retain detailed implementation and validation context; when older
+prose conflicts with this ledger, reconcile and correct it rather than assuming
+the older statement is current.
+
+## Current milestone
+
+Prepare the implemented V1 for controlled external beta. Core, Impact, role
+workspaces, public Student/Giver acquisition, and secure new-account Giver
+provisioning exist. External beta remains blocked by production infrastructure,
+real payments, production operations, legal/support entry points, and final
+release acceptance.
+
+## Last completed work
+
+This docs-only reconciliation established the repository-driven orchestration
+model. The latest material product implementation is secure new-account Giver
+provisioning, pushed in commit
+`f8ab2668d7058f4209330c09458ce077c093a753`. Migration `0021` uses a
+short-lived one-time private grant consumed atomically by the Auth INSERT: no
+grant creates a Student, and a valid grant creates a Giver. Email confirmation
+is enabled in hosted development/QA.
+
+Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
+`0021` applied in order to development/QA and 57 focused Giver-provisioning
+assertions passing. This repository reconciliation did not rerun hosted tests
+or independently inspect the remote project.
+
+## Current active workstream
+
+No product implementation is active. Repository-driven orchestration has been
+reconciled in documentation. The next product task is the single action at the
+end of this operational ledger and is security-gated.
+
+## Hosted environments
+
+| Environment / service | Purpose | Current state |
+| --- | --- | --- |
+| Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0021` are owner-confirmed applied; fixtures and focused hosted validation are allowed |
+| Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
+| Web deployment | Public and operational web surfaces | Repository application exists; no production Vercel/domain deployment is evidenced |
+| Mobile / TestFlight | iPhone-first Student release path | Expo app exists; no EAS production profile, signing, or TestFlight release evidence |
+| Scheduler | Claim and Impact maintenance | DEV/QA job is registered but intentionally inactive; real worker/concurrency validation, monitoring, and Production activation are pending |
+| Payments | Funding authority | Mock-only; no real provider, signed webhook, or reconciliation |
+| Observability | Runtime, Auth/database, scheduler, and payment visibility | Production stack and redacted alerting are not configured/evidenced |
+
+## Migration ledger
+
+`Repo` means the ordered migration exists at current HEAD. `Pushed` means it is
+present on `origin/main`. Hosted status below is environment-specific and does
+not imply Production status.
+
+| Migration | Repo | Pushed | DEV/QA Applied | DEV/QA Validated | Production Applied | Runtime State / Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `0001`-`0017` | Yes | Yes | Yes | Focused hosted suites recorded; see detailed history | No | Active in DEV/QA; `0017` Giver outcomes passed 11 hosted assertions |
+| `0018_impact_maintenance_system_attribution.sql` | Yes | Yes | Yes, owner-confirmed | Partial: local scheduler suite passed; hosted end-to-end maintenance evidence remains incomplete | No | Schema/function behavior present in DEV/QA |
+| `0019_database_maintenance_runner.sql` | Yes | Yes | Yes, owner-confirmed | Partial: local atomic runner coverage passed; real concurrent hosted execution remains pending | No | Private runner present; no API-role execution grant |
+| `0020_database_maintenance_cron.sql` | Yes | Yes | Yes, owner-confirmed | Partial: registration/inactive state confirmed; live worker, timeout, concurrency, and monitoring checks pending | No | `cinste-maintenance-v1` intentionally inactive |
+| `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
+
+For every future migration, update every column explicitly. Apply tracked
+prerequisites in order, keep historical migrations immutable, and never create
+ad-hoc hosted objects to bypass migration order.
+
+## Open blockers
+
+- External beta has no isolated Production Supabase, production web/domain,
+  controlled promotion evidence, backup/recovery proof, or production secrets.
+- Funding is mock-only; a real payment provider and trusted webhook lifecycle
+  do not exist.
+- The scheduler is inactive and lacks production monitoring and activation.
+- Mobile production signing/TestFlight, observability, legal/privacy/support,
+  and account/data-deletion delivery are incomplete.
+
+## Known defects
+
+- V1 prohibits cross-role funding, but the current checkout path does not
+  enforce `profiles.role = giver` before using the service-authoritative mock
+  funding RPCs.
+- `expire_stale_claims()` has an existing double-UPDATE CTE; claim status and
+  inventory restoration work, but its restoration timestamp is not reliable
+  evidence. See `docs/guides/database-maintenance.md`.
+
+## Owner decisions pending
+
+- Define the Partner acquisition/onboarding authority and first entry path.
+- Define the public acquisition entry for Organizations while preserving the
+  locked V1 rule that onboarding and activation remain Admin/CINSTE-controlled.
+- Select real-payment business/provider semantics before that workstream.
+- Approve final production brand assets, canonical domain, and required
+  legal/privacy/support policies before release.
+
+## Security / Astra checkpoints
+
+- Review the cross-role funding authorization fix because it changes a funding
+  trust boundary.
+- Review real payments, privileged scheduler activation/identity, Production
+  migration/RLS/grant verification, QA target allow-listing, sensitive
+  telemetry/redaction, and any deletion or material Auth/deep-link change
+  before implementation or activation.
+
+## Remaining acceptance gaps
+
+| Type | Current gaps |
+| --- | --- |
+| Architecture blocker | Production environment/promotion controls, real payment architecture, monitored scheduler activation, telemetry/privacy boundary, deletion/retention design |
+| Implementation blocker | Cross-role checkout authorization defect; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
+| Release acceptance / manual QA | Real public `signUp` null-session path, real confirmation-link callback, post-confirmation browser routing, direct hosted grant-catalog inspection, true simultaneous public-signup contention, physical Partner camera/redemption and assignment revocation, multi-organization switching, verification-loss history, localized error/review states, production-like role matrix, and TestFlight device checks |
+
+The Giver provisioning items in the last row are acceptance gaps, not current
+architecture blockers. Partner and Organization public cards currently show
+non-actionable invitation-coming-next states; protected operational workspaces
+and Admin-controlled Organization provisioning already exist.
+
+## Next recommended action
+
+**ASTRA REVIEW REQUIRED:** review the smallest server-authoritative fix that
+enforces the locked V1 `profiles.role = giver` rule at the checkout/funding
+boundary, including its focused regression cases. Do not implement until that
+review confirms the trust boundary; after approval, implement only that defect,
+validate, update this ledger, commit/push, and stop.
+
 ## COMPLETE
 - Core backend hardening implemented
 - student verification lifecycle implemented
@@ -203,12 +326,12 @@ visibility, absence of settlement/contribution side effects, and direct-write
 rejection. Manual physical QA remains required for the new history/error/review
 states and multi-organization switching.
 
-## CURRENT NEXT STEP
-1. complete the listed manual/physical Batch 5 QA, including multi-organization
-   switching, verification-loss history, localized error states, and review
-   requests
-2. do not expand Impact beyond Batch 5 or begin production planning until those
-   acceptance checks pass
+## BATCH 5 ACCEPTANCE GAPS
+Complete the listed manual/physical Batch 5 QA, including multi-organization
+switching, verification-loss history, localized error states, and review
+requests. Do not expand Impact beyond Batch 5 without a new owner-directed
+scope. The operational ledger above, not this historical batch section, owns
+the repository-wide next action.
 
 ## PUBLIC LANDING PAGE
 The public landing page has a presentation-only redesign using the provisional
@@ -328,10 +451,10 @@ or Impact attribution data.
 `/giver` now retains the funding catalog and adds My Giving cards for available,
 privacy-suppressed, and unavailable outcomes. Local validation passed web
 TypeScript, the focused My Giving presentation test, `git diff --check`, and a
-public-browser rendering check. The migration is not yet applied to
-non-production, so authenticated hosted RPC assertions and authenticated
-browser outcome-state validation remain pending. After an owner-authorized
-non-production apply, run `npm run test:integration:giver-outcomes`.
+public-browser rendering check. Migration `0017` is applied to non-production;
+11 focused hosted assertions and authenticated browser checks for available,
+privacy-suppressed, and unavailable states passed without exposing student
+data or rendering suppressed/unavailable metrics as zero.
 
 ## PARTNER REDEMPTION CORE
 The authorized Partner workspace now presents a counter-first V1 redemption
@@ -359,14 +482,16 @@ SECURITY INVOKER runner, and one five-minute Supabase Cron job registered
 inactive. Trusted nested join execution and human audit attribution remain
 intact. The runner calls claim expiration then Impact expiration atomically.
 No historical migrations, RLS, claim inventory logic, reciprocity, contribution,
-or expiration predicates were changed. No production credentials were used,
-and no hosted migrations or Cron deployment/activation occurred.
+or expiration predicates were changed. No production credentials were used.
+Migrations `0018` through `0020` are owner-confirmed applied to hosted DEV/QA;
+the registered Cron job remains intentionally inactive.
 
 Focused validation passed: `npm run test:scheduler` (9 tests), the modified
 Batch 2 fixture's Node syntax check, and `git diff --check`. Scheduler tests
 use disposable PGlite PostgreSQL and real application migrations; Cron registration uses a test
-double because this runtime has no pg_cron worker. Real Supabase Cron and
-multi-session concurrency validation remain deployment gates. See
+double because this runtime has no pg_cron worker. Real Supabase Cron worker,
+timeout, monitoring, and multi-session concurrency validation remain deployment
+gates. See
 `docs/guides/database-maintenance.md` for promotion, grants, monitoring, and
 the separately flagged existing claim-expiration double-UPDATE CTE issue.
 
@@ -458,9 +583,11 @@ i18n tests, and 8 disposable PostgreSQL provisioning assertions covering
 grants, fixed search paths/ownership, client denial, Student defaults, literal
 Giver creation, forged/expired/wrong-email/replayed proof, duplicate signup,
 metadata role rejection, token removal, and transactional rollback. Migration
-`0021` has not been applied to a hosted project. Hosted non-production grant
-visibility, Auth confirmation-setting behavior, and true multi-session
-concurrent consumption therefore remain deployment validation gates.
+`0021` is owner-confirmed applied to hosted DEV/QA. Hosted validation completed
+with 57 assertions; email confirmation is enabled. Remaining acceptance gaps
+are the real public `signUp` null-session path, a real confirmation-link
+callback and browser route, direct hosted grant-catalog inspection, and true
+simultaneous public-signup contention.
 
 Separate known defect, intentionally unchanged in this batch: current funding
 eligibility does not enforce `profiles.role = giver`, although V1 policy
