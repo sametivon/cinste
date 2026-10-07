@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { localizedWebCategory, resolveWebLocale, webLocales, webLocaleFromAcceptLanguage, webT, workspaceMessages } from '@/lib/i18n/web';
 import { webPresentation } from '@/lib/i18n/presentation';
+import { organizationCategories, organizationCopies, organizationCopy } from '@/lib/i18n/organization';
 
 describe('web i18n foundation', () => {
   it('defaults to Romanian and recognizes supported browser locales', () => {
@@ -22,6 +23,20 @@ describe('web i18n foundation', () => {
   it('keeps status and redemption presentation dictionaries in parity', () => {
     const expected = Object.keys(webPresentation.ro).sort();
     for (const locale of webLocales) expect(Object.keys(webPresentation[locale]).sort()).toEqual(expected);
+  });
+
+  it('keeps Organization Operator copy and controlled categories in parity', () => {
+    const copyKeys = Object.keys(organizationCopies.ro).sort();
+    const categoryKeys = Object.keys(organizationCategories.ro).sort();
+    for (const locale of webLocales) {
+      expect(Object.keys(organizationCopies[locale]).sort()).toEqual(copyKeys);
+      expect(Object.keys(organizationCategories[locale]).sort()).toEqual(categoryKeys);
+    }
+  });
+
+  it('serves Organization Operator copy in the selected Romanian and Turkish locales', () => {
+    expect(organizationCopy('ro').queue).toBe('Coadă de acțiuni');
+    expect(organizationCopy('tr').queue).toBe('İşlem kuyruğu');
   });
 
   it('interpolates common public copy and localizes controlled category slugs', () => {

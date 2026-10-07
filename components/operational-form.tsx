@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import type { ReactNode } from 'react';
 import { initialOperationalActionState, type OperationalAction } from '@/lib/operational-action';
+import { resolveWebLocale, webT } from '@/lib/i18n/web';
 
 export function OperationalForm({ action, children, className, confirmation }: { action: OperationalAction; children: ReactNode; className?: string; confirmation?: string }) {
   const [state, formAction] = useActionState(action, initialOperationalActionState);
@@ -20,7 +21,8 @@ export function OperationalForm({ action, children, className, confirmation }: {
   </form>;
 }
 
-export function SubmitButton({ children, className = 'btn' }: { children: ReactNode; className?: string }) {
+export function SubmitButton({ children, className = 'btn', pendingLabel }: { children: ReactNode; className?: string; pendingLabel?: string }) {
   const { pending } = useFormStatus();
-  return <button className={className} disabled={pending}>{pending ? 'Working…' : children}</button>;
+  const label = pendingLabel ?? (typeof document === 'undefined' ? 'Working…' : webT(resolveWebLocale(document.documentElement.lang), 'common.working'));
+  return <button className={className} disabled={pending}>{pending ? label : children}</button>;
 }

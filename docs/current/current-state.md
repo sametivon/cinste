@@ -403,3 +403,14 @@ selection rules. Anonymous users still go to `/`; an account with one eligible
 workspace goes to that workspace; and an account with more than one eligible
 workspace goes to the existing `/account` chooser. This changes no profile,
 assignment, authorization, or routing eligibility behavior.
+
+## ORGANIZATION OPERATOR LOCALIZATION (2026-10-07)
+
+The Organization Operator workspace now uses the shared web locale resolver and
+four-locale RO/EN/TR/AR copy for its workspace context, opportunity lifecycle,
+participation actions and states, forms, feedback, loading, and error views.
+Operator server actions resolve their messages from the same persisted locale
+cookie; repeated backend status values use the shared presentation labels; and
+dates use the selected locale rather than a fixed `en-GB` formatter. Dynamic
+organization, opportunity, and participant data remains unchanged. Dictionary
+parity coverage now includes Organization copy and controlled category labels.
