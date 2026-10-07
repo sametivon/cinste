@@ -432,8 +432,37 @@ rejected server-side. Matching existing profiles may return to their requested
 public path, while conflicting intent and multi-workspace accounts retain
 existing workspace resolution. Login never changes a profile role.
 
-Initial public Giver profile provisioning is not implemented. The only current
-profile creation seam is the `SECURITY DEFINER` auth-user trigger, which always
-defaults to Student. Making URL/form intent choose Giver there would create a
-client-controlled role mutation. **ASTRA REVIEW REQUIRED FOR GIVER ROLE
-PROVISIONING** before a trusted, new-account-only provisioner is introduced.
+Approved new-account Giver provisioning is implemented in additive migration
+`0021_giver_signup_provisioning.sql` and the dedicated web Giver signup action.
+The service-only issuer creates a 256-bit opaque one-time grant bound to the
+normalized email for ten minutes; only its SHA-256 hash is stored in
+`cinste_private`. Anonymous and authenticated roles have no private-schema,
+table, issuer, or finalizer access. The existing postgres-owned Auth INSERT
+trigger now atomically consumes a matching unused grant and inserts a literal
+`giver` profile. With no reserved grant metadata it inserts literal `student`;
+invalid, expired, replayed, or wrong-email proof aborts the Auth transaction.
+The proof is removed from persisted Auth metadata in the same transaction.
+
+The web Giver action accepts only email, password, and display name, issues the
+grant through the server-only service client, calls normal Supabase signup, and
+uses consumed-grant state rather than the returned user object as creation
+authority. Immediate sessions use existing role/assignment-aware routing;
+confirmation-required null-session results show localized RO/EN/TR/AR email
+confirmation guidance. Existing authenticated accounts, login, callback/session
+behavior, URL intent, and return paths do not mutate roles. Native Student
+signup remains unchanged and continues to create Student profiles without a
+grant.
+
+Local validation passed web TypeScript, 27 focused Giver action/auth-routing/
+i18n tests, and 8 disposable PostgreSQL provisioning assertions covering
+grants, fixed search paths/ownership, client denial, Student defaults, literal
+Giver creation, forged/expired/wrong-email/replayed proof, duplicate signup,
+metadata role rejection, token removal, and transactional rollback. Migration
+`0021` has not been applied to a hosted project. Hosted non-production grant
+visibility, Auth confirmation-setting behavior, and true multi-session
+concurrent consumption therefore remain deployment validation gates.
+
+Separate known defect, intentionally unchanged in this batch: current funding
+eligibility does not enforce `profiles.role = giver`, although V1 policy
+prohibits cross-role funding. Address that checkout authorization boundary in a
+separate reviewed task.

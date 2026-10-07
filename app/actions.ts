@@ -15,6 +15,12 @@ const credentials = z.object({
   email: z.string().email(), password: z.string().min(8), displayName: z.string().max(80).optional(),
 });
 
+const giverCredentials = z.object({
+  email: z.string().trim().email().transform((email) => email.toLowerCase()),
+  password: z.string().min(8),
+  displayName: z.string().max(80).optional(),
+}).strict();
+
 function authContext(form: FormData) {
   return {
     intent: parseAuthIntent(form.get('intent')),
@@ -45,16 +51,75 @@ export async function login(form: FormData) {
 export async function logout() { const db = await createClient(); await db.auth.signOut(); redirect("/"); }
 export async function signup(form: FormData) {
   const input = credentials.parse(Object.fromEntries(form)); const context = authContext(form); const db = await createClient();
-  if (context.intent === 'giver') {
-    // The current trigger defaults every new profile to Student. Do not create
-    // a misleading Student account from a Giver acquisition form.
-    redirect(loginError(webT(await getWebLocale(), 'login.giverSignupUnavailable'), context));
-  }
   const { error } = await db.auth.signUp({ email: input.email, password: input.password, options: { data: { display_name: input.displayName } } });
   if (error) redirect(loginError(error.message, context));
   // The database trigger is deliberately the only profile-provisioning path.
   // Do not turn URL/form intent into a role mutation here.
   redirect('/onboarding');
+}
+
+export async function signupGiver(form: FormData) {
+  const input = giverCredentials.parse({
+    email: form.get('email'),
+    password: form.get('password'),
+    displayName: form.get('displayName') ?? undefined,
+  });
+  const context = { intent: 'giver' as const, returnTo: '/giver' as const };
+  const [db, locale] = await Promise.all([createClient(), getWebLocale()]);
+  const { data: { user: authenticatedUser } } = await db.auth.getUser();
+
+  // A signed-in account keeps its stored role and assignment-derived
+  // destinations. Revisiting this form never becomes a role mutation path.
+  if (authenticatedUser) redirect(await destinationAfterAuth(db, authenticatedUser.id, context));
+
+  const service = adminDb();
+  const { data: grantToken, error: grantError } = await service.rpc('issue_giver_provisioning_grant', {
+    p_normalized_email: input.email,
+  });
+  const genericError = webT(locale, 'login.giverSignupError');
+  if (grantError || typeof grantToken !== 'string' || grantToken.length !== 64) {
+    redirect(loginError(genericError, context));
+  }
+
+  let signupData: Awaited<ReturnType<typeof db.auth.signUp>>['data'] | undefined;
+  try {
+    const result = await db.auth.signUp({
+      email: input.email,
+      password: input.password,
+      options: {
+        data: {
+          display_name: input.displayName,
+          cinste_giver_provisioning_token: grantToken,
+        },
+      },
+    });
+    signupData = result.data;
+  } catch {
+    // Finalization below cancels an unused grant. Internal Auth/provisioning
+    // errors are deliberately collapsed into localized public copy.
+  }
+
+  const { data: provisionedUserId, error: finalizeError } = await service.rpc('finalize_giver_provisioning_grant', {
+    p_token: grantToken,
+  });
+  if (finalizeError || typeof provisionedUserId !== 'string') {
+    redirect(loginError(genericError, context));
+  }
+
+  if (signupData?.session) {
+    if (signupData.session.user.id !== provisionedUserId) {
+      await db.auth.signOut();
+      redirect(loginError(genericError, context));
+    }
+    redirect(await destinationAfterAuth(db, provisionedUserId, context));
+  }
+
+  const query = new URLSearchParams({
+    status: 'confirm-email',
+    intent: 'giver',
+    returnTo: '/giver',
+  });
+  redirect(`/login?${query}`);
 }
 export async function claimCampaign(form: FormData) {
   const campaignId = z.string().uuid().parse(form.get("campaignId")); const db = await createClient();
