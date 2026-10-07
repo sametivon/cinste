@@ -138,7 +138,12 @@ try {
   await publish(operatorA.db, expiredFlexible);
   const expiredParticipation = await rpcMust(studentB.db, 'student_join_impact_opportunity', { p_opportunity_id: expiredFlexible }, 'student joins expiry opportunity');
   await must(admin.from('impact_opportunities').update({ due_at: new Date(Date.now() - 60_000).toISOString() }).eq('id', expiredFlexible), 'force flexible due_at for QA');
-  await rpcMust(studentB.db, 'expire_impact_participations', {}, 'expire flexible participation');
+  // Direct maintenance is private after 0018. A normal trusted join still
+  // performs opportunistic expiry under the authenticated student's identity.
+  const expiryProbe = await createOpportunity(operatorA.db, organizationA);
+  await publish(operatorA.db, expiryProbe);
+  const expiryProbeParticipation = await rpcMust(studentB.db, 'student_join_impact_opportunity', { p_opportunity_id: expiryProbe }, 'expire flexible participation through trusted join');
+  await rpcMust(studentB.db, 'student_cancel_impact_participation', { p_participation_id: expiryProbeParticipation }, 'release expiry probe participation');
   const expiredRow = await must(studentB.db.from('impact_participations').select('status').eq('id', expiredParticipation).single(), 'read expired flexible participation');
   eq(expiredRow.status, 'expired_incomplete', 'flexible participation expires incomplete after due_at');
 

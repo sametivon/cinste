@@ -8,6 +8,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:scheduler": "node --test tests/scheduler.test.mjs",
     "mobile": "node scripts/sync-mobile-env.mjs && npm --prefix apps/mobile run start",
     "bootstrap:test-users": "node --env-file=.env.local scripts/bootstrap-test-users.mjs",
     "reset:test-verified-student": "node --env-file=.env.local scripts/reset-test-verified-student.mjs",
@@ -34,6 +35,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@types/node": "^22",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",

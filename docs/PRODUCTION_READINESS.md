@@ -62,20 +62,23 @@ Current evidence should be read as follows:
 - **Astra/security review before implementation:** **Yes**, for the production
   migration/RLS/grant verification and secret boundary review.
 
-### BLOCKER — No production scheduler for expiring domain state
+### BLOCKER — Production maintenance scheduler is not deployed or monitored
 
 - **Affected surface:** claim inventory, expired claims, scheduled-event
   claimability, and Impact participation overdue state.
 - **Current state:** `expire_stale_claims` is invoked opportunistically by
   claim/redemption paths and a local maintenance script. That script refuses
   production. `expire_impact_participations` is similarly invoked by selected
-  Impact RPCs; no periodic production caller is configured. If no traffic
-  arrives, expiration/restoration and overdue transitions can remain stale.
-- **Required action:** use one Supabase-managed scheduled job with a narrowly
-  authorized execution identity to run both maintenance functions. Start with a
-  five-minute cadence for stale claims and a fifteen-minute cadence for Impact
-  participation expiry, make calls idempotent, record failures, alert on missed
-  runs, and prove a dry-run/production-like execution before launch.
+  Impact RPCs. New migrations `0018` through `0020` now implement explicit system
+  attribution, restricted maintenance execution, an atomic private runner, and
+  one five-minute database-local Cron job, inactive by default. They have not
+  been deployed to a hosted project. Without an active scheduler or successful
+  opportunistic calls, expiration/restoration and overdue state remain stale.
+- **Required action:** follow `docs/guides/database-maintenance.md` for controlled
+  promotion, real Cron/concurrency verification, monitoring, and separately
+  authorized owner activation. Nine isolated PostgreSQL tests pass; the Cron
+  registration test uses a test double, not a live worker. Both operations use
+  the shared five-minute cadence to avoid a separate Impact dispatcher/job.
 - **Astra/security review before implementation:** **Yes**, because execution
   identity, function grants, and maintenance mutation paths are privileged.
 
@@ -332,8 +335,8 @@ not be placed in a machine or CI environment that can run these commands.
 ### Blocked for later phases
 
 - Real payment secrets, provider URLs, and webhooks: payment workstream only.
-- Scheduled maintenance execution identity and cron configuration: scheduler
-  workstream only.
+- Scheduled maintenance is implemented but inactive in migrations `0018`-`0020`;
+  hosted verification, monitoring, and owner activation remain pending.
 - Sentry/telemetry keys and data handling: observability workstream only.
 - Account deletion, email-confirmation/reset UX, universal links, and App Store
   associated domains: separately scoped Auth/mobile release work as needed.
@@ -353,7 +356,8 @@ not be placed in a machine or CI environment that can run these commands.
 
 ### Phase 2 — Production operations
 
-- Implement the least-privilege scheduler for stale claims and Impact expiry.
+- Promote and verify the implemented inactive scheduler for claims and Impact;
+  configure monitoring before separately authorized owner activation.
 - Add Sentry, platform logs, alerting, PII/bearer-credential scrubbing, and a
   short incident/support runbook.
 - Harden service-role imports and test-script project allow-listing.

@@ -350,3 +350,22 @@ permission and end-to-end authorized-partner QA remain pending.
 - deployment/domain
 - monitoring
 - release/signing
+
+## DATABASE MAINTENANCE SCHEDULER (2026-10-07)
+
+New ordered migrations `0018` through `0020` implement constrained Impact
+system attribution, postgres-only direct Impact maintenance, a private
+SECURITY INVOKER runner, and one five-minute Supabase Cron job registered
+inactive. Trusted nested join execution and human audit attribution remain
+intact. The runner calls claim expiration then Impact expiration atomically.
+No historical migrations, RLS, claim inventory logic, reciprocity, contribution,
+or expiration predicates were changed. No production credentials were used,
+and no hosted migrations or Cron deployment/activation occurred.
+
+Focused validation passed: `npm run test:scheduler` (9 tests), the modified
+Batch 2 fixture's Node syntax check, and `git diff --check`. Scheduler tests
+use disposable PGlite PostgreSQL and real application migrations; Cron registration uses a test
+double because this runtime has no pg_cron worker. Real Supabase Cron and
+multi-session concurrency validation remain deployment gates. See
+`docs/guides/database-maintenance.md` for promotion, grants, monitoring, and
+the separately flagged existing claim-expiration double-UPDATE CTE issue.
