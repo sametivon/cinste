@@ -132,10 +132,17 @@ export async function claimCampaign(form: FormData) {
 // established the authenticated giver identity.
 export async function createOrder(form: FormData) {
   const input = z.object({ offerId: z.string().uuid(), quantity: z.coerce.number().int().min(1).max(100) }).parse(Object.fromEntries(form));
-  const db = await createClient(); const { data: { user } } = await db.auth.getUser();
+  const db = await createClient();
+  const { data: { user } } = await db.auth.getUser();
   if (!user) redirect("/login?intent=giver&returnTo=/giver");
+  const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  if (profile?.role !== "giver") {
+    redirect("/giver?fundingError=denied");
+  }
   const { data: orderId, error } = await adminDb().rpc("create_mock_checkout", { p_giver_id: user.id, p_offer_id: input.offerId, p_quantity: input.quantity });
-  if (error || !orderId) redirect(`/giver?error=${encodeURIComponent(error?.message ?? "Oferta nu este disponibilă")}`);
+  if (error || !orderId) {
+    redirect(`/giver?fundingError=${error?.message.includes("GIVER_REQUIRED") ? "denied" : "unavailable"}`);
+  }
   redirect(`/checkout/${orderId}`);
 }
 
@@ -144,10 +151,21 @@ export async function createOrder(form: FormData) {
 export async function completeMockPayment(form: FormData) {
   const input = z.object({ orderId: z.string().uuid(), success: z.enum(["true", "false"]) }).parse(Object.fromEntries(form));
   const db = await createClient();
-  const { data: order } = await db.from("giver_orders").select("id").eq("id", input.orderId).maybeSingle();
-  if (!order) redirect("/giver");
-  const { data, error } = await adminDb().rpc("confirm_mock_payment", { p_order_id: input.orderId, p_success: input.success === "true" });
-  if (error) redirect(`/checkout/${input.orderId}?error=${encodeURIComponent(error.message)}`);
+  const { data: { user } } = await db.auth.getUser();
+  if (!user) redirect("/login?intent=giver&returnTo=/giver");
+  const { data: profile } = await db.from("profiles").select("role").eq("id", user.id).maybeSingle();
+  if (profile?.role !== "giver") {
+    redirect("/giver?fundingError=denied");
+  }
+  const { data, error } = await adminDb().rpc("confirm_mock_payment", {
+    p_giver_id: user.id,
+    p_order_id: input.orderId,
+    p_success: input.success === "true",
+  });
+  if (error) {
+    const denied = error.message.includes("GIVER_REQUIRED") || error.message.includes("ORDER_NOT_FOUND");
+    redirect(`${denied ? "/giver" : `/checkout/${input.orderId}`}?fundingError=${denied ? "denied" : "unavailable"}`);
+  }
   redirect(data === "paid" ? `/giver/success/${input.orderId}` : `/checkout/${input.orderId}?failed=1`);
 }
 export async function redeem(form: FormData) {

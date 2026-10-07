@@ -4,9 +4,10 @@ import { createOrder } from '@/app/actions';
 import { givingOutcomePresentation, type GivingOutcome } from '@/lib/giving-outcomes';
 import { getWebLocale } from '@/lib/i18n/server';
 import { formatWebMoney, localizedWebCategory, webT } from '@/lib/i18n/web';
+import { fundingT } from '@/lib/i18n/funding';
 
-export default async function Giver() {
-  const [db, locale] = await Promise.all([createClient(), getWebLocale()]);
+export default async function Giver({ searchParams }: { searchParams: Promise<{ fundingError?: string }> }) {
+  const [db, locale, query] = await Promise.all([createClient(), getWebLocale(), searchParams]);
   const { data: { user } } = await db.auth.getUser();
   const [{ data: offers }, outcomeResult] = await Promise.all([
     db.from('offers').select('id,name,description,giver_price_bani,fulfillment_type,partners(name),categories(name,slug)').eq('active', true),
@@ -16,6 +17,7 @@ export default async function Giver() {
   const giving = (outcomes ?? []) as GivingOutcome[];
 
   return <main className="shell giver-v1-page py-10">
+    {(query.fundingError === 'denied' || query.fundingError === 'unavailable') && <p className="mb-6 rounded-xl bg-rose-50 p-4 font-semibold text-coral" role="alert">{fundingT(locale, query.fundingError)}</p>}
     <section className="max-w-3xl">
       <span className="tag">{webT(locale, 'giver.eyebrow')}</span>
       <h1 className="mt-4 text-5xl font-black">{webT(locale, 'giver.title')}</h1>

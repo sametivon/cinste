@@ -71,7 +71,7 @@ async function rawOrder({ giverId, offerId, quantity, unitPrice, total, paymentA
   if (payment) await must(admin.from('payments').insert({ order_id: order.id, provider, provider_reference: `qa_${crypto.randomUUID()}`, amount_bani: paymentAmount ?? total }), 'raw payment');
   return order.id;
 }
-async function serviceConfirm(orderId, success) { return admin.rpc('confirm_mock_payment', { p_order_id: orderId, p_success: success }); }
+async function serviceConfirm(giverId, orderId, success) { return admin.rpc('confirm_mock_payment', { p_giver_id: giverId, p_order_id: orderId, p_success: success }); }
 
 try {
   const verified = await qaStudent('verified');
@@ -147,22 +147,22 @@ try {
   const giver = await auth('giver@cinste.test'); const giverProfile = await must(admin.from('profiles').select('id').eq('email', 'giver@cinste.test').single(), 'giver profile');
   const cappuccino = await must(admin.from('offers').select('id,giver_price_bani,partner_id,category_id').eq('name', 'Cappuccino').single(), 'giver offer');
   const directOrder = await rawOrder({ giverId: giverProfile.id, offerId: cappuccino.id, quantity: 1, unitPrice: cappuccino.giver_price_bani, total: cappuccino.giver_price_bani, payment: false });
-  const directConfirmation = await giver.rpc('confirm_mock_payment', { p_order_id: directOrder, p_success: true });
+  const directConfirmation = await giver.rpc('confirm_mock_payment', { p_giver_id: giverProfile.id, p_order_id: directOrder, p_success: true });
   check(Boolean(directConfirmation.error), 'authenticated client cannot execute trusted payment confirmation');
-  const noPayment = await serviceConfirm(directOrder, true); check(noPayment.error?.message.includes('PAYMENT_INVALID'), 'cannot fund without a pending payment'); eq(await campaignCount(directOrder), 0, 'missing payment adds zero inventory');
+  const noPayment = await serviceConfirm(giverProfile.id, directOrder, true); check(noPayment.error?.message.includes('PAYMENT_INVALID'), 'cannot fund without a pending payment'); eq(await campaignCount(directOrder), 0, 'missing payment adds zero inventory');
   const foreignPayment = await admin.from('payments').insert({ order_id: crypto.randomUUID(), provider_reference: `qa_${crypto.randomUUID()}`, amount_bani: 1 });
   check(Boolean(foreignPayment.error), 'payment foreign key prevents a payment from targeting a different or missing order');
   const wrongAmountOrder = await rawOrder({ giverId: giverProfile.id, offerId: cappuccino.id, quantity: 2, unitPrice: cappuccino.giver_price_bani, total: cappuccino.giver_price_bani * 2, paymentAmount: cappuccino.giver_price_bani * 2 + 1 });
-  check((await serviceConfirm(wrongAmountOrder, true)).error?.message.includes('PAYMENT_AMOUNT_MISMATCH'), 'cannot fund mismatched payment amount'); eq(await campaignCount(wrongAmountOrder), 0, 'mismatched payment adds zero inventory');
+  check((await serviceConfirm(giverProfile.id, wrongAmountOrder, true)).error?.message.includes('PAYMENT_AMOUNT_MISMATCH'), 'cannot fund mismatched payment amount'); eq(await campaignCount(wrongAmountOrder), 0, 'mismatched payment adds zero inventory');
   const manipulatedPrice = cappuccino.giver_price_bani + 1; const manipulatedOrder = await rawOrder({ giverId: giverProfile.id, offerId: cappuccino.id, quantity: 1, unitPrice: manipulatedPrice, total: manipulatedPrice, paymentAmount: manipulatedPrice });
-  check((await serviceConfirm(manipulatedOrder, true)).error?.message.includes('ORDER_PRICE_MISMATCH'), 'cannot fund manipulated item price'); eq(await campaignCount(manipulatedOrder), 0, 'manipulated item adds zero inventory');
+  check((await serviceConfirm(giverProfile.id, manipulatedOrder, true)).error?.message.includes('ORDER_PRICE_MISMATCH'), 'cannot fund manipulated item price'); eq(await campaignCount(manipulatedOrder), 0, 'manipulated item adds zero inventory');
   check((await admin.rpc('create_mock_checkout', { p_giver_id: giverProfile.id, p_offer_id: cappuccino.id, p_quantity: 0 })).error?.message.includes('INVALID_QUANTITY'), 'cannot create invalid quantity checkout');
   const successCheckout = await must(admin.rpc('create_mock_checkout', { p_giver_id: giverProfile.id, p_offer_id: cappuccino.id, p_quantity: 2 }), 'create trusted checkout');
-  eq((await serviceConfirm(successCheckout, true)).data, 'paid', 'successful mock payment is server-confirmed'); eq(await campaignCount(successCheckout), 1, 'successful payment creates one funded campaign');
+  eq((await serviceConfirm(giverProfile.id, successCheckout, true)).data, 'paid', 'successful mock payment is server-confirmed'); eq(await campaignCount(successCheckout), 1, 'successful payment creates one funded campaign');
   const funded = await must(admin.from('campaigns').select('id,quantity_available').eq('giver_order_id', successCheckout), 'funded inventory'); createdCampaigns.push(...funded.map((campaign) => campaign.id)); eq(funded[0].quantity_available, 2, 'funded quantity matches trusted checkout');
-  eq((await serviceConfirm(successCheckout, true)).data, 'paid', 'duplicate confirmation is idempotent'); eq(await campaignCount(successCheckout), 1, 'duplicate confirmation does not double-fund');
+  eq((await serviceConfirm(giverProfile.id, successCheckout, true)).data, 'paid', 'duplicate confirmation is idempotent'); eq(await campaignCount(successCheckout), 1, 'duplicate confirmation does not double-fund');
   const failedCheckout = await must(admin.rpc('create_mock_checkout', { p_giver_id: giverProfile.id, p_offer_id: cappuccino.id, p_quantity: 1 }), 'create failed checkout');
-  eq((await serviceConfirm(failedCheckout, false)).data, 'failed', 'failed mock payment is recorded'); eq(await campaignCount(failedCheckout), 0, 'failed payment creates zero inventory');
+  eq((await serviceConfirm(giverProfile.id, failedCheckout, false)).data, 'failed', 'failed mock payment is recorded'); eq(await campaignCount(failedCheckout), 0, 'failed payment creates zero inventory');
   check(Boolean((await giver.rpc('track_event', { p_event: 'claim_completed', p_entity_type: 'claim', p_entity_id: first.data[0].claim_id })).error), 'client cannot submit arbitrary analytics events');
   await must(giver.rpc('track_event', { p_event: 'pay_it_forward_clicked', p_entity_type: 'conversion', p_entity_id: null }), 'client may record the allowed pay-it-forward conversion');
   check(Boolean((await admin.from('campaigns').insert({ offer_id: cappuccino.id, name: 'invalid inventory', sponsor_type: 'cinste', funding_source: 'admin', quantity_total: 1, quantity_available: 2, starts_at: new Date().toISOString(), ends_at: new Date(Date.now() + 3_600_000).toISOString(), status: 'draft' })).error), 'database rejects campaign availability above funded capacity');

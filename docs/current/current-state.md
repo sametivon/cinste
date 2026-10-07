@@ -22,13 +22,13 @@ release acceptance.
 
 ## Last completed work
 
-This docs-only reconciliation established the repository-driven orchestration
-model. The latest material product implementation is secure new-account Giver
-provisioning, pushed in commit
-`f8ab2668d7058f4209330c09458ce077c093a753`. Migration `0021` uses a
-short-lived one-time private grant consumed atomically by the Auth INSERT: no
-grant creates a Student, and a valid grant creates a Giver. Email confirmation
-is enabled in hosted development/QA.
+The V1 cross-role funding defect is fixed in migration
+`0022_funding_eligibility.sql` and the matching web server actions. Funding now
+requires the current stored profile role to be `giver` at both boundaries;
+payment confirmation binds the authenticated user explicitly to the stored
+order owner; authenticated application roles, including Admin, cannot mutate
+the financial tables directly; and both mock funding RPCs remain service-only.
+Migration `0021` Giver provisioning is unchanged.
 
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
@@ -37,9 +37,9 @@ or independently inspect the remote project.
 
 ## Current active workstream
 
-No product implementation is active. Repository-driven orchestration has been
-reconciled in documentation. The next product task is the single action at the
-end of this operational ledger and is security-gated.
+No product implementation is active. The reviewed V1 funding eligibility
+workstream is complete in the repository and awaits controlled DEV/QA migration
+application and hosted validation.
 
 ## Hosted environments
 
@@ -67,6 +67,7 @@ not imply Production status.
 | `0019_database_maintenance_runner.sql` | Yes | Yes | Yes, owner-confirmed | Partial: local atomic runner coverage passed; real concurrent hosted execution remains pending | No | Private runner present; no API-role execution grant |
 | `0020_database_maintenance_cron.sql` | Yes | Yes | Yes, owner-confirmed | Partial: registration/inactive state confirmed; live worker, timeout, concurrency, and monitoring checks pending | No | `cinste-maintenance-v1` intentionally inactive |
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
+| `0022_funding_eligibility.sql` | Yes | Yes | No | No; 6 disposable-PostgreSQL and 14 server-action assertions passed locally | No | Inactive until applied; no Production environment exists |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -84,9 +85,6 @@ ad-hoc hosted objects to bypass migration order.
 
 ## Known defects
 
-- V1 prohibits cross-role funding, but the current checkout path does not
-  enforce `profiles.role = giver` before using the service-authoritative mock
-  funding RPCs.
 - `expire_stale_claims()` has an existing double-UPDATE CTE; claim status and
   inventory restoration work, but its restoration timestamp is not reliable
   evidence. See `docs/guides/database-maintenance.md`.
@@ -102,8 +100,6 @@ ad-hoc hosted objects to bypass migration order.
 
 ## Security / Astra checkpoints
 
-- Review the cross-role funding authorization fix because it changes a funding
-  trust boundary.
 - Review real payments, privileged scheduler activation/identity, Production
   migration/RLS/grant verification, QA target allow-listing, sensitive
   telemetry/redaction, and any deletion or material Auth/deep-link change
@@ -114,7 +110,7 @@ ad-hoc hosted objects to bypass migration order.
 | Type | Current gaps |
 | --- | --- |
 | Architecture blocker | Production environment/promotion controls, real payment architecture, monitored scheduler activation, telemetry/privacy boundary, deletion/retention design |
-| Implementation blocker | Cross-role checkout authorization defect; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
+| Implementation blocker | Production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
 | Release acceptance / manual QA | Real public `signUp` null-session path, real confirmation-link callback, post-confirmation browser routing, direct hosted grant-catalog inspection, true simultaneous public-signup contention, physical Partner camera/redemption and assignment revocation, multi-organization switching, verification-loss history, localized error/review states, production-like role matrix, and TestFlight device checks |
 
 The Giver provisioning items in the last row are acceptance gaps, not current
@@ -124,11 +120,10 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**ASTRA REVIEW REQUIRED:** review the smallest server-authoritative fix that
-enforces the locked V1 `profiles.role = giver` rule at the checkout/funding
-boundary, including its focused regression cases. Do not implement until that
-review confirms the trust boundary; after approval, implement only that defect,
-validate, update this ledger, commit/push, and stop.
+**OWNER DECISION REQUIRED:** define the Partner acquisition/onboarding authority
+and first entry path while preserving the existing assignment-based Partner
+authorization model. Do not implement public Partner onboarding until that
+smallest product decision is locked.
 
 ## COMPLETE
 - Core backend hardening implemented
@@ -589,7 +584,32 @@ are the real public `signUp` null-session path, a real confirmation-link
 callback and browser route, direct hosted grant-catalog inspection, and true
 simultaneous public-signup contention.
 
-Separate known defect, intentionally unchanged in this batch: current funding
-eligibility does not enforce `profiles.role = giver`, although V1 policy
-prohibits cross-role funding. Address that checkout authorization boundary in a
-separate reviewed task.
+## V1 FUNDING ELIGIBILITY (2026-10-07)
+
+The Astra-reviewed cross-role funding correction is implemented as ordered
+migration `0022_funding_eligibility.sql`. The web actions require an
+authenticated account whose current stored `profiles.role` is literal `giver`
+before calling the service client. The database independently applies the same
+eligibility check in both `create_mock_checkout` and `confirm_mock_payment`.
+Confirmation now accepts the authenticated Giver ID explicitly and locks only
+an order whose `giver_id` matches it; RLS visibility is not used as proof of
+ownership.
+
+The prior two-argument confirmation signature is removed. Both funding RPCs
+retain execute permission only for `service_role`, use postgres ownership and a
+fixed safe search path, and disclose only localized safe RO/EN/TR/AR denial
+copy through the web actions. Direct INSERT, UPDATE, and DELETE privileges on
+`giver_orders`, `giver_order_items`, and `payments` are revoked from anonymous
+and authenticated roles, and the prior Admin write policies are removed;
+existing self/Admin read behavior is unchanged. Giver provisioning migration
+`0021` and V1 role semantics are unchanged, with no Admin funding exception.
+
+Local validation passed the production web build, TypeScript, 14 focused
+server-action assertions, 7 i18n assertions, 6 disposable-PostgreSQL funding
+tests, and all 8 existing Giver-provisioning tests. Coverage includes Giver,
+Student, Partner, and Admin eligibility, cross-user confirmation, current-role
+recheck, direct RPC denial, all direct financial-table mutation verbs,
+service-only grants, fixed function ownership/search paths, and zero
+financial/inventory/event side effects on denial. Migration `0022` is not
+applied or validated on hosted DEV/QA and is not applied to Production; no
+Production environment exists.

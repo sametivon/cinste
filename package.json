@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:scheduler": "node --test tests/scheduler.test.mjs",
     "test:provisioning": "node --test tests/giver-provisioning.test.mjs",
+    "test:funding": "node --test tests/funding-eligibility.test.mjs",
     "mobile": "node scripts/sync-mobile-env.mjs && npm --prefix apps/mobile run start",
     "bootstrap:test-users": "node --env-file=.env.local scripts/bootstrap-test-users.mjs",
     "reset:test-verified-student": "node --env-file=.env.local scripts/reset-test-verified-student.mjs",
