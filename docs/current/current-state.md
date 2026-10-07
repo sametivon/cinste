@@ -369,3 +369,23 @@ double because this runtime has no pg_cron worker. Real Supabase Cron and
 multi-session concurrency validation remain deployment gates. See
 `docs/guides/database-maintenance.md` for promotion, grants, monitoring, and
 the separately flagged existing claim-expiration double-UPDATE CTE issue.
+
+## WEB LOCALIZATION FOUNDATION (2026-10-07)
+
+The web locale has one persisted source: the `cinste_web_locale` cookie. Its
+server resolution now lives only in `lib/i18n/server.ts`; it gives a valid saved
+locale precedence over `Accept-Language` and otherwise defaults to Romanian.
+The root layout, public handoff routes, login, checkout, Partner, and Admin
+operations use that resolver. The language selector writes that single cookie
+then refreshes the route, so server-rendered and client-navigation refreshes
+resolve the same value. No profile, session, URL, or local-storage locale
+persistence exists.
+
+The prior inconsistency was caused by direct per-page resolution combined with
+literal workspace copy and hard-coded `ro-RO` formatters. The canonical
+dictionary now rejects missing keys rather than falling back to Romanian, and
+the focused i18n test checks locale persistence precedence plus four-locale
+dictionary parity. Static literal copy remains in the Organization, Admin
+overview/Impact/catalog, Giver, scanner, QR, and related domain-presentation
+surfaces; those screens require a follow-up translation-key migration before
+they can be described as fully localized.

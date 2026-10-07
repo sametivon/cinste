@@ -1,20 +1,17 @@
 import "./globals.css";
 import "@fontsource-variable/plus-jakarta-sans/wght.css";
 import Link from "next/link";
-import { cookies, headers } from "next/headers";
 
 import { logout } from "@/app/actions";
 import { WebLanguageSelector } from "@/components/web-language-selector";
-import { webLocaleFromAcceptLanguage, webT } from "@/lib/i18n/web";
+import { webT } from "@/lib/i18n/web";
+import { getWebLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "CINSTE", description: "Fă cinste unui student." };
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const locale = webLocaleFromAcceptLanguage(
-    (await headers()).get("accept-language"),
-    (await cookies()).get("cinste_web_locale")?.value,
-  );
+  const locale = await getWebLocale();
   const db = await createClient();
   const { data: { user } } = await db.auth.getUser();
 
