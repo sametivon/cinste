@@ -385,7 +385,13 @@ The prior inconsistency was caused by direct per-page resolution combined with
 literal workspace copy and hard-coded `ro-RO` formatters. The canonical
 dictionary now rejects missing keys rather than falling back to Romanian, and
 the focused i18n test checks locale persistence precedence plus four-locale
-dictionary parity. Static literal copy remains in the Organization, Admin
-overview/Impact/catalog, Giver, scanner, QR, and related domain-presentation
-surfaces; those screens require a follow-up translation-key migration before
-they can be described as fully localized.
+dictionary parity.
+
+The completed shared presentation batch localizes Giver outcome privacy and
+unavailable states, Partner redemption result states, and the account workspace
+chooser for RO, EN, TR, and AR. Repeated domain statuses now use a parity-tested
+presentation dictionary without changing stored enum values or dynamic partner,
+organization, offer, campaign, or user content. Focused validation passed web
+TypeScript plus 19 i18n, Giver outcome, Partner redemption, and workspace
+routing assertions. Literal Organization, Admin, scanner, QR, and remaining
+Giver catalog UI copy remain a separate follow-up migration.

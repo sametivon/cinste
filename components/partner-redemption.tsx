@@ -21,7 +21,7 @@ export function PartnerRedemption({ locale, inspected, token, result, error }: {
   const [mode, setMode] = useState<Mode>('ready');
   const [manualCode, setManualCode] = useState('');
   const state = inspected?.state ?? result ?? (error ? 'ERROR' : null);
-  const presentation = redemptionPresentation(state);
+  const presentation = redemptionPresentation(state, locale);
   const goToValidation = (raw: string) => { const scannedToken = tokenFromScannedCode(raw); if (scannedToken) window.location.assign(`/partner?token=${encodeURIComponent(scannedToken)}`); };
   const reset = () => { setManualCode(''); setMode('ready'); router.replace('/partner'); };
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { localizedWebCategory, resolveWebLocale, webLocales, webLocaleFromAcceptLanguage, webT, workspaceMessages } from '@/lib/i18n/web';
+import { webPresentation } from '@/lib/i18n/presentation';
 
 describe('web i18n foundation', () => {
   it('defaults to Romanian and recognizes supported browser locales', () => {
@@ -16,6 +17,11 @@ describe('web i18n foundation', () => {
   it('keeps the authenticated workspace dictionary in parity for every supported locale', () => {
     const expected = Object.keys(workspaceMessages.ro).sort();
     for (const locale of webLocales) expect(Object.keys(workspaceMessages[locale]).sort()).toEqual(expected);
+  });
+
+  it('keeps status and redemption presentation dictionaries in parity', () => {
+    const expected = Object.keys(webPresentation.ro).sort();
+    for (const locale of webLocales) expect(Object.keys(webPresentation[locale]).sort()).toEqual(expected);
   });
 
   it('interpolates common public copy and localizes controlled category slugs', () => {
