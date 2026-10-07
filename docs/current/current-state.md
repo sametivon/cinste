@@ -14,21 +14,28 @@ the older statement is current.
 
 ## Current milestone
 
-Prepare the implemented V1 for controlled external beta. Core, Impact, role
-workspaces, public Student/Giver acquisition, and secure new-account Giver
-provisioning exist. External beta remains blocked by production infrastructure,
-real payments, production operations, legal/support entry points, and final
-release acceptance.
+Realign the implemented V1 with the locked mobile-first platform strategy, then
+prepare the resulting cross-platform product for controlled external beta.
+Core, Impact, web role workspaces, public Student/Giver acquisition, secure
+new-account Giver provisioning, and the native Student journey exist. Native
+Giver, Partner, and Organization Operator journeys do not. Admin is a functional
+web foundation rather than the complete system control plane. External beta
+also remains blocked by production infrastructure, real payments, production
+operations, legal/support entry points, and final release acceptance.
 
 ## Last completed work
 
-The V1 cross-role funding defect is fixed in migration
-`0022_funding_eligibility.sql` and the matching web server actions. Funding now
-requires the current stored profile role to be `giver` at both boundaries;
-payment confirmation binds the authenticated user explicitly to the stored
-order owner; authenticated application roles, including Admin, cannot mutate
-the financial tables directly; and both mock funding RPCs remain service-only.
-Migration `0021` Giver provisioning is unchanged.
+The owner-approved mobile-first platform strategy is now recorded in
+`docs/decisions/project.md`, aligned in `docs/decisions/impact-spec.md`, and
+reconciled against actual web, native, and backend capability in
+`docs/current/cross-platform-role-surface-audit.md`. This was documentation and
+architecture work only; no product feature, authorization, RLS, RPC, funding,
+or Impact behavior changed.
+
+The latest product implementation remains the V1 cross-role funding correction
+in migration `0022_funding_eligibility.sql` and the matching web server actions.
+Both mock funding RPCs remain service-only, and migration `0021` Giver
+provisioning is unchanged.
 
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
@@ -37,9 +44,10 @@ or independently inspect the remote project.
 
 ## Current active workstream
 
-No product implementation is active. The reviewed V1 funding eligibility
-workstream is complete in the repository and awaits controlled DEV/QA migration
-application and hosted validation.
+No product implementation is active. Platform strategy reconciliation and the
+cross-platform audit are complete. Migration `0022` still awaits controlled
+DEV/QA application and hosted validation; this operational prerequisite remains
+separate from the next product-surface workstream.
 
 ## Hosted environments
 
@@ -49,7 +57,7 @@ application and hosted validation.
 | Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0021` are owner-confirmed applied; fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | Public and operational web surfaces | Repository application exists; no production Vercel/domain deployment is evidenced |
-| Mobile / TestFlight | iPhone-first Student release path | Expo app exists; no EAS production profile, signing, or TestFlight release evidence |
+| Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Expo app exists but is Student-only in implementation; all non-Student profile roles stop at `role-boundary`; no EAS production profile, signing, or TestFlight release evidence |
 | Scheduler | Claim and Impact maintenance | DEV/QA job is registered but intentionally inactive; real worker/concurrency validation, monitoring, and Production activation are pending |
 | Payments | Funding authority | Mock-only; no real provider, signed webhook, or reconciliation |
 | Observability | Runtime, Auth/database, scheduler, and payment visibility | Production stack and redacted alerting are not configured/evidenced |
@@ -82,6 +90,10 @@ ad-hoc hosted objects to bypass migration order.
 - The scheduler is inactive and lacks production monitoring and activation.
 - Mobile production signing/TestFlight, observability, legal/privacy/support,
   and account/data-deletion delivery are incomplete.
+- Native Giver, Partner, and Organization Operator surfaces required by the
+  locked platform strategy are absent; native routing does not yet resolve
+  additive workspaces.
+- Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
 
@@ -94,6 +106,8 @@ ad-hoc hosted objects to bypass migration order.
 - Define the Partner acquisition/onboarding authority and first entry path.
 - Define the public acquisition entry for Organizations while preserving the
   locked V1 rule that onboarding and activation remain Admin/CINSTE-controlled.
+- Decide only after native Giver parity evidence whether the current Giver web
+  product remains a permanent companion or is reduced to acquisition/handoff.
 - Select real-payment business/provider semantics before that workstream.
 - Approve final production brand assets, canonical domain, and required
   legal/privacy/support policies before release.
@@ -109,8 +123,8 @@ ad-hoc hosted objects to bypass migration order.
 
 | Type | Current gaps |
 | --- | --- |
-| Architecture blocker | Production environment/promotion controls, real payment architecture, monitored scheduler activation, telemetry/privacy boundary, deletion/retention design |
-| Implementation blocker | Production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
+| Architecture blocker | Reviewed native Giver provisioning/funding edge, production environment/promotion controls, real payment architecture, monitored scheduler activation, telemetry/privacy boundary, deletion/retention design |
+| Implementation blocker | Native multi-workspace routing; complete native Giver journey; native Partner redemption/operational context; native Organization daily operations; comprehensive Admin control-plane information architecture; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
 | Release acceptance / manual QA | Real public `signUp` null-session path, real confirmation-link callback, post-confirmation browser routing, direct hosted grant-catalog inspection, true simultaneous public-signup contention, physical Partner camera/redemption and assignment revocation, multi-organization switching, verification-loss history, localized error/review states, production-like role matrix, and TestFlight device checks |
 
 The Giver provisioning items in the last row are acceptance gaps, not current
@@ -120,10 +134,13 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**OWNER DECISION REQUIRED:** define the Partner acquisition/onboarding authority
-and first entry path while preserving the existing assignment-based Partner
-authorization model. Do not implement public Partner onboarding until that
-smallest product decision is locked.
+**ASTRA REVIEW REQUIRED, then IMPLEMENT:** start the native Giver end-to-end
+vertical slice with the shared native multi-workspace foundation and a reviewed
+Giver provisioning/funding contract. Reuse the existing catalog and
+`list_my_giving_outcomes()` read authority; do not grant service-only funding
+RPCs to the mobile client. Partner acquisition remains an owner decision but no
+longer supersedes the mobile-first Giver gap as the single next product
+workstream.
 
 ## COMPLETE
 - Core backend hardening implemented
@@ -134,7 +151,8 @@ smallest product decision is locked.
 - QR redemption implemented
 - partner assignment controls implemented
 - mobile student app implemented
-- mobile role/auth gate implemented
+- Student mobile role/auth gate implemented; the non-Student boundary is
+  transitional and not the final cross-platform router
 - student i18n implemented
 - recipient-oriented student copy corrected
 - physical QR redemption tested successfully

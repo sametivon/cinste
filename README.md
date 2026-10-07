@@ -2,18 +2,26 @@
 
 CINSTE is a Romania-first, multi-category student experience and reciprocal-generosity platform. Givers fund experiences, verified students claim and redeem them, and students can pass that generosity forward through community Impact. It is not a food-only product.
 
-Students use the native mobile app in V1. Funding and operational roles use the web application.
+CINSTE is mobile-first. Student and Giver core consumer journeys belong in the
+native app. Partner and Organization Operator require both operational web
+portals and native capability for relevant on-the-go work. Admin remains a
+web-first operational control plane.
 
 ## Product surfaces
 
-- **Public web:** localized landing and product handoff.
+- **Public web:** discovery, acquisition, app handoff, login, and entry to
+  Partner/Organization operational portals.
 - **Student mobile:** verification, discovery, claims, QR, profile, and Impact participation.
-- **Giver web:** fund experiences and review My Giving outcomes.
-- **Partner web:** counter-first redemption with QR scanning and manual-code fallback.
-- **Organization Operator web:** manage authorized organizations, opportunities, and participation work.
-- **Admin web:** verification, catalog and partner operations, and Impact operations.
+- **Giver mobile:** required core funding, My Giving, outcomes, and return journey; not yet implemented.
+- **Giver web:** existing funding and My Giving capability, retained as a transitional/complementary surface.
+- **Partner web + mobile:** required operational portal plus on-the-go redemption and concise operational context; web exists, native does not.
+- **Organization Operator web + mobile:** required portal plus relevant daily mobile operations; web exists, native does not.
+- **Admin web:** the comprehensive system operations control plane; the current workspace is functional but incomplete against that target.
 
-Student web is intentionally a native-app handoff in V1. Redemption is always server-authoritative: partner scan/manual-code input is validated and redeemed through the protected backend flow.
+Student web is intentionally a native-app handoff. Redemption is always
+server-authoritative: partner scan/manual-code input is validated and redeemed
+through the protected backend flow. Surface expansion does not change role,
+assignment, funding, RLS, RPC, or Impact authority.
 
 ## Tech stack
 
@@ -25,7 +33,8 @@ Student web is intentionally a native-app handoff in V1. Redemption is always se
 ## Repository structure
 
 - `app/` - Next.js web routes, server actions, and public/operational surfaces
-- `apps/mobile/` - Expo student application
+- `apps/mobile/` - Expo application; currently Student-only in implementation,
+  intended to serve Student, Giver, and approved Partner/Organization journeys
 - `supabase/migrations/` - ordered database schema, RLS, and RPC migrations
 - `scripts/` - local maintenance, QA fixture, and hosted integration scripts
 - `docs/` - product, current-state, architecture, brand, and design references
@@ -120,11 +129,20 @@ For deeper decisions and constraints, start with [AGENTS.md](AGENTS.md), [the pr
 
 ## Current V1 status
 
-Core claim and redemption flows, student verification, partner assignment controls, and the native student app are implemented. Impact backend and V1 workflows are implemented through the current migration set, with remaining manual/physical QA for scenarios such as multi-organization switching, verification-loss history, localized error states, and overdue-review requests.
+Core claim and redemption flows, student verification, partner assignment
+controls, and the native Student app are implemented. Impact backend and V1
+workflows are implemented through the current migration set. The mobile app
+currently blocks every non-Student profile at a role-boundary screen, so native
+Giver, Partner, and Organization Operator journeys remain unimplemented.
 
 The public landing and student mobile UI have a provisional V1 brand/design pass. Authentication and workspace routing are assignment-aware; Organization Operator and Admin Impact workspaces, Partner Redemption Core, and the Giver My Giving UI are present. Migrations through `0021` are owner-confirmed applied to hosted development/QA. The maintenance Cron registered by `0020` is intentionally inactive, and secure Giver provisioning in `0021` completed 57 hosted assertions. See the operational ledger for environment-specific evidence and remaining acceptance gaps.
 
-See [current-state.md](docs/current/current-state.md) for the authoritative validation record and next steps. The provisional Ripple C / Soft Echo C logo direction is not final production artwork; see [brand.md](docs/decisions/brand.md).
+See [current-state.md](docs/current/current-state.md) for the authoritative
+validation record and next step, and the
+[cross-platform role surface audit](docs/current/cross-platform-role-surface-audit.md)
+for the strategy-aligned capability matrix and roadmap. The provisional Ripple
+C / Soft Echo C logo direction is not final production artwork; see
+[brand.md](docs/decisions/brand.md).
 
 ## Production limitations
 

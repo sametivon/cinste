@@ -28,10 +28,19 @@ Student Impact experience:
 - native mobile
 
 Organization operations:
-- responsive web
+- responsive web portal for opportunity authoring, lifecycle management,
+  broader queues, and history
+- native mobile capability for relevant daily operations such as action queues,
+  participant completion/outcome handling, organization context, and timely
+  status work
 
 Admin:
-- web
+- web-first operational control plane
+
+These surfaces share the existing assignment, RLS, RPC, and audit authority.
+Native Organization capability does not create a new role or permit broader
+access than an active `organization_users` assignment. No native Admin surface
+is approved without a later concrete operational need.
 
 ## Reciprocity model
 

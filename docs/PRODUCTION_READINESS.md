@@ -8,10 +8,13 @@ documented non-production Supabase environment only.
 
 **EXTERNAL-BETA BLOCKED.**
 
-The V1 application, RLS/RPC boundary, role workspaces, native student app, and
-focused hosted non-production assertions are substantially implemented. The
-repository does not provide evidence of a separately configured production
-environment, production deployment and migration process, scheduler,
+The Core/Impact application, RLS/RPC boundary, web role workspaces, native
+Student app, and focused hosted non-production assertions are substantially
+implemented. The locked mobile-first strategy is not yet implemented for
+Giver, Partner, or Organization Operator, and Admin is not yet the complete
+system control plane. The repository also does not provide evidence of a
+separately configured production environment, production deployment and
+migration process, scheduler,
 observability, iOS release/signing path, or final physical acceptance. Funding
 is intentionally mock-only, so a public beta that includes real Giver funding
 cannot launch safely.
@@ -21,12 +24,31 @@ Current evidence should be read as follows:
 | Area | Evidence level |
 | --- | --- |
 | Core, Impact, and Giver-outcome database behavior | Implemented; focused hosted non-production validation recorded |
-| Web and mobile V1 surfaces | Implemented; local/type and selected browser/physical validation recorded |
+| Web role surfaces and native Student V1 | Implemented; local/type and selected browser/physical validation recorded |
+| Native Giver, Partner, and Organization Operator surfaces | Not implemented; non-Student mobile profiles stop at `role-boundary` |
+| Admin full-system control plane | Partially implemented; domain workspaces exist but system-wide operations remain incomplete |
 | Production Supabase, web, and mobile environments | Not evidenced in the repository |
 | Real money collection | Not implemented; mock provider only |
 | Production operations, monitoring, and release process | Not implemented/evidenced |
 
 ## Launch blockers
+
+### BLOCKER — Mobile-first role surface strategy is incomplete
+
+- **Affected surface:** Giver, Partner, Organization Operator, and Admin
+  operations.
+- **Current state:** Giver core exists only on web; Partner and Organization
+  have operational web workspaces but no native capability; mobile routes all
+  non-Student profiles to a boundary screen; Admin has functional domain
+  workspaces but not a comprehensive full-system control plane.
+- **Required action:** deliver the strategy-aligned roadmap in
+  `docs/current/cross-platform-role-surface-audit.md`, beginning with native
+  multi-workspace/Giver capability, then Partner and Organization native
+  operations and Admin control-plane evolution.
+- **Astra/security review before implementation:** **Yes** for native Giver
+  provisioning/funding, real payments, and material Auth/app-link trust
+  changes. Existing Partner/Organization RPC-backed UI does not require new
+  authority unless a contract gap is found.
 
 ### BLOCKER — Real payments are absent
 
@@ -84,9 +106,11 @@ Current evidence should be read as follows:
 - **Astra/security review before implementation:** **Yes**, because execution
   identity, function grants, and maintenance mutation paths are privileged.
 
-### BLOCKER — iPhone release configuration is incomplete
+### BLOCKER — native release configuration is incomplete
 
-- **Affected surface:** student V1, which is iPhone-first.
+- **Affected surface:** the mobile-first Student and Giver product plus approved
+  Partner/Organization native operations; the immediate release path remains
+  iPhone-first.
 - **Current state:** the Expo app has a name, scheme, icons/splash assets,
   SecureStore-based native sessions, and public Supabase environment names. It
   has no `ios.bundleIdentifier`, EAS build configuration, release profile,
@@ -348,6 +372,17 @@ not be placed in a machine or CI environment that can run these commands.
 
 ## Implementation phases
 
+### Phase 0 — Cross-platform product alignment
+
+- Implement native multi-workspace routing and the complete native Giver
+  vertical slice behind reviewed provisioning/funding boundaries.
+- Add Partner native redemption/context and Organization native daily
+  operations on existing server-authoritative contracts.
+- Evolve Admin web into the system control plane without adding unapproved
+  authority or a speculative native Admin surface.
+- Complete public acquisition, app handoff, authentication recovery, and
+  return paths needed by these surfaces.
+
 ### Phase 1 — Deployability foundation
 
 - Provision separate production Supabase, Vercel, domain/TLS, and EAS/App Store
@@ -419,7 +454,7 @@ Mark every item **yes** only with production or production-like evidence.
 | --- | --- |
 | Separate production Supabase, Vercel, mobile, Auth, Storage, and secret configuration exists | No |
 | Production Auth URL/redirect allow-list and mobile deep links are verified | No |
-| Migrations `0001`–`0021` have been applied and post-apply RLS/RPC/Storage checks passed in production | No |
+| Migrations `0001`–`0022` have been applied and post-apply RLS/RPC/Storage checks passed in production | No |
 | Production backups and forward-recovery procedure are tested | No |
 | Claims and Impact expiry scheduler is running, monitored, and tested | No |
 | Real payment provider, signed webhooks, idempotency, and reconciliation are complete | No |
@@ -429,10 +464,10 @@ Mark every item **yes** only with production or production-like evidence.
 | Privacy policy, terms, support, deletion process, and App Store privacy disclosures are approved/published | No |
 | EAS production profile, signing, bundle identifier, permissions, icons, and TestFlight physical validation are complete | No |
 | Student: auth, verification, discover, claim, QR/code, redeemed state, and Impact pass | Pending production-like QA |
-| Partner: QR/manual code, wrong partner, expired, and duplicate redemption pass | Pending production-like QA |
-| Giver: funding/payment, My Giving outcomes, and privacy suppression pass | Pending real-payment and production-like QA |
-| Organization Operator: opportunity, participant action, completion, and review states pass | Pending physical QA |
-| Admin: verification, catalog/campaign, organization, and Impact operations pass | Pending production-like QA |
+| Giver native: acquisition/auth, funding/payment, My Giving outcomes, privacy suppression, and return flow pass | Not implemented; also pending real-payment architecture |
+| Partner web + native: QR/manual code, wrong partner, expired, duplicate redemption, permission recovery, and recent context pass | Native not implemented; web pending production-like QA |
+| Organization Operator web + native: switching, opportunity context, participant action, completion, and review states pass | Native not implemented; web pending physical QA |
+| Admin web control plane: verification, Core/funding, catalog/campaign, Partner, Organization, Impact, access, audit, and incident operations pass | Partial; pending implementation and production-like QA |
 | Pending physical checks from current state (assignment revocation, organization switching, verification-loss history, localized errors, overdue review) pass | No |
 
 ### Launch-critical QA matrix
@@ -440,7 +475,7 @@ Mark every item **yes** only with production or production-like evidence.
 | Role | Scenarios |
 | --- | --- |
 | Student | Sign in/out and redirect safety; submit/approve/reject verification; discover and claim; QR/manual credential display; redeemed refresh; Impact join/cancel/history/review state. |
-| Partner | QR validation, manual code, wrong-partner rejection, expired claim, duplicate redemption, and no bearer credential in logs/screens. |
-| Giver | Real-provider success/failure/cancel/webhook retry; ownership; funded campaign; My Giving available, privacy-suppressed, and unavailable states without student data or zero reconstruction. |
-| Organization Operator | Assigned-organization isolation and switching; create/edit/publish/cancel; eligible participant completion; waiting/Admin-review/history states. |
-| Admin | Protected verification document review; approve/reject; partner/offer/campaign operations; Impact organization/operator, contribution, overdue, dispute, and reasoned correction operations. |
+| Partner | Web and native QR validation, manual code, camera permission recovery, wrong-partner rejection, expired claim, duplicate redemption, recent context, and no bearer credential in logs/screens. |
+| Giver | Native acquisition/auth and real-provider success/failure/cancel/webhook retry; ownership; funded campaign; My Giving available, privacy-suppressed, and unavailable states without student data or zero reconstruction. |
+| Organization Operator | Web and native assigned-organization isolation and switching; web create/edit/publish/cancel; native daily participant action; eligible completion; waiting/Admin-review/history states. |
+| Admin | Web-only protected verification review; Core/funding operations; partner/offer/campaign operations; organization/operator, contribution, overdue, dispute, correction, access/audit context, and trusted incident/status operations. |
