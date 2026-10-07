@@ -28,9 +28,11 @@ operations, legal/support entry points, and final release acceptance.
 The owner-approved mobile-first platform strategy is now recorded in
 `docs/decisions/project.md`, aligned in `docs/decisions/impact-spec.md`, and
 reconciled against actual web, native, and backend capability in
-`docs/current/cross-platform-role-surface-audit.md`. This was documentation and
-architecture work only; no product feature, authorization, RLS, RPC, funding,
-or Impact behavior changed.
+`docs/current/cross-platform-role-surface-audit.md`. The concrete native Giver
+vertical-slice auth, workspace, provisioning, funding, and reuse plan is now
+recorded in `docs/current/native-giver-vertical-slice-plan.md`. These were
+documentation and architecture work only; no product feature, authorization,
+RLS, RPC, funding, or Impact behavior changed.
 
 The latest product implementation remains the V1 cross-role funding correction
 in migration `0022_funding_eligibility.sql` and the matching web server actions.
@@ -138,12 +140,13 @@ and Admin-controlled Organization provisioning already exist.
 ## Next recommended action
 
 **ASTRA REVIEW REQUIRED, then IMPLEMENT:** start the native Giver end-to-end
-vertical slice with the shared native multi-workspace foundation and a reviewed
-Giver provisioning/funding contract. Reuse the existing catalog and
-`list_my_giving_outcomes()` read authority; do not grant service-only funding
-RPCs to the mobile client. Partner acquisition remains an owner decision but no
-longer supersedes the mobile-first Giver gap as the single next product
-workstream.
+vertical slice using `docs/current/native-giver-vertical-slice-plan.md`:
+first approve the trusted signup/funding BFF and confirmation app-link
+contract, then add the shared native multi-workspace foundation and Giver
+slice. Reuse the existing catalog and `list_my_giving_outcomes()` read
+authority; do not grant service-only funding RPCs to the mobile client. Partner
+acquisition remains an owner decision but no longer supersedes the mobile-first
+Giver gap as the single next product workstream.
 
 ## COMPLETE
 - Core backend hardening implemented
