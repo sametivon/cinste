@@ -6,7 +6,10 @@ import { logout } from "@/app/actions";
 import { WebLanguageSelector } from "@/components/web-language-selector";
 import { webT } from "@/lib/i18n/web";
 import { getWebLocale } from "@/lib/i18n/server";
+import { logoDestination } from "@/lib/auth-routing";
+import { activeOrganizationWorkspaces } from "@/lib/organization-workspace";
 import { createClient } from "@/lib/supabase/server";
+import type { AppRole } from "@/lib/types";
 
 export const metadata = { title: "CINSTE", description: "Fă cinste unui student." };
 
@@ -14,12 +17,15 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const locale = await getWebLocale();
   const db = await createClient();
   const { data: { user } } = await db.auth.getUser();
+  const { data: profile } = user ? await db.from("profiles").select("role").eq("id", user.id).maybeSingle() : { data: null };
+  const organizations = user ? await activeOrganizationWorkspaces(db, user.id, profile?.role as AppRole | undefined) : [];
+  const logoHref = logoDestination(Boolean(user), profile?.role as AppRole | undefined, organizations.length > 0);
 
   return <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
     <body>
       <header className="site-header">
         <div className="site-header-inner shell flex items-center justify-between py-4">
-          <Link href="/" className="text-2xl font-black tracking-tight">CINSTE<span className="text-coral">.</span></Link>
+          <Link href={logoHref} className="text-2xl font-black tracking-tight">CINSTE<span className="text-coral">.</span></Link>
           <nav className="site-nav flex items-center gap-4 text-sm font-bold" aria-label="CINSTE navigation">
             <Link href="/">{webT(locale, "nav.discover")}</Link>
             <Link href="/giver">{webT(locale, "nav.give")}</Link>

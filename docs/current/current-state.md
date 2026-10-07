@@ -395,3 +395,11 @@ organization, offer, campaign, or user content. Focused validation passed web
 TypeScript plus 19 i18n, Giver outcome, Partner redemption, and workspace
 routing assertions. Literal Organization, Admin, scanner, QR, and remaining
 Giver catalog UI copy remain a separate follow-up migration.
+
+## AUTHENTICATED LOGO ROUTING (2026-10-07)
+
+The shared wordmark now uses the existing role- and assignment-aware workspace
+selection rules. Anonymous users still go to `/`; an account with one eligible
+workspace goes to that workspace; and an account with more than one eligible
+workspace goes to the existing `/account` chooser. This changes no profile,
+assignment, authorization, or routing eligibility behavior.

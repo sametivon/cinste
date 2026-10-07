@@ -13,3 +13,9 @@ const copy: Record<WebLocale, Record<Workspace, [string, string]>> = {
   ar: { admin: ['المشرف', 'أدر عمليات CINSTE.'], partner: ['الشريك', 'امسح تجارب CINSTE واستردها.'], giver: ['قدّم تجربة', 'موّل تجربة لطالب.'], organization: ['مشغّل المؤسسة', 'أدر فرص Impact لمؤسستك.'], student: ['تطبيق الطالب', 'تابع في تطبيق CINSTE للجوال.'] },
 };
 export function availableWorkspaces(role: AppRole | null | undefined, hasOrganizationAssignment: boolean, locale: WebLocale = 'ro'): WorkspaceOption[] { const workspaces: Workspace[] = [profileWorkspace(role)]; if (hasOrganizationAssignment) { if (workspaces[0] === 'student') workspaces.unshift('organization'); else workspaces.push('organization'); } return workspaces.map((workspace) => ({ workspace, href: href[workspace], label: copy[locale][workspace][0], description: copy[locale][workspace][1] })); }
+
+export function logoDestination(authenticated: boolean, role: AppRole | null | undefined, hasOrganizationAssignment: boolean) {
+  if (!authenticated) return '/';
+  const workspaces = availableWorkspaces(role, hasOrganizationAssignment);
+  return workspaces.length === 1 ? workspaces[0].href : '/account';
+}
