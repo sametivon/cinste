@@ -3,6 +3,26 @@ import type { WebLocale } from '@/lib/i18n/web';
 
 export type Workspace = 'admin' | 'partner' | 'giver' | 'organization' | 'student';
 export type WorkspaceOption = { workspace: Workspace; href: string; label: string; description: string };
+export type AuthIntent = 'student' | 'giver';
+
+/** Public routes that may be restored after an auth form submission. */
+export const safeAuthReturnPaths = ['/giver', '/student', '/account'] as const;
+export const publicRoleDestinations = {
+  student: '/student',
+  giver: '/giver',
+} as const;
+
+export function parseAuthIntent(value: unknown): AuthIntent | undefined {
+  return value === 'student' || value === 'giver' ? value : undefined;
+}
+
+// This intentionally accepts only whole, known internal paths. In particular,
+// it does not decode input before matching: encoded separators and schemes must
+// never become a redirect destination.
+export function safeAuthReturnTo(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.includes('%') || value.includes('\\') || value.includes('#') || value.includes('?')) return undefined;
+  return (safeAuthReturnPaths as readonly string[]).includes(value) ? value : undefined;
+}
 export function accountDestination(role: AppRole | null | undefined) { if (role === 'admin') return '/admin'; if (role === 'partner') return '/partner'; if (role === 'giver') return '/giver'; return '/student'; }
 const profileWorkspace = (role: AppRole | null | undefined): Workspace => role === 'admin' || role === 'partner' || role === 'giver' ? role : 'student';
 const href: Record<Workspace, string> = { admin: '/admin', partner: '/partner', giver: '/giver', organization: '/organization', student: '/student' };
@@ -18,4 +38,19 @@ export function logoDestination(authenticated: boolean, role: AppRole | null | u
   if (!authenticated) return '/';
   const workspaces = availableWorkspaces(role, hasOrganizationAssignment);
   return workspaces.length === 1 ? workspaces[0].href : '/account';
+}
+
+/**
+ * Intent selects a public continuation only for a matching existing profile.
+ * It never grants or rewrites workspace authority; existing multi-workspace
+ * resolution remains the fallback for every conflicting or absent intent.
+ */
+export function postAuthDestination(role: AppRole | null | undefined, hasOrganizationAssignment: boolean, intent?: AuthIntent, returnTo?: string) {
+  const safeReturnTo = safeAuthReturnTo(returnTo);
+  const workspaces = availableWorkspaces(role, hasOrganizationAssignment);
+  if (workspaces.length > 1) return '/account';
+  const destination = workspaces[0].href;
+  if (role === 'giver' && (intent === 'giver' || safeReturnTo === '/giver')) return '/giver';
+  if (role === 'student' && (intent === 'student' || safeReturnTo === '/student')) return '/student';
+  return destination;
 }

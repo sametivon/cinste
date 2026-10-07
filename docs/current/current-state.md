@@ -414,3 +414,26 @@ cookie; repeated backend status values use the shared presentation labels; and
 dates use the selected locale rather than a fixed `en-GB` formatter. Dynamic
 organization, opportunity, and participant data remains unchanged. Dictionary
 parity coverage now includes Organization copy and controlled category labels.
+
+## STUDENT + GIVER PUBLIC ACQUISITION (2026-10-07)
+
+The landing page now presents Student, Giver, Partner, and Organization roles
+with distinct explanations. Student CTAs enter the existing `/student` mobile
+handoff; the handoff retains the root-only `cinste://` boundary and gives a
+localized beta/install-guidance state without claiming install detection or an
+app-store link. Giver CTAs open the public `/giver` catalog. Partner and
+Organization cards are intentionally non-actionable invitation-coming-next
+states rather than anonymous links into protected workspaces.
+
+Web auth accepts only `student` and `giver` navigation intent. Its return-path
+allowlist is exact `/giver`, `/student`, and `/account`; absolute,
+protocol-relative, query, fragment, backslash, encoded, and other paths are
+rejected server-side. Matching existing profiles may return to their requested
+public path, while conflicting intent and multi-workspace accounts retain
+existing workspace resolution. Login never changes a profile role.
+
+Initial public Giver profile provisioning is not implemented. The only current
+profile creation seam is the `SECURITY DEFINER` auth-user trigger, which always
+defaults to Student. Making URL/form intent choose Giver there would create a
+client-controlled role mutation. **ASTRA REVIEW REQUIRED FOR GIVER ROLE
+PROVISIONING** before a trusted, new-account-only provisioner is introduced.

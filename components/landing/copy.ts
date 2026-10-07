@@ -7,7 +7,7 @@ type Copy = {
   categories: string[]; discovery: string; discoveryTitle: string; discoveryBody: string;
   stepsTitle: string; steps: [string, string][];
   impact: string; impactTitle: string; impactBody: string; impactNote: string;
-  rolesTitle: string; roles: [string, string, string][];
+  rolesTitle: string; studentRole: string; studentAction: string; roles: [string, string, string][];
   finalTitle: string; finalBody: string; footer: string; workspace: string; story: string[];
 };
 export const landingCopy: Record<WebLocale, Copy> = {
@@ -25,8 +25,8 @@ export const landingCopy: Record<WebLocale, Copy> = {
     steps: [["Someone makes it possible", "A person or company funds an experience with a CINSTE partner."], ["You discover it", "Verified students find and claim experiences in the CINSTE app."], ["Go. Enjoy the moment.", "Show your CINSTE QR to the partner and redeem your experience."], ["Let the good keep going", "Discover opportunities to take part in your community through CINSTE Impact."]],
     impact: "CINSTE IMPACT", impactTitle: "Good things don’t have to stop with you.",
     impactBody: "An experience can be the beginning of something bigger. CINSTE connects students with opportunities to share their time, take part, and make a difference in their community.",
-    impactNote: "Small actions. Wider impact.", rolesTitle: "There’s a place for you here.",
-    roles: [["For givers", "Turn a little generosity into someone’s next great experience.", "Fund an experience"], ["For experience partners", "Bring students through your doors and be part of their day.", "Partner workspace"], ["For community organizations", "Create opportunities for students to take part and pass something forward.", "Organization workspace"]],
+    impactNote: "Small actions. Wider impact.", rolesTitle: "There’s a place for you here.", studentRole: "Discover, verify, and claim experiences in the CINSTE mobile app.", studentAction: "Continue in the student app",
+    roles: [["For givers", "Turn a little generosity into someone’s next great experience.", "Fund an experience"], ["For experience partners", "Bring students through your doors and be part of their day.", "Partner invitations are coming next"], ["For community organizations", "Create opportunities for students to take part and pass something forward.", "Organization invitations are coming next"]],
     finalTitle: "Make a day. Start a ripple.", finalBody: "Enjoy an experience. Make one possible. See where it goes.",
     footer: "Good experiences, passed forward.", workspace: "Workspace access is for assigned partners and organizations.",
     story: ["Someone gives", "An experience", "A student enjoys", "Community grows"]
@@ -45,8 +45,8 @@ export const landingCopy: Record<WebLocale, Copy> = {
     steps: [["Cineva face primul pas", "O persoană sau o companie finanțează o experiență la un partener CINSTE."], ["Tu o descoperi", "Studenții verificați descoperă și revendică experiențe în aplicația CINSTE."], ["Mergi. Bucură-te de moment.", "Arată partenerului codul QR CINSTE și folosește experiența."], ["Dă binele mai departe", "Descoperă oportunități de implicare în comunitate prin CINSTE Impact."]],
     impact: "CINSTE IMPACT", impactTitle: "Lucrurile bune pot merge mai departe de tine.",
     impactBody: "O experiență poate fi începutul a ceva mai mare. CINSTE conectează studenții cu oportunități de a oferi din timpul lor, de a participa și de a contribui în comunitate.",
-    impactNote: "Gesturi mici. Impact mai mare.", rolesTitle: "Ai și tu un loc aici.",
-    roles: [["Pentru cei care fac cinste", "Transformă un gest de generozitate în următoarea experiență frumoasă a cuiva.", "Finanțează o experiență"], ["Pentru parteneri", "Primește studenți și fii parte din ziua lor.", "Spațiul partenerilor"], ["Pentru organizații", "Creează oportunități prin care studenții se pot implica și pot da binele mai departe.", "Spațiul organizațiilor"]],
+    impactNote: "Gesturi mici. Impact mai mare.", rolesTitle: "Ai și tu un loc aici.", studentRole: "Descoperă, verifică-te și revendică experiențe în aplicația mobilă CINSTE.", studentAction: "Continuă în aplicația pentru studenți",
+    roles: [["Pentru cei care fac cinste", "Transformă un gest de generozitate în următoarea experiență frumoasă a cuiva.", "Finanțează o experiență"], ["Pentru parteneri", "Primește studenți și fii parte din ziua lor.", "Invitațiile pentru parteneri urmează"], ["Pentru organizații", "Creează oportunități prin care studenții se pot implica și pot da binele mai departe.", "Invitațiile pentru organizații urmează"]],
     finalTitle: "Fă o zi mai bună. Dă binele mai departe.", finalBody: "Bucură-te de o experiență. Fă una posibilă. Vezi unde duce.",
     footer: "Experiențe frumoase, date mai departe.", workspace: "Accesul în spațiile de lucru este pentru partenerii și organizațiile desemnate.",
     story: ["Cineva oferă", "O experiență", "Un student se bucură", "Comunitatea crește"]
@@ -65,8 +65,8 @@ export const landingCopy: Record<WebLocale, Copy> = {
     steps: [["Biri mümkün kılar", "Bir kişi veya şirket, CINSTE ortağında bir deneyimi finanse eder."], ["Sen keşfedersin", "Doğrulanmış öğrenciler CINSTE uygulamasında deneyimleri keşfeder ve alır."], ["Git. Anın tadını çıkar.", "Deneyimi kullanmak için ortağa CINSTE QR kodunu göster."], ["İyiliği ileri taşı", "CINSTE Impact ile topluluğuna katılma fırsatlarını keşfet."]],
     impact: "CINSTE IMPACT", impactTitle: "Güzel şeyler seninle bitmek zorunda değil.",
     impactBody: "Bir deneyim daha büyük bir şeyin başlangıcı olabilir. CINSTE, öğrencileri zamanlarını paylaşabilecekleri, katılabilecekleri ve topluluklarına katkıda bulunabilecekleri fırsatlarla buluşturur.",
-    impactNote: "Küçük adımlar. Daha geniş etki.", rolesTitle: "Burada sana da yer var.",
-    roles: [["Ismarlayanlar için", "Küçük bir paylaşımı birinin güzel deneyimine dönüştür.", "Bir deneyimi finanse et"], ["Deneyim ortakları için", "Öğrencileri karşıla, günlerinin bir parçası ol.", "Ortak çalışma alanı"], ["Topluluk kuruluşları için", "Öğrencilerin katılıp iyiliği ileri taşıyabileceği fırsatlar oluştur.", "Kuruluş çalışma alanı"]],
+    impactNote: "Küçük adımlar. Daha geniş etki.", rolesTitle: "Burada sana da yer var.", studentRole: "CINSTE mobil uygulamasında deneyimleri keşfedin, doğrulanın ve alın.", studentAction: "Öğrenci uygulamasında devam et",
+    roles: [["Ismarlayanlar için", "Küçük bir paylaşımı birinin güzel deneyimine dönüştür.", "Bir deneyimi finanse et"], ["Deneyim ortakları için", "Öğrencileri karşıla, günlerinin bir parçası ol.", "İş ortağı davetleri yakında"], ["Topluluk kuruluşları için", "Öğrencilerin katılıp iyiliği ileri taşıyabileceği fırsatlar oluştur.", "Kuruluş davetleri yakında"]],
     finalTitle: "Bir günü güzelleştir. Bir etki başlat.", finalBody: "Bir deneyimin tadını çıkar. Birini mümkün kıl. Nereye gittiğini gör.",
     footer: "Paylaşılan güzel deneyimler.", workspace: "Çalışma alanları atanmış ortaklar ve kuruluşlar içindir.",
     story: ["Biri paylaşır", "Bir deneyim", "Bir öğrenci yaşar", "Topluluk büyür"]
@@ -85,8 +85,8 @@ export const landingCopy: Record<WebLocale, Copy> = {
     steps: [["أحدهم يجعلها ممكنة", "يموّل شخص أو شركة تجربة لدى شريك CINSTE."], ["أنت تكتشفها", "يكتشف الطلاب المتحقق منهم التجارب ويحجزونها في تطبيق CINSTE."], ["اذهب واستمتع باللحظة", "اعرض رمز QR الخاص بك لدى الشريك للاستفادة من التجربة."], ["دع الخير يستمر", "اكتشف فرص المشاركة في مجتمعك عبر CINSTE Impact."]],
     impact: "CINSTE IMPACT", impactTitle: "الأشياء الجميلة لا تتوقف عندك.",
     impactBody: "قد تكون التجربة بداية لشيء أكبر. تربط CINSTE الطلاب بفرص لمشاركة وقتهم والمشاركة وإحداث أثر في مجتمعهم.",
-    impactNote: "خطوات صغيرة. أثر أوسع.", rolesTitle: "لك مكان هنا.",
-    roles: [["لمن يقدمون التجارب", "حوّل لفتة كريمة إلى تجربة جميلة لشخص آخر.", "موّل تجربة"], ["لشركاء التجارب", "استقبل الطلاب وكن جزءًا من يومهم.", "مساحة الشركاء"], ["للمؤسسات المجتمعية", "أنشئ فرصًا للطلاب للمشاركة ونشر الأثر.", "مساحة المؤسسات"]],
+    impactNote: "خطوات صغيرة. أثر أوسع.", rolesTitle: "لك مكان هنا.", studentRole: "اكتشف التجارب وأكمل التحقق والمطالبة في تطبيق CINSTE للجوال.", studentAction: "تابع في تطبيق الطالب",
+    roles: [["لمن يقدمون التجارب", "حوّل لفتة كريمة إلى تجربة جميلة لشخص آخر.", "موّل تجربة"], ["لشركاء التجارب", "استقبل الطلاب وكن جزءًا من يومهم.", "دعوات الشركاء ستتوفر قريباً"], ["للمؤسسات المجتمعية", "أنشئ فرصًا للطلاب للمشاركة ونشر الأثر.", "دعوات المؤسسات ستتوفر قريباً"]],
     finalTitle: "اجعل يومًا أجمل. وابدأ أثرًا.", finalBody: "استمتع بتجربة. اجعل أخرى ممكنة. وشاهد أثرها.",
     footer: "تجارب جميلة يستمر أثرها.", workspace: "مساحات العمل مخصصة للشركاء والمؤسسات المعينين.",
     story: ["شخص يعطي", "تجربة", "طالب يستمتع", "مجتمع ينمو"]
