@@ -175,7 +175,7 @@ Current evidence should be read as follows:
 
 - **Affected surface:** Supabase schema, RLS, Storage policies, and privileged
   RPCs.
-- **Current state:** migrations `0001` through `0021` are ordered and include
+- **Current state:** migrations `0001` through `0022` are ordered and include
   explicit RLS policies plus many SECURITY DEFINER/execute-grant hardening
   steps. Current documentation records application and focused assertions in a
   non-production project, including the self-scoped Giver outcome RPC. There is
@@ -278,7 +278,7 @@ never use production secrets or mutate production data.
   `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`; native sessions use SecureStore. Its
   `cinste` scheme matches the web student-handoff default. No web handoff
   includes a claim or redemption bearer credential.
-- Ordered migrations `0001` through `0021` are the sole schema source of truth.
+- Ordered migrations `0001` through `0022` are the sole schema source of truth.
   Historical migrations remain immutable.
 
 ### Owner action required before any production deployment
@@ -333,7 +333,7 @@ or developer to apply migrations to a production project.
    operator has a tested forward-recovery procedure; existing migrations are
    additive/ordered and should not be edited after deployment.
 3. From a clean, reviewed commit, apply `supabase/migrations/0001` through
-   `0021` in numeric order using the owner-approved Supabase migration method.
+   `0022` in numeric order using the owner-approved Supabase migration method.
    Do not run `supabase/seed.sql`, `supabase/seed-test-users.sql`, QA bootstrap,
    reset, integration, or local maintenance scripts.
 4. Record the commit, migration names, operator, UTC time, and Supabase result

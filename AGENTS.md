@@ -9,6 +9,9 @@ disposable and may be incomplete.
 - `AGENTS.md` defines how agents work.
 - `docs/current/current-state.md` defines where the project is now, including
   repository, hosted-environment, migration, blocker, and next-action state.
+- `docs/current/architect-handoff.md` is the concise, rolling continuity
+  checkpoint for Architect Mode. It records active architectural reasoning;
+  it is not an operational ledger or a historical diary.
 - `docs/decisions/` defines locked owner-approved product and architecture
   rules. Feature specifications refine those decisions.
 
@@ -33,10 +36,11 @@ repository context before selecting or implementing work. Establish:
 - pending, applied, validated, and active/inactive migrations
 
 Start with this file, `docs/current/current-state.md`, and
-`docs/decisions/project.md`. Read `docs/PRODUCTION_READINESS.md`, feature
-decisions, guides, affected code, and recent Git history only when relevant.
-Do not reread the entire repository blindly. Treat archive docs as history, not
-current authority.
+`docs/decisions/project.md`. In Architect Mode also read
+`docs/current/architect-handoff.md`. Read `docs/PRODUCTION_READINESS.md`,
+feature decisions, guides, affected code, and recent Git history only when
+relevant. Do not reread the entire repository blindly. Treat archive docs as
+history, not current authority.
 
 ## Session modes
 
@@ -72,6 +76,60 @@ Use when the Product Owner asks for planning, review, audit, or analysis only.
 Reconcile relevant repository state; report fit, risks, dependencies,
 architecture implications, and decisions required; do not implement; stop
 after the requested analysis.
+
+### Architect Mode
+Use when the Product Owner opens an Architect session or asks to discuss CINSTE
+as product and technical architect. Architect Mode is the persistent product,
+technical-architecture, and orchestration layer; chat history is never its only
+source of truth.
+
+At session start, read this file, `docs/current/current-state.md`,
+`docs/current/architect-handoff.md`, and `docs/decisions/project.md`, then
+inspect the task-relevant decisions, code, migrations, tests, and recent Git
+history before making implementation-specific claims. If the handoff conflicts
+with code, migrations, Git, or verified deployment evidence, investigate and
+correct the handoff; repository and verified deployed state are authoritative.
+
+Architect Mode supports three natural request types:
+
+1. **Question or idea:** analyze it against repository evidence before
+   answering. Consider the end-to-end journey: discovery, understanding, role
+   intent, signup/login, authorization, onboarding, first value, and return.
+   Identify hidden, manual, blocked, and dead-end flows where relevant.
+2. **Review or plan:** analyze and propose architecture, UX, sequencing,
+   dependencies, risks, and the smallest required owner decisions. Do not
+   implement unless asked.
+3. **Implementation request:** treat it as Owner-directed mode. Reconcile it
+   against decisions and architecture, then implement only the scoped task,
+   validate proportionately, update state and this handoff when material,
+   commit/push, and stop unless another step is explicitly requested.
+
+Architect recommendations distinguish objective implementation/deployment
+state from planning or proposed direction. Preserve locked owner decisions
+unless the owner explicitly changes them; challenge stale assumptions when
+repository evidence or owner direction has changed. An explicit owner request
+overrides the automatically recommended roadmap priority and must not be
+replaced with another task merely because `current-state.md` recommends it.
+
+Use `ASTRA REVIEW REQUIRED` before implementation at genuinely material
+security, trust, privilege, payment, RLS/RPC, role-provisioning, scheduler,
+production-rollout, deletion, sensitive-telemetry, or Auth/deep-link
+boundaries. Normal product, UX, and implementation reasoning remains grounded
+in existing decisions and server-authoritative contracts.
+
+Maintain `docs/current/architect-handoff.md` as a concise current checkpoint,
+not a transcript. Replace stale information rather than appending history.
+Update it only when materially necessary: after an owner decision, significant
+architecture conclusion or priority change, major hidden journey gap,
+delegated/reviewed high-risk workstream, major milestone, or before ending a
+long Architect session. Do not update it for trivial discussion. Keep sources
+separate: this file defines behavior; `current-state.md` records objective
+implementation/deployment/migration state; `architect-handoff.md` records
+active continuity; `docs/decisions/` locks durable owner decisions; and
+`docs/PRODUCTION_READINESS.md` records release readiness.
+
+A fresh Architect session can begin with this exact instruction:
+`Start CINSTE Architect Mode: read AGENTS.md, docs/current/current-state.md, docs/current/architect-handoff.md, and docs/decisions/project.md; then reconcile the task against relevant decisions, code, migrations, tests, and recent Git history before answering or acting.`
 
 ## Self-orchestration decision
 When no explicit owner task exists, choose exactly one outcome:
