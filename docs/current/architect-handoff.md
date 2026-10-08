@@ -68,19 +68,15 @@ iOS-specific build, signing, TestFlight, or release work.
   local-only orientation before authoritative routing, followed by a role- and
   state-specific next step. It must not bypass verification, assignments,
   workspace choice, or role boundaries.
-- The shared native orientation is now implemented: versioned per-user
-  SecureStore state, two concise localized steps, authoritative resolver
-  continuation, revisitable Student/Giver/boundary entry points, and protected
-  route guards. Typecheck and the full 48-test mobile suite pass; physical
-  device acceptance remains pending. The fixed Giver confirmation callback is
-  unchanged and remains outside protected workspace/onboarding guards.
-- The owner rejected that two-step orientation as product-incomplete. The
-  required direction is a role-based guided launch flow, not added explanation
-  screens: a shared animated CINSTE system story, a personalized role/state
-  journey with a truthful next action, and durable contextual guidance inside
-  the resulting workspace. Motion must be purposeful and reduced-motion safe.
-  The latest owner screenshots are from a stale Expo Go bundle: they still show
-  the removed in-page Giver switch and no native tab bar.
+- The role-based guided launch flow is implemented: orientation version 2 keeps
+  per-user SecureStore state, adds an animated SVG system map, personalized
+  role/state journeys, truthful CTAs, reduced-motion-safe transitions, and
+  compact Your journey guidance on Student Profile and Giver Offers. Existing
+  resolver continuation, protected route guards, revisitable orientation
+  entry points, and the fixed unauthenticated Giver callback are unchanged.
+  Typecheck and the full 51-test mobile suite pass; physical-device acceptance
+  remains pending. The latest owner screenshots are from a stale Expo Go
+  bundle and must be reloaded before acceptance.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -96,13 +92,11 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Replace the shallow orientation with the approved role-based guided native
-   launch flow, including purposeful reduced-motion-safe effects and durable
-   contextual guidance after entry.
-2. Reload Expo Go from the current bundle, then re-run manual acceptance for
+1. Reload Expo Go from the current bundle, then re-run manual acceptance for
    onboarding, Student/Giver routing, Giver catalog/detail, My Giving privacy
-   states, navigation, and absence of checkout/payment controls.
-3. After Apple Developer enrollment, implement the Astra-reviewed
+   states, durable guidance, navigation, and absence of checkout/payment
+   controls.
+2. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
 3. Resolve native Partner and Organization operational-surface gaps in the

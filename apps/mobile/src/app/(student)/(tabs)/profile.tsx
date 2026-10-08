@@ -1,4 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { JourneyGuidance } from '@/components/journey-guidance';
 import { router } from 'expo-router';
 
 import { Button, Card, Loading, Pill, colors } from '@/components/ui';
@@ -18,7 +19,7 @@ export default function Profile() {
   const logout = async () => { await signOut(); router.replace('/(auth)/login'); };
 
   return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}>
-    <Text style={[styles.title, isRTL && styles.textRtl]}>{t('profile.title')}</Text>
+    <Text style={[styles.title, isRTL && styles.textRtl]}>{t('profile.title')}</Text><JourneyGuidance />
     <Card style={styles.accountCard}>
       <Pill color={status === 'verified' ? 'mint' : 'coral'} rtl={isRTL}>{t(statusKey)}</Pill>
       <Text style={[styles.name, isRTL && styles.textRtl]}>{student?.full_name || session?.user.email}</Text>

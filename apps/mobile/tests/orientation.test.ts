@@ -12,7 +12,7 @@ describe('versioned per-user orientation presentation state', () => {
   beforeEach(() => store.clear());
 
   it('uses a versioned user-id key and keeps users separate', async () => {
-    expect(MOBILE_ORIENTATION_VERSION).toBe(1);
+    expect(MOBILE_ORIENTATION_VERSION).toBe(2);
     expect(mobileOrientationStorageKey('user-a')).not.toContain('@');
     expect(mobileOrientationStorageKey('user-a')).not.toBe(mobileOrientationStorageKey('user-b'));
     await completeMobileOrientation('user-a');

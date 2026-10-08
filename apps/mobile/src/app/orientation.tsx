@@ -1,50 +1,39 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Line } from 'react-native-svg';
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
-import { ScrollView, StyleSheet, Text } from 'react-native';
-
-import { Button, Card, Loading, colors } from '@/components/ui';
+import { Button, Loading } from '@/components/ui';
 import { useAuth } from '@/context/auth';
 import { useAppLocale } from '@/i18n';
-import { resolveMobileDestination } from '@/lib/mobile-routing';
+import { color, radius, space, type } from '@/design/tokens';
+import { motionDuration, selectOrientationJourney } from '@/lib/orientation-journey';
+
+const AnimatedLine = Animated.createAnimatedComponent(Line);
 
 export default function Orientation() {
   const { session, loading, role, student, workspaceEnvelope, selectedWorkspace, orientationComplete, completeOrientation } = useAuth();
-  const { t, isRTL } = useAppLocale();
-  const { revisit } = useLocalSearchParams<{ revisit?: string }>();
-  const [step, setStep] = useState(1);
-  const destination = resolveMobileDestination({ hasSession: Boolean(session), resolved: !loading, role, verificationStatus: student?.verification_status ?? null, envelope: workspaceEnvelope, selectedWorkspace });
-
-  if (loading) return <Loading label={t('common.loading')} />;
-  if (!session) return <Redirect href="/(auth)/login" />;
-  if (orientationComplete && revisit !== '1') return <Redirect href="/" />;
-
-  const nextKey = workspaceEnvelope.workspaces.length > 1
-    ? 'orientation.next.workspace'
-    : role === 'student'
-    ? student?.verification_status === 'verified' ? 'orientation.next.studentVerified' : 'orientation.next.studentUnverified'
-    : role === 'giver'
-      ? 'orientation.next.giver'
-      : 'orientation.next.boundary';
-  const finish = async () => { await completeOrientation(); router.replace('/'); };
-
+  const { t, isRTL } = useAppLocale(); const { revisit } = useLocalSearchParams<{ revisit?: string }>();
+  const [phase, setPhase] = useState(0); const [reducedMotion, setReducedMotion] = useState(false);
+  const fade = useRef(new Animated.Value(0)).current; const progress = useRef(new Animated.Value(0)).current;
+  const journey = useMemo(() => selectOrientationJourney({ role, verificationStatus: student?.verification_status ?? null, envelope: workspaceEnvelope, selectedWorkspace }), [role, student?.verification_status, workspaceEnvelope, selectedWorkspace]);
+  useEffect(() => { void AccessibilityInfo.isReduceMotionEnabled().then(setReducedMotion); const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReducedMotion); return () => sub.remove(); }, []);
+  useEffect(() => { fade.setValue(0); progress.setValue(0); Animated.parallel([Animated.timing(fade, { toValue: 1, duration: motionDuration(reducedMotion, 260), useNativeDriver: true }), Animated.timing(progress, { toValue: 1, duration: motionDuration(reducedMotion, 520), useNativeDriver: false })]).start(); }, [phase, reducedMotion, fade, progress]);
+  if (loading) return <Loading label={t('common.loading')} />; if (!session) return <Redirect href="/(auth)/login" />; if (orientationComplete && revisit !== '1') return <Redirect href="/" />;
+  const finish = async () => { await completeOrientation(); router.replace('/'); }; const goNext = () => setPhase((value) => Math.min(2, value + 1));
+  const phaseTitle = phase === 0 ? 'orientation.systemTitle' : phase === 1 ? 'orientation.placeTitle' : 'orientation.startTitle';
   return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}>
-    <Text style={[styles.brand, isRTL && styles.textRtl]}>CINSTE<Text style={{ color: colors.coral }}>.</Text></Text>
-    {step === 1 ? <>
-      <Text style={[styles.title, isRTL && styles.textRtl]}>{t('orientation.title')}</Text>
-      <Card style={styles.card}><Text style={[styles.heading, isRTL && styles.textRtl]}>{t('orientation.whatTitle')}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('orientation.whatCopy')}</Text></Card>
-      <Card style={styles.card}><Text style={[styles.heading, isRTL && styles.textRtl]}>{t('orientation.whyTitle')}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('orientation.whyCopy')}</Text></Card>
-      <Button label={t('orientation.continue')} onPress={() => setStep(2)} />
-    </> : <>
-      <Text style={[styles.title, isRTL && styles.textRtl]}>{t('orientation.nextTitle')}</Text>
-      <Card style={styles.card}><Text style={[styles.heading, isRTL && styles.textRtl]}>{t(nextKey)}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('orientation.privacyCopy')}</Text></Card>
-      <Text style={[styles.step, isRTL && styles.textRtl]}>{destination === 'role-boundary' ? t('orientation.boundaryNote') : t('orientation.ready')}</Text>
-      <Button label={t('orientation.continue')} onPress={() => void finish()} />
-    </>}
+    <View style={[styles.top, isRTL && styles.rowRtl]}><Text style={styles.brand}>CINSTE<Text style={styles.brandDot}>.</Text></Text><Text style={styles.phase}>{phase + 1}/3</Text></View>
+    <Animated.View style={{ opacity: fade, transform: [{ translateX: fade.interpolate({ inputRange: [0, 1], outputRange: [isRTL ? -18 : 18, 0] }) }] }}>
+      <Text style={[styles.title, isRTL && styles.textRtl]}>{t(phaseTitle as never)}</Text>
+      {phase === 0 && <><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('orientation.systemCopy' as never)}</Text><SystemMap progress={progress} /></>}
+      {phase === 1 && <><View style={styles.roleHeader}><Text style={[styles.roleLabel, isRTL && styles.textRtl]}>{t(journey.roleLabelKey as never)}</Text><Text style={[styles.stage, isRTL && styles.textRtl]}>{t(journey.stageKey as never)}</Text></View><JourneySteps steps={journey.steps} t={t} isRTL={isRTL} /></>}
+      {phase === 2 && <><View style={styles.startBox}><Text style={[styles.startTitle, isRTL && styles.textRtl]}>{t('orientation.nextTitle' as never)}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t(journey.nextKey as never)}</Text></View><Text style={[styles.hint, isRTL && styles.textRtl]}>{t('orientation.ready' as never)}</Text></>}
+    </Animated.View>
+    <View style={styles.actions}>{phase < 2 ? <Button label={t('orientation.continue' as never)} onPress={goNext} /> : <Button label={t(journey.ctaKey as never)} onPress={() => void finish()} />}<Pressable accessibilityRole="button" accessibilityLabel={t('journey.howItWorks' as never)} onPress={() => phase > 0 && setPhase(0)} style={styles.revisit}><Text style={styles.revisitText}>{phase > 0 ? t('orientation.systemLink' as never) : ''}</Text></Pressable></View>
   </ScrollView>;
 }
 
-const styles = StyleSheet.create({
-  page: { flexGrow: 1, padding: 24, gap: 16, backgroundColor: colors.cream, justifyContent: 'center' }, rtl: {}, textRtl: { textAlign: 'right', writingDirection: 'rtl' },
-  brand: { fontSize: 24, fontWeight: '900', letterSpacing: -1, color: colors.ink }, title: { fontSize: 32, lineHeight: 40, fontWeight: '900', color: colors.ink },
-  card: { gap: 8 }, heading: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.ink }, copy: { fontSize: 16, lineHeight: 24, color: colors.muted }, step: { fontSize: 14, lineHeight: 20, color: colors.muted },
-});
+function SystemMap({ progress }: { progress: Animated.Value }) { const nodes = [{ x: 40, y: 70 }, { x: 140, y: 25 }, { x: 240, y: 70 }, { x: 140, y: 120 }]; return <View accessible accessibilityLabel="Support, Partner experience, Verified Student, Community impact" style={styles.map}><Svg width="280" height="145" viewBox="0 0 280 145"><AnimatedLine x1="40" y1="70" x2="140" y2="25" stroke={color.primary} strokeWidth="3" opacity={progress} /><AnimatedLine x1="140" y1="25" x2="240" y2="70" stroke={color.lilac} strokeWidth="3" opacity={progress} /><AnimatedLine x1="240" y1="70" x2="140" y2="120" stroke={color.mint} strokeWidth="3" opacity={progress} /><AnimatedLine x1="140" y1="120" x2="40" y2="70" stroke={color.sky} strokeWidth="3" opacity={progress} />{nodes.map((node, index) => <Circle key={index} cx={node.x} cy={node.y} r="14" fill={[color.primary, color.lilac, color.mint, color.sky][index]} />)}</Svg><View style={styles.mapLabels}><Text style={styles.mapLabel}>Support</Text><Text style={styles.mapLabel}>Partner</Text><Text style={styles.mapLabel}>Student</Text><Text style={styles.mapLabel}>Impact</Text></View></View>; }
+function JourneySteps({ steps, t, isRTL }: { steps: string[]; t: (key: never) => string; isRTL: boolean }) { return <View style={styles.steps}>{steps.map((step, index) => <View key={step} style={[styles.stepRow, isRTL && styles.rowRtl]}><View style={[styles.stepDot, index === 0 && styles.currentDot]}><Text style={styles.stepNumber}>{index + 1}</Text></View><Text style={[styles.stepText, isRTL && styles.textRtl]}>{t(step as never)}</Text></View>)}</View>; }
+
+const styles = StyleSheet.create({ page: { flexGrow: 1, padding: space.lg, paddingTop: space.xl, paddingBottom: space.xxl, backgroundColor: color.canvas, justifyContent: 'space-between', gap: space.lg }, rtl: {}, rowRtl: { flexDirection: 'row-reverse' }, textRtl: { textAlign: 'right', writingDirection: 'rtl' }, top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, brand: { ...type.label, color: color.ink, letterSpacing: 1 }, brandDot: { color: color.primary }, phase: { ...type.caption, color: color.muted }, title: { ...type.display, color: color.ink, marginTop: space.xl, maxWidth: 350 }, copy: { ...type.body, color: color.secondaryText, marginTop: space.sm, maxWidth: 360 }, map: { alignItems: 'center', marginVertical: space.xl, paddingVertical: space.sm }, mapLabels: { width: 280, flexDirection: 'row', justifyContent: 'space-between', marginTop: -12 }, mapLabel: { ...type.caption, color: color.secondaryText }, roleHeader: { marginTop: space.xl, padding: space.lg, borderRadius: radius.hero, backgroundColor: color.surfaceSubtle, borderWidth: 1, borderColor: color.line }, roleLabel: { ...type.label, color: color.primary }, stage: { ...type.section, color: color.ink, marginTop: space.xs }, steps: { marginTop: space.xl, gap: space.sm }, stepRow: { minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: space.md, padding: space.sm, borderRadius: radius.card, backgroundColor: color.surface, borderWidth: 1, borderColor: color.line }, stepDot: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: color.surfaceSubtle }, currentDot: { backgroundColor: color.primary }, stepNumber: { ...type.label, color: color.ink }, stepText: { ...type.body, color: color.ink, flex: 1 }, startBox: { marginTop: space.xl, padding: space.lg, borderRadius: radius.hero, backgroundColor: color.mintSoft, borderWidth: 1, borderColor: color.line }, startTitle: { ...type.cardTitle, color: color.ink }, hint: { ...type.bodySmall, color: color.muted, marginTop: space.lg }, actions: { gap: space.xs }, revisit: { minHeight: 28, alignItems: 'center', justifyContent: 'center' }, revisitText: { ...type.caption, color: color.muted } });

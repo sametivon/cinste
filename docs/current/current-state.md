@@ -95,26 +95,25 @@ Production evidence.
 
 ## Current active workstream
 
-The shared native CINSTE orientation batch is implemented in the repository.
-Authenticated native entry is gated by a versioned SecureStore presentation
-marker keyed by Supabase user ID; the two-step orientation describes CINSTE,
-privacy, and the authoritative role/state next step, then records completion
-only after Continue and re-runs the existing resolver. Student Profile, Giver
-Account, and the native role-boundary surface can revisit it. Protected Student,
-Giver, verification, history, workspace, and offer routes redirect incomplete
-users to orientation. The unauthenticated `/native/giver/confirm` callback
-remains outside those guards. Mobile typecheck passes and the full suite is
-48/48; Expo Go/manual device acceptance remains pending. No migration,
-database, web, funding, callback, or Production state changed.
+The role-based guided native launch flow is implemented in the repository.
+Orientation version 2 uses per-user SecureStore presentation state, an animated
+SVG CINSTE system map, role/state-specific journeys, a truthful next action,
+and reduced-motion-safe transitions. Completion still re-runs the existing
+resolver; it does not select a workspace, grant authority, bypass verification,
+or cross a role boundary. Compact Your journey guidance is present on Student
+Profile and Giver Offers, while Student Profile, Giver Account, and the native
+role-boundary surface retain revisitable orientation entry. Protected Student,
+Giver, verification, history, workspace, and offer routes remain guarded, and
+the unauthenticated `/native/giver/confirm` callback remains outside those
+guards. Mobile typecheck passes and the full suite is 51/51. This is repository
+and local automated evidence only; Expo Go/manual device acceptance remains
+pending. No migration, database, web, funding, callback, or Production state
+changed.
 
-The owner rejected the two-step orientation as product-incomplete. The needed
-experience is a role-based guided launch flow, not an introductory overlay:
-an animated shared explanation of the CINSTE system, a personalized role/state
-journey, and durable contextual guidance after entry. Effects must be
-purposeful, use the existing native motion capability, and respect reduced
-motion. The latest owner screenshots still show the pre-shell standalone Giver
-screen (no native tab bar and the removed in-page switch), so Expo Go must be
-reloaded from the current Metro bundle before device acceptance is recorded.
+The preceding two-step orientation was rejected as product-incomplete and has
+now been replaced by the guided launch batch above. The latest owner screenshots
+still show the pre-shell standalone Giver screen, so Expo Go must be reloaded
+from the current Metro bundle before device acceptance is recorded.
 
 The native workspace-envelope/Giver-shell, onboarding, and read-only catalog/
 outcomes batches are complete in the repository:
@@ -239,18 +238,13 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** replace the shallow two-step orientation with a coherent, role-based
-native onboarding flow: an animated shared CINSTE system story, a personalized
-role/state journey with an authoritative next action, and compact contextual
-guidance that remains available after entry. It must use versioned per-user
-local presentation state only, respect reduced-motion settings, and never grant
-authority or bypass verification, assignment, workspace choice, or existing
-role boundaries. No BFF, funding, Auth protocol, database, or role change is
-in scope. Reload Expo Go from the current Metro bundle before later device
-acceptance. The fixed unauthenticated callback remains outside the guarded
-workspace; the native-owned PKCE and verified iOS Universal Link correction
-remains blocked until Apple Developer membership provides a real bundle ID and
-Team ID. No signed-iOS, TestFlight, or Production evidence is claimed.
+**NEXT:** reload Expo Go from the current Metro bundle and run manual acceptance
+for the guided launch, Student/Giver routing, durable guidance, Giver catalog,
+My Giving privacy states, navigation, and absence of funding controls. The fixed
+unauthenticated callback remains outside the guarded workspace; the native-owned
+PKCE and verified iOS Universal Link correction remains blocked until Apple
+Developer membership provides a real bundle ID and Team ID. No signed-iOS,
+TestFlight, or Production evidence is claimed.
 
 ## COMPLETE
 - Core backend hardening implemented
