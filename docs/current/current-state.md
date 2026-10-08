@@ -107,6 +107,15 @@ remains outside those guards. Mobile typecheck passes and the full suite is
 48/48; Expo Go/manual device acceptance remains pending. No migration,
 database, web, funding, callback, or Production state changed.
 
+The owner rejected the two-step orientation as product-incomplete. The needed
+experience is a role-based guided launch flow, not an introductory overlay:
+an animated shared explanation of the CINSTE system, a personalized role/state
+journey, and durable contextual guidance after entry. Effects must be
+purposeful, use the existing native motion capability, and respect reduced
+motion. The latest owner screenshots still show the pre-shell standalone Giver
+screen (no native tab bar and the removed in-page switch), so Expo Go must be
+reloaded from the current Metro bundle before device acceptance is recorded.
+
 The native workspace-envelope/Giver-shell, onboarding, and read-only catalog/
 outcomes batches are complete in the repository:
 the resolver fails closed on missing/failed reads and does not call BFF, funding
@@ -230,19 +239,18 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** add a shared, first-run and revisitable native CINSTE orientation for
-every authenticated user before the authoritative workspace resolver sends them
-to their next task. It must explain the common giver-to-student-to-partner
-journey, then present a role- and state-specific next step without granting
-authority or bypassing verification, assignment, workspace choice, or existing
-role boundaries. Use per-user local presentation state only; do not add a
-database onboarding flag or change funding, BFF, Auth, or role authority. The
-Giver explanation must make its current mobile/Web funding boundary clear.
-Then run bounded Expo Go acceptance on iPhone. The fixed unauthenticated
-callback remains outside the guarded workspace; the native-owned PKCE and
-verified iOS Universal Link correction remains blocked until Apple Developer
-membership provides a real bundle ID and Team ID. No signed-iOS, TestFlight, or
-Production evidence is claimed.
+**NEXT:** replace the shallow two-step orientation with a coherent, role-based
+native onboarding flow: an animated shared CINSTE system story, a personalized
+role/state journey with an authoritative next action, and compact contextual
+guidance that remains available after entry. It must use versioned per-user
+local presentation state only, respect reduced-motion settings, and never grant
+authority or bypass verification, assignment, workspace choice, or existing
+role boundaries. No BFF, funding, Auth protocol, database, or role change is
+in scope. Reload Expo Go from the current Metro bundle before later device
+acceptance. The fixed unauthenticated callback remains outside the guarded
+workspace; the native-owned PKCE and verified iOS Universal Link correction
+remains blocked until Apple Developer membership provides a real bundle ID and
+Team ID. No signed-iOS, TestFlight, or Production evidence is claimed.
 
 ## COMPLETE
 - Core backend hardening implemented

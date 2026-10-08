@@ -74,6 +74,13 @@ iOS-specific build, signing, TestFlight, or release work.
   route guards. Typecheck and the full 48-test mobile suite pass; physical
   device acceptance remains pending. The fixed Giver confirmation callback is
   unchanged and remains outside protected workspace/onboarding guards.
+- The owner rejected that two-step orientation as product-incomplete. The
+  required direction is a role-based guided launch flow, not added explanation
+  screens: a shared animated CINSTE system story, a personalized role/state
+  journey with a truthful next action, and durable contextual guidance inside
+  the resulting workspace. Motion must be purposeful and reduced-motion safe.
+  The latest owner screenshots are from a stale Expo Go bundle: they still show
+  the removed in-page Giver switch and no native tab bar.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -89,10 +96,13 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Re-run manual Expo Go acceptance for orientation, Student/Giver routing,
-   Giver catalog/detail, My Giving privacy states, navigation, and absence of
-   checkout/payment controls.
-2. After Apple Developer enrollment, implement the Astra-reviewed
+1. Replace the shallow orientation with the approved role-based guided native
+   launch flow, including purposeful reduced-motion-safe effects and durable
+   contextual guidance after entry.
+2. Reload Expo Go from the current bundle, then re-run manual acceptance for
+   onboarding, Student/Giver routing, Giver catalog/detail, My Giving privacy
+   states, navigation, and absence of checkout/payment controls.
+3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
 3. Resolve native Partner and Organization operational-surface gaps in the
@@ -275,10 +285,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Add the local-only shared native CINSTE orientation before acceptance
-   testing; it does not require Apple signing or a Mac.
-2. Run the bounded Expo Go manual acceptance below for the orientation and
-   Student/Giver surfaces.
+1. Replace the two-step orientation with the approved role-based guided native
+   launch flow; it does not require Apple signing or a Mac.
+2. Reload Expo Go from the current bundle and run the bounded acceptance for
+   onboarding and Student/Giver surfaces.
 3. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link
    correction and validate hosted QA signup/confirmation.
@@ -287,15 +297,14 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** add a shared first-run and revisitable CINSTE orientation
-for every authenticated native user before the existing authoritative resolver
-sends them to a task screen. Explain the common giver-to-student-to-partner
-journey, then show a safe role- and state-specific next step. For Givers,
-explain Offers, My Giving privacy states, and that browsing/outcome updates are
-mobile while funding remains on CINSTE web. Persist only a versioned, per-user
-local presentation choice; do not change BFF, funding, Auth, role, or database
-authority, and do not bypass verification, assignments, workspace choice, or
-role boundaries. Preserve the exact unauthenticated callback outside the
-workspace guard. Then collect Expo Go iPhone evidence for orientation and the
-Student/Giver surfaces. Do not claim signed-iOS, TestFlight, or Production
-acceptance.
+**NEXT BOUNDED TASK:** replace the shallow two-step orientation with a coherent
+role-based guided native launch flow. It must show an animated shared CINSTE
+system story, then a personalized role/state journey with the resolver-derived
+next action, and leave compact contextual guidance available in the destination
+workspace. Use only versioned per-user local presentation state, purposeful
+reduced-motion-safe effects, and truthful current-surface boundaries. Do not
+change BFF, funding, Auth protocol, role, database authority, verification,
+assignments, or workspace choice. Preserve the exact unauthenticated callback
+outside the workspace guard. Reload Expo Go from the current Metro bundle only
+after implementation, then collect device evidence. Do not claim signed-iOS,
+TestFlight, or Production acceptance.
