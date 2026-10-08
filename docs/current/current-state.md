@@ -56,9 +56,11 @@ strict BFF client, and an Expo-side fixed-code callback scaffold are now
 implemented in the repository. Reconciliation found that this is not a
 complete hosted confirmation flow: the Vercel host has no matching
 callback/association delivery and the server-initiated signup does not
-establish a mobile-held PKCE verifier for the later code exchange. QA callback
-configuration is therefore not evidenced and must not be added as a claim of
-usability. Both mock
+establish a mobile-held PKCE verifier for the later code exchange. Astra has
+now approved the correction: native retains the verifier, sends only its S256
+challenge to the BFF, and redeems the returned code over HTTPS
+before setting its session. QA callback configuration remains blocked pending
+implementation and real mobile signing identities. Both mock
 funding RPCs remain service-only, and migration `0021` Giver provisioning is
 unchanged.
 
@@ -80,8 +82,10 @@ email/password/displayName shape to the fixed BFF URL; the callback accepts
 only an authorization code, is designed to exchange it through PKCE, discards
 link intent, and re-runs the resolver. It is not a usable end-to-end PKCE flow
 yet: the BFF signup context cannot supply the later mobile verifier, and
-hosted HTTPS callback/app-link association delivery is absent. Mobile-code
-validation is local only; no hosted
+hosted HTTPS callback/app-link association delivery is absent. The approved
+replacement is native-owned PKCE challenge plus a direct trusted token
+exchange after exact-link validation. Mobile-code validation is local only; no
+hosted
 mobile deployment, hosted signup/callback validation, or physical-device
 acceptance is evidenced.
 The first native Giver BFF implementation batch is complete in the repository:
@@ -142,11 +146,11 @@ ad-hoc hosted objects to bypass migration order.
   no authenticated physical-device acceptance yet.
 - The reviewed native Giver BFF's database limiter is hosted-validated and the
   owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel. The
-  native callback requires an Astra-reviewed correction before external
-  configuration: repository reconciliation found no Vercel callback/verified
-  app-link association delivery and no safe PKCE-verifier handoff from the
-  server-created signup to the mobile code exchange. Do not configure or use
-  the callback until that contract is resolved.
+  native callback has an Astra-reviewed correction but is not ready for
+  external configuration: implement native-owned PKCE challenge/state, exact
+  HTTPS callback validation, and verified association delivery using real iOS
+  and Android signing identities. Do not configure or use the callback until
+  that implementation is complete.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -189,10 +193,10 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** obtain an Astra-reviewed, implementable server-signup-to-native
-confirmation contract (including the PKCE verifier and verified HTTPS app-link
-delivery). Only then configure the exact Vercel/Supabase callback URL and run
-hosted QA signup/callback validation.
+**NEXT:** owner supplies the iOS bundle/team and Android package/signing
+identities needed for verified app links; then implement the approved
+native-owned PKCE/app-link correction. Only then configure the exact
+Vercel/Supabase callback URL and run hosted QA signup/callback validation.
 
 ## COMPLETE
 - Core backend hardening implemented
