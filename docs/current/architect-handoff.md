@@ -45,7 +45,7 @@ iOS-specific build, signing, TestFlight, or release work.
 - Read-only native Giver catalog/detail and My Giving outcomes are implemented:
   active offer/partner/category reads use existing RLS, outcomes use the
   no-argument self-scoped RPC, and all three privacy states are preserved.
-  Focused mobile validation is 31/31 and typecheck passes.
+  The full mobile suite is 42/42 and typecheck passes.
 
 ### In Progress
 
@@ -67,10 +67,12 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. After Apple Developer enrollment, implement the Astra-reviewed
+1. Run manual Expo Go acceptance for the new read-only Giver catalog, detail,
+   and My Giving states using an existing confirmed Giver account.
+2. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-2. Resolve native Partner and Organization operational-surface gaps in the
+3. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -250,15 +252,19 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. When Apple Developer membership exists, owner supplies the iOS bundle ID
+1. Run the bounded Expo Go manual acceptance below for the read-only Giver
+   surface; it does not require Apple signing or a Mac.
+2. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link
    correction and validate hosted QA signup/confirmation.
-2. Resolve native Partner and Organization operational-surface decisions and
+3. Resolve native Partner and Organization operational-surface decisions and
    implementation gaps.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** implement the approved native-owned PKCE and verified iOS
-Universal Link correction after the owner supplies the bundle ID and Team ID.
-Keep read-only Giver validation separate from hosted mobile, signed-iOS,
-TestFlight, and Production evidence.
+**NEXT BOUNDED TASK:** manually validate the read-only Giver surface in Expo Go
+on iPhone with an existing confirmed Giver account: catalog load and empty/error
+states, offer-detail navigation, and each available privacy outcome state that
+the fixture data can evidence. Confirm there are no checkout/payment controls.
+Record only observed device evidence; do not claim signed-iOS, TestFlight, or
+Production acceptance.

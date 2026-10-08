@@ -208,11 +208,13 @@ and Admin-controlled Organization provisioning already exist.
 ## Next recommended action
 
 **NEXT:** the read-only native Giver catalog and My Giving outcomes surfaces
-are complete in the repository. The next action is the Astra-reviewed
-native-owned PKCE and verified iOS Universal Link correction once Apple
-Developer membership provides a real bundle ID and Team ID. No hosted mobile,
-Expo Go, signed-iOS, TestFlight, or Production evidence is claimed for this
-read-only batch.
+are complete in the repository. Run bounded manual Expo Go acceptance on iPhone
+with an existing confirmed Giver account: catalog/detail navigation, any
+available outcome/privacy states, and absence of checkout/payment controls.
+Then the Astra-reviewed native-owned PKCE and verified iOS Universal Link
+correction remains blocked until Apple Developer membership provides a real
+bundle ID and Team ID. No hosted mobile, Expo Go, signed-iOS, TestFlight, or
+Production evidence is currently claimed for this read-only batch.
 
 ## COMPLETE
 - Core backend hardening implemented
