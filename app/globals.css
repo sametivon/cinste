@@ -49,9 +49,10 @@ body:has(.admin-v1-page) { background:#FFF8F3; color:#231F20; font-family:"Plus 
 .auth-visual-mark span { background:var(--cinste-primary); border-radius:999px; display:block; height:12px; width:12px }
 .auth-visual-mark span:nth-child(2) { background:#F1EBFB; margin-top:18px }
 .auth-visual-mark span:nth-child(3) { background:#E5F5F0; margin-top:36px }
-.auth-journey { display:grid; gap:10px; list-style:none; margin:34px 0 0; max-width:290px; padding:0 }
-.auth-journey li { align-items:center; color:var(--cinste-text); display:flex; font-size:14px; font-weight:700; gap:10px }
-.auth-journey li::before { background:var(--cinste-surface); border:1px solid #CDBEB7; border-radius:999px; content:counter(list-item); display:grid; height:24px; place-items:center; width:24px }
+.auth-journey { counter-reset:auth-step; display:grid; gap:10px; list-style:none; margin:34px 0 0; max-width:290px; padding:0; position:relative }
+.auth-journey::before { background:#CDBEB7; content:""; height:calc(100% - 24px); left:12px; opacity:.65; position:absolute; top:12px; width:1px }
+.auth-journey li { align-items:center; color:var(--cinste-text); display:flex; font-size:14px; font-weight:700; gap:10px; position:relative }
+.auth-journey li::before { background:var(--cinste-surface); border:1px solid #CDBEB7; border-radius:999px; content:counter(auth-step); counter-increment:auth-step; display:grid; height:24px; place-items:center; width:24px; z-index:1 }
 .auth-intro-giver .auth-visual-mark span:first-child { background:#E5F5F0 }
 .auth-intro-student .auth-visual-mark span:first-child { background:#E8F3FB }
 @media (max-width:760px) { .auth-journey { margin-top:24px } }
