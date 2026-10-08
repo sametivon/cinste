@@ -39,3 +39,4 @@ body:has(.admin-v1-page) { background:#FFF8F3; color:#231F20; font-family:"Plus 
 .join-card-kicker { color:var(--cinste-primary); display:block; font-size:12px; font-weight:800; letter-spacing:.08em; margin-bottom:10px; text-transform:uppercase }
 .join-card-benefit,.join-card-next { border-top:1px solid var(--cinste-border); margin-top:14px!important; padding-top:12px }
 .join-card-benefit strong,.join-card-next strong { color:var(--cinste-text) }
+.auth-card-primary { border-color:#E5B9BD; box-shadow:0 6px 18px rgb(71 45 41 / 10%) }.auth-switch { margin:20px 0 0!important; text-align:center }.auth-switch a { color:var(--cinste-primary); font-weight:800; text-decoration:underline; text-underline-offset:3px }

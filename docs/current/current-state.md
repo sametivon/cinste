@@ -106,7 +106,8 @@ The public web acquisition flow now sends every Student and Giver landing CTA
 through the localized role explainer before authentication. The explainer says
 what each path receives and what happens next, keeps Partner and Organization
 truthfully invitation-only, and keeps Admin sign-in-only. Role-aware login
-puts account creation before returning-user sign-in. Role selection remains
+shows one account-creation form for a selected Student or Giver path; existing
+users can intentionally switch to a single sign-in form. Role selection remains
 presentation-only: it cannot set a stored role, assignment, or workspace.
 Typecheck and 21 focused routing/provisioning tests pass locally. This is
 repository and local automated evidence only; no hosted or device acceptance
