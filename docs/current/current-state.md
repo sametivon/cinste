@@ -60,7 +60,8 @@ establish a mobile-held PKCE verifier for the later code exchange. Astra has
 now approved the correction: native retains the verifier, sends only its S256
 challenge to the BFF, and redeems the returned code over HTTPS
 before setting its session. QA callback configuration remains blocked pending
-implementation and real mobile signing identities. Both mock
+implementation and a real iOS signing identity. Android is out of scope for
+this slice. Both mock
 funding RPCs remain service-only, and migration `0021` Giver provisioning is
 unchanged.
 
@@ -148,9 +149,9 @@ ad-hoc hosted objects to bypass migration order.
   owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel. The
   native callback has an Astra-reviewed correction but is not ready for
   external configuration: implement native-owned PKCE challenge/state, exact
-  HTTPS callback validation, and verified association delivery using real iOS
-  and Android signing identities. Do not configure or use the callback until
-  that implementation is complete.
+  HTTPS callback validation, and verified iOS Universal Link delivery using a
+  real bundle/team identity. Android is out of scope for this slice. Do not
+  configure or use the callback until that implementation is complete.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -193,9 +194,9 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** owner supplies the iOS bundle/team and Android package/signing
-identities needed for verified app links; then implement the approved
-native-owned PKCE/app-link correction. Only then configure the exact
+**NEXT:** owner supplies the iOS bundle ID and Apple Team ID needed for the
+verified Universal Link; then implement the approved native-owned PKCE/app-link
+correction. Android is out of scope. Only then configure the exact
 Vercel/Supabase callback URL and run hosted QA signup/callback validation.
 
 ## COMPLETE

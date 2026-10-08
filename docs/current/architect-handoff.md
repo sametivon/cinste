@@ -17,7 +17,8 @@ callback scaffold are implemented locally. Astra review identified a concrete
 correction: native owns a CSPRNG PKCE verifier and submits only its S256
 challenge to the BFF; after the exact verified HTTPS app link, native redeems
 the Auth code with that verifier over HTTPS and sets the returned session.
-Hosted configuration waits for that correction and real mobile signing IDs.
+Hosted configuration waits for that correction and the real iOS signing ID.
+Android is explicitly out of scope for the current native Giver slice.
 
 ## Roadmap snapshot
 
@@ -62,11 +63,12 @@ Hosted configuration waits for that correction and real mobile signing IDs.
 ### Blocked
 
 - Native Giver BFF use is blocked on implementing the Astra-reviewed PKCE and
-  verified-app-link correction. The owner must supply real iOS bundle/team and
-  Android package/signing-fingerprint identities for association files; do not
-  configure the callback variable or Auth redirect allowlist until the
-  corrected implementation is ready. Native Partner and Organization surfaces
-  are absent, and the mobile router is still Student-centric.
+  verified iOS Universal Link correction. The owner must supply a real iOS
+  bundle ID and Apple Team ID for the association file; Android is not in the
+  current scope. Do not configure the callback variable or Auth redirect
+  allowlist until the corrected implementation is ready. Native Partner and
+  Organization surfaces are absent, and the mobile router is still
+  Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
   deletion/retention delivery.
@@ -134,7 +136,8 @@ label must not be reported as a business Production deployment. The owner
 reports `NATIVE_BFF_RATE_LIMIT_KEY` configured server-side; its value was not
 inspected. The repository contains an Expo callback scaffold but no hosted
 callback/association delivery. Astra has selected a viable native-owned PKCE
-correction; the required mobile signing identities are not yet evidenced.
+correction; the required iOS signing identity is not yet evidenced. Android is
+out of scope for this slice.
 
 The web app has public/auth routes and functional Giver, Partner, Organization
 Operator, and Admin workspaces. Native has the Student journey plus the reviewed
@@ -205,8 +208,9 @@ the `0022` funding RPCs are correctly service-only on the web server path.
   other parameters or fragment; redeem the code directly against Supabase's
   PKCE token endpoint over HTTPS; then set the session from that trusted
   response. No raw tokens may arrive via a link. The BFF must retain the grant
-  and pass the challenge through its Auth signup request. Host exact fallback
-  and iOS/Android association files only after real app IDs are supplied.
+  and pass the challenge through its Auth signup request. Host the exact
+  fallback and iOS association file only after the real app ID is supplied;
+  Android is out of scope for this slice.
 - Required before real payments, scheduler identity/activation, Production
   migration/RLS/grant verification, QA target allow-listing, sensitive
   telemetry/redaction, deletion/erasure, and material Auth/deep-link changes.
@@ -225,8 +229,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Owner supplies the iOS bundle/team and Android package/signing identities;
-   then implement the approved PKCE/app-link correction and validate hosted QA
+1. Owner supplies the iOS bundle ID and Apple Team ID; then implement the
+   approved PKCE/Universal Link correction and validate hosted QA
    signup/confirmation.
 2. Run hosted behavioral validation for already-applied `0022` as a separate
    DEV/QA task.
@@ -235,8 +239,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** owner supplies the mobile signing identities needed for
-verified app links: iOS bundle ID plus Apple Team ID, and Android package name
-plus SHA-256 signing-certificate fingerprint. Then implement the approved
+**NEXT BOUNDED TASK:** owner supplies the iOS bundle ID and Apple Team ID
+needed for the verified Universal Link. Then implement the approved
 native-owned PKCE and exact HTTPS app-link correction. Preserve the resolver
-and Giver shell; do not add funding or Partner/Organization functionality.
+and Giver shell; Android, funding, and Partner/Organization functionality are
+out of scope.
