@@ -74,7 +74,7 @@ product-surface workstream.
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
 | Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0023` are owner-confirmed applied. On 2026-10-08, 12 non-production hosted assertions passed for `0023`; `0022` hosted behavioral validation remains pending. Fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
-| Web deployment | Public and operational web surfaces | Repository application exists; no production Vercel/domain deployment is evidenced |
+| Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Expo app exists but is Student-only in implementation; all non-Student profile roles stop at `role-boundary`; no EAS production profile, signing, or TestFlight release evidence |
 | Scheduler | Claim and Impact maintenance | DEV/QA job is registered but intentionally inactive; real worker/concurrency validation, monitoring, and Production activation are pending |
 | Payments | Funding authority | Mock-only; no real provider, signed webhook, or reconciliation |
@@ -112,10 +112,10 @@ ad-hoc hosted objects to bypass migration order.
 - Native Giver, Partner, and Organization Operator surfaces required by the
   locked platform strategy are absent; native routing does not yet resolve
   additive workspaces.
-- The reviewed native Giver BFF's database limiter is hosted-validated, but
-  use remains blocked until the QA Next.js host's server-only
-  `NATIVE_BFF_RATE_LIMIT_KEY` and exact HTTPS Supabase Auth redirect allowlist
-  are evidenced without exposing their values.
+- The reviewed native Giver BFF's database limiter is hosted-validated and the
+  owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel, but
+  use remains blocked until an exact HTTPS Supabase Auth confirmation redirect
+  and matching native callback are implemented and configured.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -158,14 +158,12 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**IMPLEMENT:** obtain non-secret evidence that the QA Next.js host has
-server-only `NATIVE_BFF_RATE_LIMIT_KEY` and that
-`NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL` is an exact HTTPS Supabase Auth
-redirect allowlist entry. Do not enable or call the BFF until both are
-evidenced. The separate next product workstream is native workspace foundation
-and Giver auth/read-only surfaces; reuse the existing catalog and
-`list_my_giving_outcomes()` authority and do not grant service-only funding
-RPCs to the mobile client.
+**IMPLEMENT:** add the reviewed native workspace-envelope resolver and chooser
+with a Giver shell, preserving all existing Student navigation and verification
+behavior. Do not add native signup, confirmation callbacks, funding calls, or
+Partner/Organization functionality in that batch. Reuse the existing catalog
+and `list_my_giving_outcomes()` authority later; do not grant service-only
+funding RPCs to the mobile client.
 
 ## COMPLETE
 - Core backend hardening implemented

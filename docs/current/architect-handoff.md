@@ -11,8 +11,8 @@ Realign the implemented V1 with the locked mobile-first platform strategy, then
 prepare for controlled external beta. The immediate product objective is the
 smallest safe native Giver vertical slice. Astra has reviewed its trust
 boundary; the BFF foundation and `0023` migration are implemented and
-owner-confirmed applied to DEV/QA. The limiter's hosted validation passed;
-QA host secret/callback configuration remains unverified.
+owner-confirmed applied to DEV/QA. The limiter's hosted validation passed and
+a QA Vercel host is live; the native confirmation callback remains absent.
 
 ## Roadmap snapshot
 
@@ -30,32 +30,35 @@ QA host secret/callback configuration remains unverified.
   2026-10-08 for service-only execution, direct API-role denial, private
   storage API denial, the configured burst quota, and invalid fingerprint
   rejection. No Production environment was contacted.
+- QA Vercel host at `https://cinste.vercel.app`: its stable domain returned
+  HTTP 200 on 2026-10-08. Vercel's deployment label is not business Production.
 
 ### In Progress
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
   migration `0023` is owner-confirmed applied to DEV/QA and its database
-  behavior is hosted-validated. QA secret/callback configuration remains
-  unverified, so it cannot be used.
+  behavior is hosted-validated. The owner configured its server-only
+  rate-limit key in QA Vercel; the native confirmation callback remains absent,
+  so it cannot be used.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
 
-1. Obtain non-secret QA-host evidence for the server-only rate-limit key and
-   exact HTTPS Supabase Auth confirmation redirect allowlist before any native
-   client calls the BFF.
-2. Implement the reviewed native multi-workspace foundation and Giver vertical
-   slice while preserving Student and web Giver behavior.
-3. Run focused hosted DEV/QA behavioral validation for `0022`.
-4. Resolve native Partner and Organization operational-surface gaps in the
+1. Implement the reviewed native multi-workspace foundation and Giver shell
+   while preserving Student navigation and verification behavior.
+2. Implement native Giver signup and the exact confirmation callback, then
+   configure its HTTPS Supabase Auth redirect allowlist before BFF use.
+3. Implement the remaining read-only Giver catalog and outcomes surfaces.
+4. Run focused hosted DEV/QA behavioral validation for `0022`.
+5. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
-5. Close production-readiness work needed for controlled external beta.
 
 ### Blocked
 
-- Native Giver BFF use is blocked on QA host secret/callback configuration;
-  native Partner and Organization surfaces are absent, and
+- Native Giver BFF use is blocked on the unimplemented native confirmation
+  callback and its exact HTTPS Supabase Auth redirect configuration; native
+  Partner and Organization surfaces are absent, and
   the mobile router is still Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
@@ -117,6 +120,13 @@ production web/mobile deployment do not exist. Payments are mock-only. The
 maintenance Cron is registered in DEV/QA but intentionally inactive. No EAS
 production profile, signing, or TestFlight evidence exists.
 
+An owner-created QA Vercel project now serves `https://cinste.vercel.app` from
+the repository; its stable domain returned HTTP 200 on 2026-10-08. The Vercel
+deployment is configured against QA resources and its provider environment
+label must not be reported as a business Production deployment. The owner
+reports `NATIVE_BFF_RATE_LIMIT_KEY` configured server-side; its value was not
+inspected. No exact native confirmation callback redirect is configured.
+
 The web app has public/auth routes and functional Giver, Partner, Organization
 Operator, and Admin workspaces. Native has the Student journey, but its current
 `resolveMobileDestination` sends every non-Student profile to `role-boundary`;
@@ -126,17 +136,19 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 ## Active workstreams
 
 - Native Giver BFF foundation and `0023` are complete, pushed, owner-confirmed
-  applied to DEV/QA, and database-validated there; QA configuration evidence
-  is still required before use.
+  applied to DEV/QA, and database-validated there; its QA Vercel host and
+  server-only rate-limit key are owner-confirmed, but the confirmation callback
+  remains before use.
 - The mobile-first audit and native Giver vertical-slice plan remain the
   implementation guide for the unstarted native router and UI work.
 - Separate operational work remains: hosted behavioral validation of `0022`.
 
 ## Blocked / waiting workstreams
 
-- Native Giver BFF use remains blocked until the QA Next.js host's isolated
-  service and rate-limit secrets and exact confirmation callback configuration
-  are evidenced. Focused hosted limiter validation has passed. Native
+- Native Giver BFF use remains blocked until the native confirmation callback
+  and its exact HTTPS Supabase Auth redirect configuration exist. Focused
+  hosted limiter validation has passed and the rate-limit key is
+  owner-confirmed server-side. Native
   workspace routing and UI remain separate, unimplemented work.
 - Partner public acquisition/onboarding and Organization public acquisition
   await the owner decisions above.
@@ -195,16 +207,16 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Obtain non-secret evidence of the QA BFF secret/callback configuration.
-2. Implement the reviewed native multi-workspace foundation and Giver vertical
-   slice in the recorded sequence, preserving existing Student behavior.
+1. Implement the reviewed native multi-workspace foundation and Giver shell,
+   preserving existing Student behavior.
+2. Implement native Giver signup plus the exact confirmation callback and
+   redirect allowlist configuration.
 3. Run hosted behavioral validation for already-applied `0022` as a separate
    DEV/QA task.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** verify, without exposing values, that the QA Next.js
-host has server-only `NATIVE_BFF_RATE_LIMIT_KEY` and that
-`NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL` exactly matches an HTTPS Supabase
-Auth redirect allowlist entry. Do not add mobile UI, deep-link handling, or
-client funding calls in that task.
+**NEXT BOUNDED TASK:** implement the reviewed native workspace-envelope
+resolver and chooser with a Giver shell. Preserve Student navigation and
+verification behavior; do not add native signup, confirmation/deep-link
+handling, funding calls, or Partner/Organization functionality.
