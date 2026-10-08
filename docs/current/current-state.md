@@ -110,16 +110,18 @@ and local automated evidence only; Expo Go/manual device acceptance remains
 pending. No migration, database, web, funding, callback, or Production state
 changed.
 
-Reconciliation found two visual/localization defects before acceptance: the
-system-map labels and accessibility label are hard-coded English instead of
-using the four-locale dictionaries, and its paths fade together rather than
-presenting the approved sequential system journey. Correct those bounded native
-presentation defects before collecting device evidence.
+Owner iPhone Expo Go evidence on 2026-10-08 rejects the launch flow for device
+acceptance. The current bundle now proves the native Giver tabs load, but phase
+one overlaps the status bar, phase two renders blank after Continue, the map is
+still a non-sequential diamond with English labels, and the durable Giver
+guidance remains a dense technical paragraph instead of a clear next action.
+Correct these bounded native presentation defects before collecting further
+acceptance evidence.
 
 The preceding two-step orientation was rejected as product-incomplete and has
-now been replaced by the guided launch batch above. The latest owner screenshots
-still show the pre-shell standalone Giver screen, so Expo Go must be reloaded
-from the current Metro bundle before device acceptance is recorded.
+now been replaced by the guided launch batch above. The current owner evidence
+is from the latest bundle, not a stale pre-shell view; its failures are product
+and rendering defects rather than a reload issue.
 
 The native workspace-envelope/Giver-shell, onboarding, and read-only catalog/
 outcomes batches are complete in the repository:

@@ -74,11 +74,12 @@ iOS-specific build, signing, TestFlight, or release work.
   compact Your journey guidance on Student Profile and Giver Offers. Existing
   resolver continuation, protected route guards, revisitable orientation
   entry points, and the fixed unauthenticated Giver callback are unchanged.
-  Typecheck and the full 51-test mobile suite pass. Reconciliation found two
-  required corrections before Expo Go review: the system-map labels/accessibility
-  label are hard-coded English, and its paths fade together rather than
-  presenting the approved sequential journey. The latest owner screenshots are
-  from a stale Expo Go bundle and must be reloaded only after those corrections.
+  Typecheck and the full 51-test mobile suite pass. Owner iPhone Expo Go
+  evidence rejects device acceptance: phase one overlaps the status bar, phase
+  two is blank after Continue, map labels remain English in a non-sequential
+  diamond, and durable Giver guidance is still dense technical copy. The
+  current evidence is from the latest bundle; correct these product/rendering
+  defects before a new device review.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -94,16 +95,16 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Correct system-map localization/accessibility and purposeful sequential
-   journey motion without changing routing, authority, or the flow's content.
-2. Reload Expo Go from the current bundle, then re-run manual acceptance for
+1. Correct the guided launch: safe-area layout, non-blank role phase, localized
+   sequential system story, and concise action-led durable guidance.
+2. Re-run manual iPhone Expo Go acceptance for
    onboarding, Student/Giver routing, Giver catalog/detail, My Giving privacy
    states, durable guidance, navigation, and absence of checkout/payment
    controls.
 3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-3. Resolve native Partner and Organization operational-surface gaps in the
+4. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -295,12 +296,12 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** correct the guided-launch system map before acceptance:
-move every visible and accessibility label into the RO/EN/TR/AR dictionaries,
-and animate the map as a clear sequential Giver-to-Partner-to-Student-to-Impact
-journey rather than simultaneous path fading. Preserve the current three-phase
-flow, versioned local state, reduced-motion behavior, resolver continuation,
-route guards, exact unauthenticated callback boundary, and all authority/
-funding exclusions. Add focused regression coverage, then reload Expo Go from
-the current Metro bundle and collect device evidence. Do not claim signed-iOS,
-TestFlight, or Production acceptance.
+**NEXT BOUNDED TASK:** correct the guided launch before acceptance: keep all
+orientation content inside safe areas; fix the blank personalized role phase;
+move map labels/accessibility into RO/EN/TR/AR dictionaries; animate a clear
+sequential Giver-to-Partner-to-Student-to-Impact story; and replace the dense
+technical durable Giver paragraph with one concise, action-led next-step
+message. Preserve the current three-phase flow, local state, reduced-motion
+behavior, resolver continuation, guards, callback boundary, and all authority/
+funding exclusions. Add focused regression coverage, then collect new iPhone
+Expo Go evidence. Do not claim signed-iOS, TestFlight, or Production acceptance.
