@@ -62,10 +62,12 @@ iOS-specific build, signing, TestFlight, or release work.
   the protected `(workspace)` layout, while `/giver` and catalog, detail, My
   Giving, and Account remain in the guarded workspace. Signed-iOS, TestFlight,
   and Production validation remain unevidenced.
-- The owner identified an onboarding comprehension gap: the workspace is now
-  navigable but does not explain the Giver journey, privacy-protected outcomes,
-  or the current mobile/Web funding boundary. The next product task is a
-  first-run, revisitable, local-only orientation inside the guarded workspace.
+- The owner identified an app-wide onboarding comprehension gap: authenticated
+  users are sent straight to a task surface before understanding CINSTE or why
+  that task matters. The next product task is a shared, first-run, revisitable,
+  local-only orientation before authoritative routing, followed by a role- and
+  state-specific next step. It must not bypass verification, assignments,
+  workspace choice, or role boundaries.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -81,12 +83,13 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Add a guided first-run and revisitable native Giver orientation that explains
-   the journey, Offers, My Giving privacy states, and that funding remains on
-   CINSTE web in the current mobile slice. Persist only local presentation
-   state per authenticated user.
-2. Re-run manual Expo Go acceptance for orientation, catalog, detail, My Giving
-   privacy states, navigation, and absence of checkout/payment controls.
+1. Add a shared first-run and revisitable native CINSTE orientation for every
+   authenticated user before role/state routing, followed by a safe role- and
+   state-specific next-step screen. Persist only local presentation state per
+   authenticated user.
+2. Re-run manual Expo Go acceptance for orientation, Student/Giver routing,
+   Giver catalog/detail, My Giving privacy states, navigation, and absence of
+   checkout/payment controls.
 3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
@@ -270,10 +273,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Add the local-only native Giver orientation before acceptance testing; it
-   does not require Apple signing or a Mac.
+1. Add the local-only shared native CINSTE orientation before acceptance
+   testing; it does not require Apple signing or a Mac.
 2. Run the bounded Expo Go manual acceptance below for the orientation and
-   read-only Giver surface.
+   Student/Giver surfaces.
 3. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link
    correction and validate hosted QA signup/confirmation.
@@ -282,14 +285,15 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** add a guided first-run and revisitable Giver orientation
-inside the guarded native workspace. Explain the giver-to-student-to-partner
-journey, Offers, My Giving privacy states, and the current boundary that
-browsing/outcome updates are available in mobile while funding remains on
-CINSTE web. Persist only a versioned, per-user local presentation choice; do
-not change BFF, funding, Auth, role, or database authority. Preserve the exact
-unauthenticated callback outside the workspace guard. Then collect Expo Go
-iPhone evidence for orientation, catalog/detail, My Giving privacy states,
-navigation/back behavior, safe-area presentation, and absence of
-checkout/payment controls. Do not claim signed-iOS, TestFlight, or Production
+**NEXT BOUNDED TASK:** add a shared first-run and revisitable CINSTE orientation
+for every authenticated native user before the existing authoritative resolver
+sends them to a task screen. Explain the common giver-to-student-to-partner
+journey, then show a safe role- and state-specific next step. For Givers,
+explain Offers, My Giving privacy states, and that browsing/outcome updates are
+mobile while funding remains on CINSTE web. Persist only a versioned, per-user
+local presentation choice; do not change BFF, funding, Auth, role, or database
+authority, and do not bypass verification, assignments, workspace choice, or
+role boundaries. Preserve the exact unauthenticated callback outside the
+workspace guard. Then collect Expo Go iPhone evidence for orientation and the
+Student/Giver surfaces. Do not claim signed-iOS, TestFlight, or Production
 acceptance.

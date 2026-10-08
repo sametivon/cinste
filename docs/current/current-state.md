@@ -218,18 +218,19 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** add a guided, first-run and revisitable Giver orientation inside the
-authenticated native Giver workspace. It must explain the giver-to-student-to-
-partner journey, what Offers and My Giving mean, the privacy-protected outcome
-states, and the current mobile boundary: browsing and outcome updates are
-available while funding remains on CINSTE web. Use per-user local presentation
-state only; do not add a database onboarding flag or change funding, BFF, Auth,
-or role authority. Then run bounded Expo Go acceptance on iPhone for both the
-orientation and workspace shell. The fixed unauthenticated callback remains
-outside the guarded workspace; the native-owned PKCE and verified iOS Universal
-Link correction remains blocked until Apple Developer membership provides a
-real bundle ID and Team ID. No signed-iOS, TestFlight, or Production evidence
-is claimed.
+**NEXT:** add a shared, first-run and revisitable native CINSTE orientation for
+every authenticated user before the authoritative workspace resolver sends them
+to their next task. It must explain the common giver-to-student-to-partner
+journey, then present a role- and state-specific next step without granting
+authority or bypassing verification, assignment, workspace choice, or existing
+role boundaries. Use per-user local presentation state only; do not add a
+database onboarding flag or change funding, BFF, Auth, or role authority. The
+Giver explanation must make its current mobile/Web funding boundary clear.
+Then run bounded Expo Go acceptance on iPhone. The fixed unauthenticated
+callback remains outside the guarded workspace; the native-owned PKCE and
+verified iOS Universal Link correction remains blocked until Apple Developer
+membership provides a real bundle ID and Team ID. No signed-iOS, TestFlight, or
+Production evidence is claimed.
 
 ## COMPLETE
 - Core backend hardening implemented
