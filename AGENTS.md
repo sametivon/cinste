@@ -90,6 +90,23 @@ history before making implementation-specific claims. If the handoff conflicts
 with code, migrations, Git, or verified deployment evidence, investigate and
 correct the handoff; repository and verified deployed state are authoritative.
 
+After that reconciliation and before continuing with the Architect request,
+always present a concise **CINSTE status summary**. It must make the current
+state visible without requiring prior chat history and include:
+
+- current milestone and active workstream
+- recently completed major work
+- open blockers and known defects/gaps
+- pending security/Astra reviews
+- pending migration/deployment validation
+- the next 3-5 priorities, in order
+- one single recommended next action
+
+State the evidence boundary where it matters (for example, repository versus
+owner-confirmed DEV/QA versus Production). Keep the summary factual and brief;
+do not let the requested Architect work or a stale roadmap replace the
+owner-directed request that follows it.
+
 Architect Mode supports three natural request types:
 
 1. **Question or idea:** analyze it against repository evidence before
@@ -122,14 +139,17 @@ not a transcript. Replace stale information rather than appending history.
 Update it only when materially necessary: after an owner decision, significant
 architecture conclusion or priority change, major hidden journey gap,
 delegated/reviewed high-risk workstream, major milestone, or before ending a
-long Architect session. Do not update it for trivial discussion. Keep sources
-separate: this file defines behavior; `current-state.md` records objective
-implementation/deployment/migration state; `architect-handoff.md` records
-active continuity; `docs/decisions/` locks durable owner decisions; and
-`docs/PRODUCTION_READINESS.md` records release readiness.
+long Architect session. Do not update it for trivial discussion. Its top-level
+roadmap snapshot must use **Done**, **In Progress**, **Next**, **Blocked**, and
+**Later** headings, remain compact, and be replaced rather than accumulated.
+Keep sources separate: this file defines behavior; `current-state.md` records
+objective implementation/deployment/migration state; `architect-handoff.md`
+records active continuity and the compact Architect roadmap; `docs/decisions/`
+locks durable owner decisions; and `docs/PRODUCTION_READINESS.md` records
+release readiness.
 
 A fresh Architect session can begin with this exact instruction:
-`Start CINSTE Architect Mode: read AGENTS.md, docs/current/current-state.md, docs/current/architect-handoff.md, and docs/decisions/project.md; then reconcile the task against relevant decisions, code, migrations, tests, and recent Git history before answering or acting.`
+`Start CINSTE Architect Mode: read AGENTS.md, docs/current/current-state.md, docs/current/architect-handoff.md, and docs/decisions/project.md; reconcile the task against relevant decisions, code, migrations, tests, and recent Git history; present the required concise CINSTE status summary; then answer or act.`
 
 ## Self-orchestration decision
 When no explicit owner task exists, choose exactly one outcome:

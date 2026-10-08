@@ -13,6 +13,50 @@ smallest safe native Giver vertical slice, preceded by its required Astra
 review. This handoff establishes Architect Mode only; it changes no product
 behavior.
 
+## Roadmap snapshot
+
+### Done
+
+- Locked mobile-first platform strategy, cross-platform role-surface audit, and
+  native Giver vertical-slice plan.
+- Core and Impact foundations; native Student journey; functional web Giver,
+  Partner, Organization Operator, and Admin foundations.
+- Secure web Giver provisioning (`0021`) and cross-role funding eligibility
+  correction (`0022`), with the latter applied to DEV/QA.
+
+### In Progress
+
+- No product implementation is active. The current immediate work is the
+  required Astra review of the native Giver trusted boundary.
+- Separate DEV/QA operational work: hosted behavioral validation of `0022`.
+
+### Next
+
+1. Astra-review the native Giver signup/funding BFF, bearer verification,
+   confirmation app-link, rate controls, credential placement, and BFF host.
+2. Implement the reviewed native multi-workspace foundation and Giver vertical
+   slice while preserving Student and web Giver behavior.
+3. Run focused hosted DEV/QA behavioral validation for `0022`.
+4. Resolve native Partner and Organization operational-surface gaps in the
+   locked mobile-first sequence.
+5. Close production-readiness work needed for controlled external beta.
+
+### Blocked
+
+- Native Giver implementation is Astra-gated; native Partner and Organization
+  surfaces are absent, and the mobile router is still Student-centric.
+- External beta lacks Production infrastructure, real payments, monitored
+  scheduler activation, release/signing, observability, legal/support, and
+  deletion/retention delivery.
+- Partner and Organization public acquisition paths await owner decisions.
+
+### Later
+
+- Decide web Giver's permanent companion versus acquisition/handoff role after
+  native parity evidence.
+- Define real-payment provider/business semantics and finalize brand, domain,
+  and legal/privacy/support policy for release.
+
 ## Current product / architecture direction
 
 CINSTE is mobile-first. Student and Giver core consumer journeys belong in the
