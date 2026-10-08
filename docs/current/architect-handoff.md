@@ -46,12 +46,17 @@ iOS-specific build, signing, TestFlight, or release work.
   active offer/partner/category reads use existing RLS, outcomes use the
   no-argument self-scoped RPC, and all three privacy states are preserved.
   The full mobile suite is 42/42 and typecheck passes.
+- iPhone Expo Go evidence confirms the read-only data loads, but rejects the
+  current Giver presentation as unfinished: it is a direct screen with no
+  role-local bottom navigation or safe-area header, and long QA fixture content
+  makes the cards oversized and poorly prioritized.
 
 ### In Progress
 
-- The read-only native Giver surface is repository-complete. Expo Go,
-  authenticated mobile, hosted mobile, signed-iOS, TestFlight, and Production
-  validation remain unevidenced.
+- The read-only native Giver data contract is repository-complete, but its
+  workspace shell is not. Implement a native Giver tab/stack shell and compact,
+  defensive card presentation before accepting Expo Go UX. Signed-iOS,
+  TestFlight, and Production validation remain unevidenced.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -67,12 +72,16 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Run manual Expo Go acceptance for the new read-only Giver catalog, detail,
-   and My Giving states using an existing confirmed Giver account.
-2. After Apple Developer enrollment, implement the Astra-reviewed
+1. Implement the read-only native Giver workspace shell: safe-area-aware
+   header, role-local bottom tabs, stack-integrated offer detail, and resilient
+   rendering of long database-authored content. Preserve the existing read
+   contracts and no-funding boundary.
+2. Re-run manual Expo Go acceptance for catalog, detail, My Giving privacy
+   states, navigation, and absence of checkout/payment controls.
+3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-3. Resolve native Partner and Organization operational-surface gaps in the
+4. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -262,9 +271,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** manually validate the read-only Giver surface in Expo Go
-on iPhone with an existing confirmed Giver account: catalog load and empty/error
-states, offer-detail navigation, and each available privacy outcome state that
-the fixture data can evidence. Confirm there are no checkout/payment controls.
-Record only observed device evidence; do not claim signed-iOS, TestFlight, or
-Production acceptance.
+**NEXT BOUNDED TASK:** implement the existing read-only Giver catalog, offer
+detail, and My Giving reads inside a cohesive native Giver workspace shell:
+safe-area-aware header, role-local bottom tabs, stack-integrated offer detail,
+and compact defensive rendering for long database-authored content. Preserve
+all read-only contracts, null privacy metrics, existing Student routes, and the
+absence of checkout/payment controls. Then collect fresh Expo Go iPhone
+evidence; do not claim signed-iOS, TestFlight, or Production acceptance.

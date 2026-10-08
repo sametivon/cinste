@@ -43,8 +43,12 @@ Giving outcomes batch. Mobile reads active offers with active partner and
 category joins under existing RLS, presents offer details without funding
 controls, and calls authenticated `list_my_giving_outcomes()` with no
 caller-supplied ID. The three outcome states remain distinct and suppressed or
-unavailable metrics remain null, never zero. Focused mobile tests pass 31/31 and
-mobile typecheck passes.
+unavailable metrics remain null, never zero. The full mobile suite passes 42/42
+and mobile typecheck passes. Manual iPhone Expo Go evidence confirms that the
+read-only data loads, but exposes a product-quality gap: the Giver surface is a
+direct screen without a role-local native navigator or safe-area header, so it
+has no bottom navigation, overlaps the status bar, and renders long QA fixture
+content poorly. This is not accepted mobile UX evidence.
 
 The preceding implementation batch is the reviewed native workspace-envelope
 and Giver shell batch. Mobile now derives a presentation-only workspace envelope
@@ -207,14 +211,14 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** the read-only native Giver catalog and My Giving outcomes surfaces
-are complete in the repository. Run bounded manual Expo Go acceptance on iPhone
-with an existing confirmed Giver account: catalog/detail navigation, any
-available outcome/privacy states, and absence of checkout/payment controls.
-Then the Astra-reviewed native-owned PKCE and verified iOS Universal Link
-correction remains blocked until Apple Developer membership provides a real
-bundle ID and Team ID. No hosted mobile, Expo Go, signed-iOS, TestFlight, or
-Production evidence is currently claimed for this read-only batch.
+**NEXT:** integrate the existing read-only Giver catalog, offer detail, and My
+Giving reads into a cohesive native Giver workspace shell: safe-area-aware
+header, role-local bottom tabs, stack-integrated offer detail, and resilient
+long-content card rendering. Preserve all read-only contracts and the absence
+of checkout/payment controls. Then rerun bounded Expo Go acceptance on iPhone.
+The Astra-reviewed native-owned PKCE and verified iOS Universal Link correction
+remains blocked until Apple Developer membership provides a real bundle ID and
+Team ID. No signed-iOS, TestFlight, or Production evidence is claimed.
 
 ## COMPLETE
 - Core backend hardening implemented
