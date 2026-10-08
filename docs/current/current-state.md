@@ -52,8 +52,13 @@ stored-role checks; strict schemas; generic responses; and private,
 database-backed rate-limit contract in ordered migration `0023`. The owner
 confirmed `0023` was applied to DEV/QA, and the focused non-production hosted
 runner passed 12 limiter assertions on 2026-10-08. The native Giver signup UI,
-strict BFF client, and fixed HTTPS PKCE confirmation route are now implemented
-in the repository. QA callback configuration is still not evidenced. Both mock
+strict BFF client, and an Expo-side fixed-code callback scaffold are now
+implemented in the repository. Reconciliation found that this is not a
+complete hosted confirmation flow: the Vercel host has no matching
+callback/association delivery and the server-initiated signup does not
+establish a mobile-held PKCE verifier for the later code exchange. QA callback
+configuration is therefore not evidenced and must not be added as a claim of
+usability. Both mock
 funding RPCs remain service-only, and migration `0021` Giver provisioning is
 unchanged.
 
@@ -72,16 +77,20 @@ are complete in the repository:
 the resolver fails closed on missing/failed reads and does not call BFF, funding
 RPCs, or financial tables. The Giver signup client posts only the permitted
 email/password/displayName shape to the fixed BFF URL; the callback accepts
-only an authorization code, exchanges it through PKCE, discards link intent,
-and re-runs the resolver. Mobile-code validation is local only; no hosted
+only an authorization code, is designed to exchange it through PKCE, discards
+link intent, and re-runs the resolver. It is not a usable end-to-end PKCE flow
+yet: the BFF signup context cannot supply the later mobile verifier, and
+hosted HTTPS callback/app-link association delivery is absent. Mobile-code
+validation is local only; no hosted
 mobile deployment, hosted signup/callback validation, or physical-device
 acceptance is evidenced.
 The first native Giver BFF implementation batch is complete in the repository:
 the shared limiter is database-backed, private, and service-only. Migration
 `0023` is committed and pushed, owner-confirmed applied to DEV/QA, and passed
 its targeted hosted database validation. The isolated QA Next.js
-secret/callback configuration is not evidenced, so the BFF is not usable.
-The exact confirmation callback remains unimplemented. Migration `0022` is
+secret/callback configuration is not evidenced, so the BFF is not usable. The
+Expo callback scaffold exists, but the hosted callback/app-link and PKCE
+handoff remain unresolved. Migration `0022` is
 applied to DEV/QA and awaits hosted
 behavioral validation; that validation remains separate from the next
 product-surface workstream.
@@ -133,10 +142,11 @@ ad-hoc hosted objects to bypass migration order.
   no authenticated physical-device acceptance yet.
 - The reviewed native Giver BFF's database limiter is hosted-validated and the
   owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel. The
-  repository now contains the matching native callback, but use remains
-  blocked until the owner confirms Vercel
-  `NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL=https://cinste.vercel.app/native/giver/confirm`
-  and the exact same HTTPS URL is allowed in Supabase Auth Redirect URLs.
+  native callback requires an Astra-reviewed correction before external
+  configuration: repository reconciliation found no Vercel callback/verified
+  app-link association delivery and no safe PKCE-verifier handoff from the
+  server-created signup to the mobile code exchange. Do not configure or use
+  the callback until that contract is resolved.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -179,10 +189,10 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** owner confirms the exact Vercel callback environment variable and
-Supabase Auth Redirect URL, then perform hosted QA signup/callback validation.
-Keep the new workspace resolver and Giver shell; do not add funding calls or
-Partner/Organization functionality.
+**NEXT:** obtain an Astra-reviewed, implementable server-signup-to-native
+confirmation contract (including the PKCE verifier and verified HTTPS app-link
+delivery). Only then configure the exact Vercel/Supabase callback URL and run
+hosted QA signup/callback validation.
 
 ## COMPLETE
 - Core backend hardening implemented

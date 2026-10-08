@@ -12,8 +12,10 @@ prepare for controlled external beta. The immediate product objective is the
 smallest safe native Giver vertical slice. Astra has reviewed its trust
 boundary; the BFF foundation and `0023` migration are implemented and
 owner-confirmed applied to DEV/QA. The limiter's hosted validation passed and
-a QA Vercel host is live; native Giver signup and the fixed confirmation
-callback are now implemented locally, pending exact hosted configuration.
+a QA Vercel host is live; native Giver signup and an Expo-side fixed-code
+callback scaffold are implemented locally. Repository reconciliation found a
+material PKCE/HTTPS-app-link delivery gap, so hosted configuration must wait
+for an Astra-reviewed correction.
 
 ## Roadmap snapshot
 
@@ -40,16 +42,16 @@ callback are now implemented locally, pending exact hosted configuration.
   Node-runtime routes plus private, database-backed rate limiting. Ordered
   migration `0023` is owner-confirmed applied to DEV/QA and its database
   behavior is hosted-validated. The owner configured its server-only
-  rate-limit key in QA Vercel. The native signup client and fixed HTTPS PKCE
-  callback are now implemented and locally tested, but the BFF cannot be used
-  until the exact Vercel callback variable and Supabase Auth redirect allowlist
-  are owner-confirmed.
+  rate-limit key in QA Vercel. The native signup client and fixed-code callback
+  scaffold are locally tested, but the BFF cannot be used: the server-created
+  signup does not provide a mobile-held PKCE verifier, and the hosted HTTPS
+  callback/app-link association delivery is absent.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
 
-1. Owner confirms the exact Vercel callback variable and Supabase Auth redirect
-   allowlist, then run hosted QA signup/callback validation.
+1. Obtain Astra review of the PKCE-verifier and hosted HTTPS app-link delivery
+   correction; then configure the exact callback and run hosted QA validation.
 2. Implement the remaining read-only Giver catalog and outcomes surfaces.
 3. Run focused hosted DEV/QA behavioral validation for `0022`.
 4. Resolve native Partner and Organization operational-surface gaps in the
@@ -57,12 +59,12 @@ callback are now implemented locally, pending exact hosted configuration.
 
 ### Blocked
 
-- Native Giver BFF use is blocked on owner confirmation of the exact HTTPS
-  callback configuration: Vercel
-  `NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL=https://cinste.vercel.app/native/giver/confirm`
-  and Supabase Auth Redirect URLs must allow exactly that URL; native Partner
-  and Organization surfaces are absent, and
-  the mobile router is still Student-centric.
+- Native Giver BFF use is blocked pending `ASTRA REVIEW REQUIRED`: the
+  server-created signup has no safe mobile PKCE-verifier handoff, and the
+  Vercel host has no verified HTTPS callback/app-link association delivery.
+  Do not configure the callback variable or Auth redirect allowlist until the
+  corrected contract is approved; native Partner and Organization surfaces are
+  absent, and the mobile router is still Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
   deletion/retention delivery.
@@ -128,7 +130,8 @@ the repository; its stable domain returned HTTP 200 on 2026-10-08. The Vercel
 deployment is configured against QA resources and its provider environment
 label must not be reported as a business Production deployment. The owner
 reports `NATIVE_BFF_RATE_LIMIT_KEY` configured server-side; its value was not
-inspected. No exact native confirmation callback redirect is configured.
+inspected. The repository contains an Expo callback scaffold but no hosted
+callback/association delivery or viable server-signup-to-mobile PKCE handoff.
 
 The web app has public/auth routes and functional Giver, Partner, Organization
 Operator, and Admin workspaces. Native has the Student journey plus the reviewed
@@ -140,18 +143,18 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 - Native Giver BFF foundation and `0023` are complete, pushed, owner-confirmed
   applied to DEV/QA, and database-validated there; its QA Vercel host and
-  server-only rate-limit key are owner-confirmed, but the confirmation callback
-  remains before use.
+  server-only rate-limit key are owner-confirmed, but the confirmation
+  contract requires Astra review before use.
 - The mobile-first audit and native Giver vertical-slice plan remain the
   implementation guide for the next auth/callback and read-only surfaces.
 - Separate operational work remains: hosted behavioral validation of `0022`.
 
 ## Blocked / waiting workstreams
 
-- Native Giver BFF use remains blocked until the native confirmation callback
-  and its exact HTTPS Supabase Auth redirect configuration exist. Focused
-  hosted limiter validation has passed and the rate-limit key is
-  owner-confirmed server-side. Native
+- Native Giver BFF use remains blocked until Astra resolves the missing
+  server-signup-to-mobile PKCE-verifier handoff and verifies a hosted HTTPS
+  callback/app-link delivery design. Focused hosted limiter validation has
+  passed and the rate-limit key is owner-confirmed server-side. Native
   workspace routing and UI now exist as repository-only presentation surfaces;
   physical-device and hosted mobile validation remain pending.
 - Partner public acquisition/onboarding and Organization public acquisition
@@ -193,6 +196,11 @@ the `0022` funding RPCs are correctly service-only on the web server path.
   route handlers, server-side bearer verification and profile recheck, strict
   schemas, rate limits, redacted logs, isolated secrets, and an exact PKCE
   confirmation callback. No Server Actions or native service-RPC calls.
+- `ASTRA REVIEW REQUIRED` before configuring or validating the present native
+  callback scaffold: source reconciliation found no mobile-held PKCE verifier
+  for a code created by server-side signup and no hosted app-link association
+  delivery. This is a material Auth/deep-link trust correction, not a routine
+  environment-variable task.
 - Required before real payments, scheduler identity/activation, Production
   migration/RLS/grant verification, QA target allow-listing, sensitive
   telemetry/redaction, deletion/erasure, and material Auth/deep-link changes.
@@ -211,8 +219,9 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Owner confirms the exact HTTPS callback configuration, then validate hosted
-   QA signup and PKCE confirmation.
+1. Obtain Astra approval for a concrete PKCE-verifier and hosted app-link
+   delivery contract, implement that correction, then configure and validate
+   hosted QA signup/confirmation.
 2. Run hosted behavioral validation for already-applied `0022` as a separate
    DEV/QA task.
 3. Add read-only native Giver catalog and outcomes surfaces after the auth
@@ -220,7 +229,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** owner confirms the exact HTTPS callback configuration,
-then run hosted QA signup and PKCE confirmation validation. Preserve the new
-resolver and Giver shell; do not add funding or Partner/Organization
+**NEXT BOUNDED TASK:** Astra reviews and specifies the correction for the
+server-created Giver signup to native PKCE confirmation handoff and the exact
+verified HTTPS app-link delivery. Preserve the new resolver and Giver shell;
+do not configure the callback or add funding or Partner/Organization
 functionality.
