@@ -10,8 +10,8 @@ kod-kapsami: []
 Realign the implemented V1 with the locked mobile-first platform strategy, then
 prepare for controlled external beta. The immediate product objective is the
 smallest safe native Giver vertical slice. Astra has reviewed its trust
-boundary and set binding BFF/app-link requirements; implementation has not yet
-started.
+boundary; the BFF foundation is implemented in the repository, pending DEV/QA
+migration application and hosted validation.
 
 ## Roadmap snapshot
 
@@ -23,6 +23,8 @@ started.
   Partner, Organization Operator, and Admin foundations.
 - Secure web Giver provisioning (`0021`) and cross-role funding eligibility
   correction (`0022`), with the latter applied to DEV/QA.
+- Reviewed Node-runtime native Giver BFF foundation in `732b85a`: strict
+  signup/funding routes and private database-backed rate limiting (`0023`).
 
 ### In Progress
 
@@ -34,12 +36,14 @@ started.
 
 ### Next
 
-1. Implement the reviewed native multi-workspace foundation and Giver vertical
+1. Apply and hosted-validate `0023` and the BFF QA secret/callback
+   configuration before any native client calls it.
+2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice while preserving Student and web Giver behavior.
-2. Run focused hosted DEV/QA behavioral validation for `0022`.
-3. Resolve native Partner and Organization operational-surface gaps in the
+3. Run focused hosted DEV/QA behavioral validation for `0022`.
+4. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
-4. Close production-readiness work needed for controlled external beta.
+5. Close production-readiness work needed for controlled external beta.
 
 ### Blocked
 
@@ -96,15 +100,15 @@ turning a client route or saved workspace choice into authorization.
 
 ## Current repository / deployment state
 
-This handoff was reconciled from `main`/`origin/main` at `d49f6a1` before its
-own documentation commit; inspect current Git state at every session start.
-Migrations `0001` through `0023` exist in the repository. DEV/QA application of
+Reconciled on `main`/`origin/main` at `732b85a`; the only working-tree entry is
+the intentional untracked `docs/brand/` owner-review area. Migrations `0001`
+through `0023` exist and are pushed. DEV/QA application of
 `0018` through `0022` is owner-confirmed; `0022_funding_eligibility.sql` was
 manually applied through the Supabase SQL Editor but has not received hosted
-behavioral validation. Production Supabase and evidenced production web/mobile
-deployment do not exist. Payments are mock-only. The maintenance Cron is
-registered in DEV/QA but intentionally inactive. No EAS production profile,
-signing, or TestFlight evidence exists.
+behavioral validation. `0023` is not applied or hosted-validated. Production
+Supabase and evidenced production web/mobile deployment do not exist. Payments
+are mock-only. The maintenance Cron is registered in DEV/QA but intentionally
+inactive. No EAS production profile, signing, or TestFlight evidence exists.
 
 The web app has public/auth routes and functional Giver, Partner, Organization
 Operator, and Admin workspaces. Native has the Student journey, but its current
@@ -114,12 +118,11 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Active workstreams
 
-- No product implementation is currently active.
-- The mobile-first surface audit and native Giver vertical-slice plan are
-  complete as analysis. The latter is in
-  `docs/current/native-giver-vertical-slice-plan.md`.
+- Native Giver BFF foundation is complete in the repository but awaiting
+  ordered DEV/QA application/validation of `0023` and QA configuration.
+- The mobile-first audit and native Giver vertical-slice plan remain the
+  implementation guide for the unstarted native router and UI work.
 - Separate operational work remains: hosted behavioral validation of `0022`.
-  It is not a reason to bypass the native Giver security review.
 
 ## Blocked / waiting workstreams
 
@@ -184,7 +187,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Apply and validate `0023` plus QA BFF secret/callback configuration.
+1. Apply and hosted-validate `0023` plus QA BFF secret/callback configuration.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice in the recorded sequence, preserving existing Student behavior.
 3. Run hosted behavioral validation for already-applied `0022` as a separate
@@ -192,6 +195,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**IMPLEMENT:** apply/validate the reviewed native Giver BFF foundation in
-DEV/QA, then add the native workspace resolver and Giver auth/read-only UI.
-Do not add native funding calls until the BFF is hosted-validated.
+**NEXT BOUNDED TASK:** apply and hosted-validate ordered migration `0023` in
+DEV/QA, with the isolated BFF rate-limit secret and exact HTTPS confirmation
+callback allowlisted. Verify its private-table/function privileges and
+representative quota behavior; do not add mobile UI, deep-link handling, or
+client funding calls in that task.

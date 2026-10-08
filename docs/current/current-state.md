@@ -108,8 +108,8 @@ ad-hoc hosted objects to bypass migration order.
 - Native Giver, Partner, and Organization Operator surfaces required by the
   locked platform strategy are absent; native routing does not yet resolve
   additive workspaces.
-- The reviewed native Giver BFF requires a shared durable rate-limit control
-  and a configured QA Next.js host; neither is currently evidenced.
+- The reviewed native Giver BFF requires ordered `0023` application plus a
+  configured QA Next.js server secret and exact callback allowlist before use.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
