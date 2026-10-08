@@ -26,9 +26,10 @@ started.
 
 ### In Progress
 
-- The Astra-reviewed native Giver contract is captured. Its implementation is
-  waiting for a shared durable rate-limit facility and configured QA Next.js
-  host; an in-memory limiter is not sufficient across instances.
+- The first reviewed native Giver BFF batch is implemented in the repository:
+  Node-runtime routes plus private, database-backed rate limiting. Ordered
+  migration `0023`, QA secret/callback configuration, and hosted validation
+  remain before it can be used.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
@@ -42,10 +43,9 @@ started.
 
 ### Blocked
 
-- Native Giver implementation is scoped and reviewed, but awaits selection of
-  its shared durable rate-limit facility and QA host configuration; native
-  Partner and Organization surfaces are absent, and the mobile router is still
-  Student-centric.
+- Native Giver BFF use is blocked on `0023` application and QA host secret/
+  callback configuration; native Partner and Organization surfaces are absent,
+  and the mobile router is still Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
   deletion/retention delivery.
@@ -98,7 +98,7 @@ turning a client route or saved workspace choice into authorization.
 
 This handoff was reconciled from `main`/`origin/main` at `d49f6a1` before its
 own documentation commit; inspect current Git state at every session start.
-Migrations `0001` through `0022` exist and are pushed. DEV/QA application of
+Migrations `0001` through `0023` exist in the repository. DEV/QA application of
 `0018` through `0022` is owner-confirmed; `0022_funding_eligibility.sql` was
 manually applied through the Supabase SQL Editor but has not received hosted
 behavioral validation. Production Supabase and evidenced production web/mobile
@@ -123,10 +123,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Blocked / waiting workstreams
 
-- Native Giver implementation and hosted acceptance remain blocked until the
-  shared durable rate-limit facility and QA host are selected/configured; the
-  resulting Node-runtime BFF must include redacted logging, exact confirmation
-  callback, isolated server-side QA secret, and required hosted tests.
+- Native Giver BFF hosted acceptance remains blocked until `0023` is applied
+  and the QA Next.js host has the isolated service and rate-limit secrets plus
+  exact confirmation callback configuration. Native workspace routing and UI
+  remain separate, unimplemented work.
 - Partner public acquisition/onboarding and Organization public acquisition
   await the owner decisions above.
 - External beta remains blocked by production infrastructure, real payments,
@@ -184,8 +184,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Select the shared durable rate-limit facility and configure the QA Next.js
-   host for the reviewed native Giver BFF.
+1. Apply and validate `0023` plus QA BFF secret/callback configuration.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice in the recorded sequence, preserving existing Student behavior.
 3. Run hosted behavioral validation for already-applied `0022` as a separate
@@ -193,8 +192,6 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**OWNER DECISION REQUIRED:** select the shared durable rate-limit facility for
-the reviewed native Giver BFF and configure its QA Next.js host. Then build the
-Node-runtime BFF and exact confirmation callback contract with token
-verification, secret isolation, source/bundle scanning, and malformed-request
-tests, before native UI or funding calls.
+**IMPLEMENT:** apply/validate the reviewed native Giver BFF foundation in
+DEV/QA, then add the native workspace resolver and Giver auth/read-only UI.
+Do not add native funding calls until the BFF is hosted-validated.

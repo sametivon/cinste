@@ -37,10 +37,13 @@ strict schemas, exact PKCE confirmation callback, rate controls, redacted
 logs, and isolated service credentials. The review is documented; no product
 feature, authorization, RLS, RPC, funding, or Impact behavior has changed.
 
-The latest product implementation remains the V1 cross-role funding correction
-in migration `0022_funding_eligibility.sql` and the matching web server actions.
-Both mock funding RPCs remain service-only, and migration `0021` Giver
-provisioning is unchanged.
+The latest implementation batch is the reviewed native Giver BFF foundation:
+Node-runtime signup, checkout, and confirmation routes; verified bearer plus
+stored-role checks; strict schemas; generic responses; and private,
+database-backed rate-limit contract in ordered migration `0023`. The migration
+is not yet applied to DEV/QA, and no native Giver UI or confirmation callback
+has been added. Both mock funding RPCs remain service-only, and migration
+`0021` Giver provisioning is unchanged.
 
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
@@ -52,12 +55,13 @@ inspect the remote project.
 
 ## Current active workstream
 
-No product implementation is active. The Astra-reviewed native Giver contract
-is ready for an implementation batch, but a shared, durable rate-limit facility
-and deployed QA Next.js host are not evidenced; an in-memory limiter would not
-meet the review requirement across instances. Migration `0022` is applied to
-DEV/QA and awaits hosted behavioral validation; that validation remains
-separate from the next product-surface workstream.
+The first native Giver BFF implementation batch is complete in the repository:
+the shared limiter is database-backed, private, and service-only. Migration
+`0023` and its isolated QA Next.js secret/callback configuration require
+DEV/QA application and validation before the BFF is usable. Native workspace
+routing, Giver UI, and the exact confirmation callback remain unimplemented.
+Migration `0022` is applied to DEV/QA and awaits hosted behavioral validation;
+that validation remains separate from the next product-surface workstream.
 
 ## Hosted environments
 
@@ -86,6 +90,7 @@ not imply Production status.
 | `0020_database_maintenance_cron.sql` | Yes | Yes | Yes, owner-confirmed | Partial: registration/inactive state confirmed; live worker, timeout, concurrency, and monitoring checks pending | No | `cinste-maintenance-v1` intentionally inactive |
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
 | `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | No; 6 disposable-PostgreSQL and 14 server-action assertions passed locally only | No | Applied in DEV/QA; hosted behavioral validation pending; no Production environment exists |
+| `0023_native_bff_rate_limits.sql` | Yes | Yes | No | No; 3 disposable-PostgreSQL privilege/quota assertions passed locally | No | Private HMAC-fingerprint limiter for reviewed native Giver BFF; must be applied after `0022` |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -147,16 +152,13 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**OWNER DECISION REQUIRED, then IMPLEMENT:** select the shared durable
-rate-limit facility for the Astra-reviewed native Giver BFF (for example, a
-managed edge rate-limit service or a database-backed design with its retention
-and privilege boundaries reviewed), and configure its QA Next.js host. Then
-implement the reviewed Node-runtime BFF, exact confirmation callback, native
-workspace foundation, and Giver slice. Reuse the existing catalog and
-`list_my_giving_outcomes()` read authority; do not grant service-only funding
-RPCs to the mobile client. Partner acquisition remains an owner decision but no
-longer supersedes the mobile-first Giver gap as the single next product
-workstream.
+**IMPLEMENT:** apply and validate `0023` in DEV/QA with the isolated server
+secret and exact callback allowlist configured, then implement the native
+workspace foundation and Giver auth/read-only surfaces. Reuse the existing
+catalog and `list_my_giving_outcomes()` read authority; do not grant
+service-only funding RPCs to the mobile client. Partner acquisition remains an
+owner decision but no longer supersedes the mobile-first Giver gap as the
+single next product workstream.
 
 ## COMPLETE
 - Core backend hardening implemented
