@@ -115,6 +115,14 @@ focused routing/provisioning tests pass locally. This is
 repository and local automated evidence only; no hosted or device acceptance
 is claimed.
 
+The public hierarchy refinement keeps the existing CINSTE palette and auth
+layout while removing redundant brand eyebrows from Login, Onboarding, Account,
+the landing CTA, and Partner offer drafts. Login now uses a role-aware visual
+journey for Student and Giver intent, with a neutral network treatment for
+generic sign-in. Admin context eyebrows remain limited to operational
+boundaries. Typecheck and the focused auth/provisioning tests pass locally;
+hosted visual acceptance is still pending.
+
 Partner offer drafts are implemented in repository migration `0024`, pending
 application to development/QA. The security review keeps partner-authored
 descriptive drafts separate from canonical offers and campaigns. An assigned
