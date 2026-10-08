@@ -195,6 +195,7 @@ not imply Production status.
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
 | `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | Yes, DEV/QA only: owner ran 61 hosted non-production assertions on 2026-10-08 | No | Service-only Giver eligibility, ownership, pricing/activity rechecks, direct API-role denial, and idempotent state behavior validated; no Production environment exists |
 | `0023_native_bff_rate_limits.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 12 hosted assertions passed on 2026-10-08 (service execution; anon/authenticated denial; private API storage denial; configured 5-per-minute quota; invalid non-fingerprint rejection) | No | Active private HMAC-fingerprint limiter. The QA Next.js host's server-only `NATIVE_BFF_RATE_LIMIT_KEY` and exact HTTPS Supabase Auth redirect allowlist remain unverified; do not use the BFF |
+| `0024_partner_offer_drafts.sql` | Yes | Yes | No | No | No | Partner-scoped descriptive drafts and Admin-only atomic offer approval are repository-only; no campaign, inventory, price, or payment authority is delegated |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
