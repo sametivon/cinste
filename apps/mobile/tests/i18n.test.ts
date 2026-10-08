@@ -26,6 +26,18 @@ describe('mobile i18n foundation', () => {
     for (const locale of ['en', 'tr', 'ar'] as const) expect(Object.keys(translations[locale]).sort()).toEqual(canonical);
   });
 
+  it('localizes the ordered system map and compact Giver guidance in every locale', () => {
+    for (const locale of ['ro', 'en', 'tr', 'ar'] as const) {
+      expect(translations[locale]['orientation.map.support']).toBeTruthy();
+      expect(translations[locale]['orientation.map.partner']).toBeTruthy();
+      expect(translations[locale]['orientation.map.student']).toBeTruthy();
+      expect(translations[locale]['orientation.map.impact']).toBeTruthy();
+      expect(translations[locale]['orientation.map.accessibility']).toBeTruthy();
+      expect(translations[locale]['journey.giverTitle']).toBeTruthy();
+      expect(translations[locale]['journey.giverNext']).toBeTruthy();
+    }
+  });
+
   it('localizes every seeded category without exposing a translation key', async () => {
     const translator = await translatorFor('tr');
     for (const slug of ['food-drink', 'cinema', 'hair-grooming', 'beauty', 'fitness', 'entertainment', 'activities', 'education', 'mobility', 'other']) {

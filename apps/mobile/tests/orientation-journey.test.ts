@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { motionDuration, selectOrientationJourney } from '@/lib/orientation-journey';
+import { motionDuration, orientationPhaseContent, selectOrientationJourney, systemMapProgress, systemMapReveal } from '@/lib/orientation-journey';
 
 describe('guided launch journey selection', () => {
   it('selects truthful student stages', () => {
@@ -14,4 +14,14 @@ describe('guided launch journey selection', () => {
     expect(selectOrientationJourney({ role: 'partner', verificationStatus: null, envelope: { status: 'resolved', workspaces: [] } }).kind).toBe('boundary');
   });
   it('makes reduced motion instant without changing content', () => { expect(motionDuration(true, 260)).toBe(0); expect(motionDuration(false, 260)).toBe(260); });
+  it('keeps all three phase bodies present after transition completion', () => {
+    expect(orientationPhaseContent.map((phase) => phase.titleKey)).toEqual(['orientation.systemTitle', 'orientation.placeTitle', 'orientation.startTitle']);
+    expect(orientationPhaseContent.every((phase) => phase.contentKeys.length > 0)).toBe(true);
+  });
+  it('reveals the system map in Support, Partner, Student, Impact order', () => {
+    expect([0, 1, 2].map((index) => systemMapReveal(0.75, index))).toEqual([true, true, true]);
+    expect(systemMapReveal(0.75, 3)).toBe(false);
+    expect(systemMapReveal(1, 3)).toBe(true);
+    expect(systemMapProgress(true, 0)).toBe(1);
+  });
 });

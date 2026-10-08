@@ -68,18 +68,15 @@ iOS-specific build, signing, TestFlight, or release work.
   local-only orientation before authoritative routing, followed by a role- and
   state-specific next step. It must not bypass verification, assignments,
   workspace choice, or role boundaries.
-- The role-based guided launch flow is implemented: orientation version 2 keeps
-  per-user SecureStore state, adds an animated SVG system map, personalized
-  role/state journeys, truthful CTAs, reduced-motion-safe transitions, and
-  compact Your journey guidance on Student Profile and Giver Offers. Existing
-  resolver continuation, protected route guards, revisitable orientation
-  entry points, and the fixed unauthenticated Giver callback are unchanged.
-  Typecheck and the full 51-test mobile suite pass. Owner iPhone Expo Go
-  evidence rejects device acceptance: phase one overlaps the status bar, phase
-  two is blank after Continue, map labels remain English in a non-sequential
-  diamond, and durable Giver guidance is still dense technical copy. The
-  current evidence is from the latest bundle; correct these product/rendering
-  defects before a new device review.
+- The role-based guided launch flow and its bounded iPhone correction are
+  implemented: orientation version 2 keeps per-user SecureStore state, uses
+  complete safe-area coverage, renders all phase bodies through transitions,
+  presents a localized sequential Support/Partner/Student/Impact map with
+  immediate reduced-motion completion, and gives Giver Offers compact,
+  action-led guidance. Resolver continuation, protected route guards,
+  revisitable orientation entry points, and the fixed unauthenticated Giver
+  callback are unchanged. Typecheck and the full 54-test mobile suite pass.
+  Fresh Expo Go acceptance remains pending.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -95,16 +92,14 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Correct the guided launch: safe-area layout, non-blank role phase, localized
-   sequential system story, and concise action-led durable guidance.
-2. Re-run manual iPhone Expo Go acceptance for
+1. Reload Expo Go and run manual iPhone acceptance for
    onboarding, Student/Giver routing, Giver catalog/detail, My Giving privacy
    states, durable guidance, navigation, and absence of checkout/payment
    controls.
-3. After Apple Developer enrollment, implement the Astra-reviewed
+2. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-4. Resolve native Partner and Organization operational-surface gaps in the
+3. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -284,9 +279,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Replace the two-step orientation with the approved role-based guided native
-   launch flow; it does not require Apple signing or a Mac.
-2. Reload Expo Go from the current bundle and run the bounded acceptance for
+1. Reload Expo Go from the current bundle and run the bounded acceptance for
    onboarding and Student/Giver surfaces.
 3. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link

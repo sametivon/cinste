@@ -10,10 +10,11 @@ export function JourneyGuidance() {
   const { role, student, workspaceEnvelope, selectedWorkspace } = useAuth();
   const { t, isRTL } = useAppLocale();
   const journey = selectOrientationJourney({ role, verificationStatus: student?.verification_status ?? null, envelope: workspaceEnvelope, selectedWorkspace });
+  const isGiver = journey.kind === 'giver';
   return <Card style={styles.card}>
-    <View style={[styles.headingRow, isRTL && styles.rowRtl]}><View style={styles.dot} /><Text style={[styles.kicker, isRTL && styles.textRtl]}>{t('journey.title' as never)}</Text></View>
-    <Text style={[styles.stage, isRTL && styles.textRtl]}>{t(journey.stageKey as never)}</Text>
-    <Text style={[styles.copy, isRTL && styles.textRtl]}>{t(journey.nextKey as never)}</Text>
+    <View style={[styles.headingRow, isRTL && styles.rowRtl]}><View style={styles.dot} /><Text style={[styles.kicker, isRTL && styles.textRtl]}>{t(isGiver ? 'journey.giverTitle' as never : 'journey.title' as never)}</Text></View>
+    {!isGiver && <Text style={[styles.stage, isRTL && styles.textRtl]}>{t(journey.stageKey as never)}</Text>}
+    <Text style={[styles.copy, isRTL && styles.textRtl]}>{t(isGiver ? 'journey.giverNext' as never : journey.nextKey as never)}</Text>
     <Pressable accessibilityRole="button" accessibilityLabel={t('journey.howItWorks' as never)} onPress={() => router.push('/orientation?revisit=1' as never)} style={styles.link}><Text style={[styles.linkText, isRTL && styles.textRtl]}>{t('journey.howItWorks' as never)}</Text></Pressable>
   </Card>;
 }

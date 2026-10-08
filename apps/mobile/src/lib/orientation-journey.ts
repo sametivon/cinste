@@ -4,6 +4,12 @@ import type { MobileWorkspace, WorkspaceEnvelope } from '@/lib/mobile-routing';
 export type JourneyKind = 'student-unverified' | 'student-verified' | 'student-pending' | 'student-rejected' | 'giver' | 'workspace' | 'boundary';
 export type JourneyModel = { kind: JourneyKind; roleLabelKey: string; stageKey: string; nextKey: string; ctaKey: string; steps: string[] };
 
+export const orientationPhaseContent = [
+  { titleKey: 'orientation.systemTitle', contentKeys: ['orientation.systemCopy', 'orientation.map.accessibility'] },
+  { titleKey: 'orientation.placeTitle', contentKeys: ['journey.role', 'journey.stage', 'journey.steps'] },
+  { titleKey: 'orientation.startTitle', contentKeys: ['orientation.nextTitle', 'journey.next', 'orientation.ready'] },
+] as const;
+
 export function selectOrientationJourney(input: { role: AppRole | null; verificationStatus: VerificationStatus | null; envelope?: WorkspaceEnvelope; selectedWorkspace?: MobileWorkspace | null }): JourneyModel {
   const workspaces = input.envelope?.workspaces ?? [];
   if (workspaces.length > 1 && !input.selectedWorkspace) return { kind: 'workspace', roleLabelKey: 'orientation.role.multi', stageKey: 'orientation.stage.choose', nextKey: 'orientation.next.workspace', ctaKey: 'orientation.cta.workspace', steps: ['orientation.step.choose', 'orientation.step.enter'] };
@@ -19,3 +25,11 @@ export function selectOrientationJourney(input: { role: AppRole | null; verifica
 }
 
 export function motionDuration(reducedMotion: boolean, normalDuration: number) { return reducedMotion ? 0 : normalDuration; }
+
+export function systemMapReveal(progress: number, index: number) {
+  return progress >= (index + 1) / 4;
+}
+
+export function systemMapProgress(reducedMotion: boolean, progress: number) {
+  return reducedMotion ? 1 : progress;
+}

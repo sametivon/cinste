@@ -105,18 +105,18 @@ Profile and Giver Offers, while Student Profile, Giver Account, and the native
 role-boundary surface retain revisitable orientation entry. Protected Student,
 Giver, verification, history, workspace, and offer routes remain guarded, and
 the unauthenticated `/native/giver/confirm` callback remains outside those
-guards. Mobile typecheck passes and the full suite is 51/51. This is repository
+guards. Mobile typecheck passes and the full suite is 54/54. This is repository
 and local automated evidence only; Expo Go/manual device acceptance remains
 pending. No migration, database, web, funding, callback, or Production state
 changed.
 
-Owner iPhone Expo Go evidence on 2026-10-08 rejects the launch flow for device
-acceptance. The current bundle now proves the native Giver tabs load, but phase
-one overlaps the status bar, phase two renders blank after Continue, the map is
-still a non-sequential diamond with English labels, and the durable Giver
-guidance remains a dense technical paragraph instead of a clear next action.
-Correct these bounded native presentation defects before collecting further
-acceptance evidence.
+Owner iPhone Expo Go evidence on 2026-10-08 rejected the launch flow for device
+acceptance. The repository correction now places the complete flow inside the
+shared safe area, keeps every phase body rendered through transition changes,
+uses a localized ordered Support/Partner/Student/Impact map with immediate
+reduced-motion completion, and gives Giver Offers a compact action-led card.
+This correction is repository and local automated evidence only; fresh Expo Go
+acceptance remains pending.
 
 The preceding two-step orientation was rejected as product-incomplete and has
 now been replaced by the guided launch batch above. The current owner evidence
