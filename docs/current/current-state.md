@@ -17,8 +17,9 @@ the older statement is current.
 Realign the implemented V1 with the locked mobile-first platform strategy, then
 prepare the resulting cross-platform product for controlled external beta.
 Core, Impact, web role workspaces, public Student/Giver acquisition, secure
-new-account Giver provisioning, and the native Student journey exist. Native
-Giver, Partner, and Organization Operator journeys do not. Admin is a functional
+new-account Giver provisioning, the native Student journey, and the read-only
+native Giver catalog/outcomes slice exist. Native Giver funding, Partner, and
+Organization Operator journeys do not. Admin is a functional
 web foundation rather than the complete system control plane. External beta
 also remains blocked by production infrastructure, real payments, production
 operations, legal/support entry points, and final release acceptance.
@@ -37,14 +38,21 @@ strict schemas, exact PKCE confirmation callback, rate controls, redacted
 logs, and isolated service credentials. The review is documented; no product
 feature, authorization, RLS, RPC, funding, or Impact behavior has changed.
 
-The latest implementation batch is the reviewed native workspace-envelope and
-Giver shell batch. Mobile now derives a presentation-only workspace envelope
+The latest implementation batch is the read-only native Giver catalog and My
+Giving outcomes batch. Mobile reads active offers with active partner and
+category joins under existing RLS, presents offer details without funding
+controls, and calls authenticated `list_my_giving_outcomes()` with no
+caller-supplied ID. The three outcome states remain distinct and suppressed or
+unavailable metrics remain null, never zero. Focused mobile tests pass 31/31 and
+mobile typecheck passes.
+
+The preceding implementation batch is the reviewed native workspace-envelope
+and Giver shell batch. Mobile now derives a presentation-only workspace envelope
 from the authenticated profile plus RLS-scoped Partner/active Organization
 assignment reads, revalidates SecureStore choices during session/sign-in and
 foreground refresh, and provides a localized chooser and non-funding Giver
 entry shell with sign-out. Student navigation and verification gates remain
-unchanged. Focused mobile tests pass 31/31 and mobile typecheck passes. Expo
-lint reports two pre-existing errors outside this batch.
+unchanged. Expo lint reports two pre-existing errors outside these batches.
 
 The preceding implementation batch was the reviewed native Giver BFF foundation:
 Node-runtime signup, checkout, and confirmation routes; verified bearer plus
@@ -76,8 +84,8 @@ Production evidence.
 
 ## Current active workstream
 
-The native workspace-envelope/Giver-shell and native Giver onboarding batches
-are complete in the repository:
+The native workspace-envelope/Giver-shell, onboarding, and read-only catalog/
+outcomes batches are complete in the repository:
 the resolver fails closed on missing/failed reads and does not call BFF, funding
 RPCs, or financial tables. The Giver signup client posts only the permitted
 email/password/displayName shape to the fixed BFF URL; the callback accepts
@@ -189,7 +197,7 @@ ad-hoc hosted objects to bypass migration order.
 | Type | Current gaps |
 | --- | --- |
 | Architecture blocker | Reviewed native Giver provisioning/funding edge, production environment/promotion controls, real payment architecture, monitored scheduler activation, telemetry/privacy boundary, deletion/retention design |
-| Implementation blocker | Complete native Giver catalog/outcomes journey; native Partner redemption/operational context; native Organization daily operations; comprehensive Admin control-plane information architecture; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
+| Implementation blocker | Native Partner redemption/operational context; native Organization daily operations; comprehensive Admin control-plane information architecture; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
 | Release acceptance / manual QA | Real public `signUp` null-session path, real confirmation-link callback, post-confirmation browser routing, direct hosted grant-catalog inspection, true simultaneous public-signup contention, physical Partner camera/redemption and assignment revocation, multi-organization switching, verification-loss history, localized error/review states, production-like role matrix, and TestFlight device checks |
 
 The Giver provisioning items in the last row are acceptance gaps, not current
@@ -199,11 +207,12 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** implement read-only native Giver catalog and “My Giving” outcomes
-surfaces. Reuse existing authenticated read contracts; do not add funding,
-modify BFF/RPC/migration behavior, or alter Apple/Expo configuration. The
-approved iOS confirmation correction remains blocked until Apple Developer
-membership provides a real bundle ID and Team ID.
+**NEXT:** the read-only native Giver catalog and My Giving outcomes surfaces
+are complete in the repository. The next action is the Astra-reviewed
+native-owned PKCE and verified iOS Universal Link correction once Apple
+Developer membership provides a real bundle ID and Team ID. No hosted mobile,
+Expo Go, signed-iOS, TestFlight, or Production evidence is claimed for this
+read-only batch.
 
 ## COMPLETE
 - Core backend hardening implemented

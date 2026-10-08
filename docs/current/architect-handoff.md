@@ -42,8 +42,16 @@ iOS-specific build, signing, TestFlight, or release work.
   rejection. No Production environment was contacted.
 - QA Vercel host at `https://cinste.vercel.app`: its stable domain returned
   HTTP 200 on 2026-10-08. Vercel's deployment label is not business Production.
+- Read-only native Giver catalog/detail and My Giving outcomes are implemented:
+  active offer/partner/category reads use existing RLS, outcomes use the
+  no-argument self-scoped RPC, and all three privacy states are preserved.
+  Focused mobile validation is 31/31 and typecheck passes.
 
 ### In Progress
+
+- The read-only native Giver surface is repository-complete. Expo Go,
+  authenticated mobile, hosted mobile, signed-iOS, TestFlight, and Production
+  validation remain unevidenced.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -59,12 +67,10 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Implement the remaining read-only native Giver catalog and outcomes
-   surfaces.
-2. After Apple Developer enrollment, implement the Astra-reviewed
+1. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-3. Resolve native Partner and Organization operational-surface gaps in the
+2. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -154,7 +160,8 @@ out of scope for this slice.
 
 The web app has public/auth routes and functional Giver, Partner, Organization
 Operator, and Admin workspaces. Native has the Student journey plus the reviewed
-workspace resolver, chooser, and safe Giver entry shell; Partner and
+workspace resolver, chooser, and read-only Giver catalog/detail/outcomes shell;
+Partner and
 Organization operations remain at `role-boundary`. `0021` provisioning and
 the `0022` funding RPCs are correctly service-only on the web server path.
 
@@ -243,18 +250,15 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Implement read-only native Giver catalog and outcomes surfaces without
-   adding funding or changing BFF/RPC/migration behavior.
-2. When Apple Developer membership exists, owner supplies the iOS bundle ID
+1. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link
    correction and validate hosted QA signup/confirmation.
-3. Add read-only native Giver catalog and outcomes surfaces after the auth
-   callback boundary is complete.
+2. Resolve native Partner and Organization operational-surface decisions and
+   implementation gaps.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** implement read-only native Giver catalog and “My
-Giving” outcomes surfaces using existing read contracts. Do not add funding,
-modify BFF/RPC/migration behavior, or alter Apple/Expo configuration. Preserve
-the resolver and Giver shell, and report local, Expo Go, hosted, and signed-iOS
-evidence separately.
+**NEXT BOUNDED TASK:** implement the approved native-owned PKCE and verified iOS
+Universal Link correction after the owner supplies the bundle ID and Team ID.
+Keep read-only Giver validation separate from hosted mobile, signed-iOS,
+TestFlight, and Production evidence.
