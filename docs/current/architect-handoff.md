@@ -57,13 +57,11 @@ iOS-specific build, signing, TestFlight, or release work.
   `/giver` safely enters a native Stack with Offers, My Giving, and Account
   tabs; offer detail has native Back behavior; headers and detail content are
   safe-area aware; catalog titles/descriptions are bounded while full detail
-  content remains available. Local mobile typecheck and the 42-test suite pass.
-  Reconciliation found a blocking route-topology regression: its protected
-  `native/giver` layout also wraps the existing unauthenticated
-  `native/giver/confirm` callback, which would redirect before a future PKCE
-  code exchange could establish a session. Separate the callback from the
-  workspace guard before Expo Go acceptance. Signed-iOS, TestFlight, and
-  Production validation remain unevidenced.
+  content remains available. Local mobile typecheck and the 44-test suite pass.
+  The fixed unauthenticated `native/giver/confirm` callback now sits outside
+  the protected `(workspace)` layout, while `/giver` and catalog, detail, My
+  Giving, and Account remain in the guarded workspace. Signed-iOS, TestFlight,
+  and Production validation remain unevidenced.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -79,15 +77,12 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Correct the native route topology so the exact unauthenticated confirmation
-   callback is outside the authenticated Giver workspace guard, without
-   changing its currently blocked PKCE/BFF behavior.
-2. Re-run manual Expo Go acceptance for catalog, detail, My Giving privacy
+1. Re-run manual Expo Go acceptance for catalog, detail, My Giving privacy
    states, navigation, and absence of checkout/payment controls.
-3. After Apple Developer enrollment, implement the Astra-reviewed
+2. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-4. Resolve native Partner and Organization operational-surface gaps in the
+3. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -278,11 +273,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 ## Immediate next action
 
 **NEXT BOUNDED TASK:** collect fresh Expo Go iPhone evidence for the completed
-native Giver workspace shell only after correcting its route topology: the
-exact unauthenticated `native/giver/confirm` callback must sit outside the
-authenticated workspace guard; catalog, detail, My Giving, and Account must
-remain guarded. Preserve the existing blocked PKCE/BFF state and do not alter
-Auth semantics. Then validate catalog/detail, My Giving privacy states, native
+native Giver workspace shell. The exact unauthenticated
+`native/giver/confirm` callback is outside the authenticated workspace guard;
+catalog, detail, My Giving, and Account remain guarded. Preserve the existing
+blocked PKCE/BFF state and do not alter Auth semantics. Then validate catalog/detail, My Giving privacy states, native
 navigation/back behavior, safe-area presentation, and absence of
 checkout/payment controls. Do not claim signed-iOS, TestFlight, or Production
 acceptance.

@@ -43,7 +43,7 @@ Giving outcomes batch. Mobile reads active offers with active partner and
 category joins under existing RLS, presents offer details without funding
 controls, and calls authenticated `list_my_giving_outcomes()` with no
 caller-supplied ID. The three outcome states remain distinct and suppressed or
-unavailable metrics remain null, never zero. The full mobile suite passes 42/42
+unavailable metrics remain null, never zero. The full mobile suite passes 44/44
 and mobile typecheck passes. Manual iPhone Expo Go evidence confirms that the
 read-only data loads, but exposes a product-quality gap: the Giver surface is a
 direct screen without a role-local native navigator or safe-area header, so it
@@ -52,12 +52,10 @@ content poorly. The scoped repository correction now provides a native Giver
 Stack, Offers/My Giving/Account tabs, safe-area-aware detail content, and
 bounded catalog card hierarchy. This remains repository/local evidence only;
 fresh Expo Go acceptance is still required. Reconciliation found one blocking
-route-topology regression: the protected `native/giver` layout now also wraps
-the existing unauthenticated `native/giver/confirm` callback. It would redirect
-before a future PKCE code exchange can establish a session. The BFF/callback is
-already unusable pending its reviewed correction, but the callback must be
-structurally separated from the protected Giver workspace before this shell is
-accepted.
+route topology is now corrected: the fixed unauthenticated
+`native/giver/confirm` callback is outside the protected `(workspace)` layout,
+while `/giver`, catalog, detail, My Giving, and Account remain guarded. The
+BFF/callback remains unusable pending its reviewed PKCE correction.
 
 The preceding implementation batch is the reviewed native workspace-envelope
 and Giver shell batch. Mobile now derives a presentation-only workspace envelope
@@ -220,12 +218,12 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** correct the native route topology so the fixed unauthenticated Giver
-confirmation callback is outside the authenticated Giver workspace guard,
-while the catalog, detail, My Giving, and Account routes remain guarded. This
-must preserve the existing Astra-reviewed callback contract and must not enable
-the currently blocked BFF flow. Then rerun bounded Expo Go acceptance on iPhone
-for the Giver workspace shell. The native-owned PKCE and verified iOS Universal
+**NEXT:** rerun bounded Expo Go acceptance on iPhone for the Giver workspace
+shell: catalog/detail, My Giving privacy states, native navigation/back behavior,
+safe-area presentation, and absence of checkout/payment controls. The fixed
+unauthenticated callback is now outside the guarded workspace; the existing
+Astra-reviewed callback contract and blocked BFF flow remain unchanged. The
+native-owned PKCE and verified iOS Universal
 Link correction remains blocked until Apple Developer membership provides a
 real bundle ID and Team ID. No signed-iOS, TestFlight, or Production evidence
 is claimed.

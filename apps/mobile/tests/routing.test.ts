@@ -1,10 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
 import { canAccessVerifiedStudentRoute, mobileNavigationKey, resolveMobileDestination, resolveWorkspaceEnvelope, type MobileRouteState } from '@/lib/mobile-routing';
+import { FIXED_GIVER_CONFIRMATION_PATH } from '@/lib/native-giver-confirmation';
+import { NATIVE_GIVER_WORKSPACE_ROUTE, NATIVE_GIVER_WORKSPACE_SCREENS } from '@/lib/native-giver-route-topology';
 
 const state = (overrides: Partial<MobileRouteState> = {}): MobileRouteState => ({ hasSession: true, resolved: true, role: 'student', verificationStatus: 'verified', ...overrides });
 
 describe('authoritative mobile account gate', () => {
+  it('keeps the fixed confirmation callback outside the protected Giver workspace route', () => {
+    expect(FIXED_GIVER_CONFIRMATION_PATH).toBe('/native/giver/confirm');
+    expect(FIXED_GIVER_CONFIRMATION_PATH).not.toBe(NATIVE_GIVER_WORKSPACE_ROUTE);
+    expect(NATIVE_GIVER_WORKSPACE_ROUTE).toBe('/native/giver');
+  });
+
+  it('keeps the safe Giver entry and workspace screens inside the guarded workspace group', () => {
+    expect(NATIVE_GIVER_WORKSPACE_SCREENS).toEqual([
+      '/native/giver',
+      '/native/giver/offer/[offerId]',
+      '/native/giver/my-giving',
+      '/native/giver/account',
+    ]);
+  });
+
   it('derives only independently readable workspaces and fails closed on stale reads', () => {
     expect(resolveWorkspaceEnvelope({ profileRole: 'giver', partnerAssignment: false, organizationAssignment: true, readsAvailable: true })).toEqual({ status: 'resolved', workspaces: ['giver', 'organization'] });
     expect(resolveWorkspaceEnvelope({ profileRole: 'partner', partnerAssignment: false, organizationAssignment: false, readsAvailable: true })).toEqual({ status: 'resolved', workspaces: [] });
