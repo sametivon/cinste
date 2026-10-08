@@ -51,7 +51,13 @@ has no bottom navigation, overlaps the status bar, and renders long QA fixture
 content poorly. The scoped repository correction now provides a native Giver
 Stack, Offers/My Giving/Account tabs, safe-area-aware detail content, and
 bounded catalog card hierarchy. This remains repository/local evidence only;
-fresh Expo Go acceptance is still required.
+fresh Expo Go acceptance is still required. Reconciliation found one blocking
+route-topology regression: the protected `native/giver` layout now also wraps
+the existing unauthenticated `native/giver/confirm` callback. It would redirect
+before a future PKCE code exchange can establish a session. The BFF/callback is
+already unusable pending its reviewed correction, but the callback must be
+structurally separated from the protected Giver workspace before this shell is
+accepted.
 
 The preceding implementation batch is the reviewed native workspace-envelope
 and Giver shell batch. Mobile now derives a presentation-only workspace envelope
@@ -214,14 +220,15 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** integrate the existing read-only Giver catalog, offer detail, and My
-Giving reads into a cohesive native Giver workspace shell: safe-area-aware
-header, role-local bottom tabs, stack-integrated offer detail, and resilient
-long-content card rendering. Preserve all read-only contracts and the absence
-of checkout/payment controls. Then rerun bounded Expo Go acceptance on iPhone.
-The Astra-reviewed native-owned PKCE and verified iOS Universal Link correction
-remains blocked until Apple Developer membership provides a real bundle ID and
-Team ID. No signed-iOS, TestFlight, or Production evidence is claimed.
+**NEXT:** correct the native route topology so the fixed unauthenticated Giver
+confirmation callback is outside the authenticated Giver workspace guard,
+while the catalog, detail, My Giving, and Account routes remain guarded. This
+must preserve the existing Astra-reviewed callback contract and must not enable
+the currently blocked BFF flow. Then rerun bounded Expo Go acceptance on iPhone
+for the Giver workspace shell. The native-owned PKCE and verified iOS Universal
+Link correction remains blocked until Apple Developer membership provides a
+real bundle ID and Team ID. No signed-iOS, TestFlight, or Production evidence
+is claimed.
 
 ## COMPLETE
 - Core backend hardening implemented
