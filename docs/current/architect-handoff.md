@@ -10,8 +10,8 @@ kod-kapsami: []
 Realign the implemented V1 with the locked mobile-first platform strategy, then
 prepare for controlled external beta. The immediate product objective is the
 smallest safe native Giver vertical slice. Astra has reviewed its trust
-boundary; the BFF foundation is implemented in the repository, pending DEV/QA
-migration application and hosted validation.
+boundary; the BFF foundation and `0023` migration are implemented and
+owner-confirmed applied to DEV/QA, pending configuration and hosted validation.
 
 ## Roadmap snapshot
 
@@ -30,14 +30,14 @@ migration application and hosted validation.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
-  migration `0023`, QA secret/callback configuration, and hosted validation
-  remain before it can be used.
+  migration `0023` is owner-confirmed applied to DEV/QA; QA secret/callback
+  configuration and hosted validation remain before it can be used.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
 
-1. Apply and hosted-validate `0023` and the BFF QA secret/callback
-   configuration before any native client calls it.
+1. Hosted-validate `0023` and the BFF QA secret/callback configuration before
+   any native client calls it.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice while preserving Student and web Giver behavior.
 3. Run focused hosted DEV/QA behavioral validation for `0022`.
@@ -47,9 +47,9 @@ migration application and hosted validation.
 
 ### Blocked
 
-- Native Giver BFF use is blocked on `0023` application and QA host secret/
-  callback configuration; native Partner and Organization surfaces are absent,
-  and the mobile router is still Student-centric.
+- Native Giver BFF use is blocked on QA host secret/callback configuration and
+  hosted validation; native Partner and Organization surfaces are absent, and
+  the mobile router is still Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
   deletion/retention delivery.
@@ -100,15 +100,14 @@ turning a client route or saved workspace choice into authorization.
 
 ## Current repository / deployment state
 
-Reconciled on `main`/`origin/main` at `732b85a`; the only working-tree entry is
+Reconciled on `main`/`origin/main` at `3241b11`; the only working-tree entry is
 the intentional untracked `docs/brand/` owner-review area. Migrations `0001`
-through `0023` exist and are pushed. DEV/QA application of
-`0018` through `0022` is owner-confirmed; `0022_funding_eligibility.sql` was
-manually applied through the Supabase SQL Editor but has not received hosted
-behavioral validation. `0023` is not applied or hosted-validated. Production
-Supabase and evidenced production web/mobile deployment do not exist. Payments
-are mock-only. The maintenance Cron is registered in DEV/QA but intentionally
-inactive. No EAS production profile, signing, or TestFlight evidence exists.
+through `0023` exist and are pushed. DEV/QA application of `0018` through
+`0023` is owner-confirmed; `0022_funding_eligibility.sql` and `0023` have not
+received hosted behavioral validation. Production Supabase and evidenced
+production web/mobile deployment do not exist. Payments are mock-only. The
+maintenance Cron is registered in DEV/QA but intentionally inactive. No EAS
+production profile, signing, or TestFlight evidence exists.
 
 The web app has public/auth routes and functional Giver, Partner, Organization
 Operator, and Admin workspaces. Native has the Student journey, but its current
@@ -118,18 +117,18 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Active workstreams
 
-- Native Giver BFF foundation is complete in the repository but awaiting
-  ordered DEV/QA application/validation of `0023` and QA configuration.
+- Native Giver BFF foundation and `0023` are complete and owner-confirmed
+  applied to DEV/QA, awaiting QA configuration and hosted validation.
 - The mobile-first audit and native Giver vertical-slice plan remain the
   implementation guide for the unstarted native router and UI work.
 - Separate operational work remains: hosted behavioral validation of `0022`.
 
 ## Blocked / waiting workstreams
 
-- Native Giver BFF hosted acceptance remains blocked until `0023` is applied
-  and the QA Next.js host has the isolated service and rate-limit secrets plus
-  exact confirmation callback configuration. Native workspace routing and UI
-  remain separate, unimplemented work.
+- Native Giver BFF hosted acceptance remains blocked until the QA Next.js host
+  has the isolated service and rate-limit secrets plus exact confirmation
+  callback configuration, and focused hosted validation passes. Native
+  workspace routing and UI remain separate, unimplemented work.
 - Partner public acquisition/onboarding and Organization public acquisition
   await the owner decisions above.
 - External beta remains blocked by production infrastructure, real payments,
@@ -187,7 +186,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Apply and hosted-validate `0023` plus QA BFF secret/callback configuration.
+1. Hosted-validate `0023` plus QA BFF secret/callback configuration.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice in the recorded sequence, preserving existing Student behavior.
 3. Run hosted behavioral validation for already-applied `0022` as a separate
@@ -195,8 +194,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** apply and hosted-validate ordered migration `0023` in
-DEV/QA, with the isolated BFF rate-limit secret and exact HTTPS confirmation
+**NEXT BOUNDED TASK:** hosted-validate owner-confirmed DEV/QA migration
+`0023`, with the isolated BFF rate-limit secret and exact HTTPS confirmation
 callback allowlisted. Verify its private-table/function privileges and
 representative quota behavior; do not add mobile UI, deep-link handling, or
 client funding calls in that task.

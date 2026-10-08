@@ -40,10 +40,11 @@ feature, authorization, RLS, RPC, funding, or Impact behavior has changed.
 The latest implementation batch is the reviewed native Giver BFF foundation:
 Node-runtime signup, checkout, and confirmation routes; verified bearer plus
 stored-role checks; strict schemas; generic responses; and private,
-database-backed rate-limit contract in ordered migration `0023`. The migration
-is not yet applied to DEV/QA, and no native Giver UI or confirmation callback
-has been added. Both mock funding RPCs remain service-only, and migration
-`0021` Giver provisioning is unchanged.
+database-backed rate-limit contract in ordered migration `0023`. The owner
+confirmed `0023` was applied to DEV/QA; hosted behavioral validation and QA
+BFF secret/callback configuration remain pending. No native Giver UI or
+confirmation callback has been added. Both mock funding RPCs remain
+service-only, and migration `0021` Giver provisioning is unchanged.
 
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
@@ -57,18 +58,19 @@ inspect the remote project.
 
 The first native Giver BFF implementation batch is complete in the repository:
 the shared limiter is database-backed, private, and service-only. Migration
-`0023` and its isolated QA Next.js secret/callback configuration require
-DEV/QA application and validation before the BFF is usable. Native workspace
-routing, Giver UI, and the exact confirmation callback remain unimplemented.
-Migration `0022` is applied to DEV/QA and awaits hosted behavioral validation;
-that validation remains separate from the next product-surface workstream.
+`0023` is owner-confirmed applied to DEV/QA; its isolated QA Next.js
+secret/callback configuration and hosted validation remain before the BFF is
+usable. Native workspace routing, Giver UI, and the exact confirmation callback
+remain unimplemented. Migration `0022` is applied to DEV/QA and awaits hosted
+behavioral validation; that validation remains separate from the next
+product-surface workstream.
 
 ## Hosted environments
 
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0022` are owner-confirmed applied; `0022` hosted behavioral validation remains pending; fixtures and focused hosted validation are allowed |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0023` are owner-confirmed applied; `0022` and `0023` hosted behavioral validation remain pending; fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | Public and operational web surfaces | Repository application exists; no production Vercel/domain deployment is evidenced |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Expo app exists but is Student-only in implementation; all non-Student profile roles stop at `role-boundary`; no EAS production profile, signing, or TestFlight release evidence |
@@ -90,7 +92,7 @@ not imply Production status.
 | `0020_database_maintenance_cron.sql` | Yes | Yes | Yes, owner-confirmed | Partial: registration/inactive state confirmed; live worker, timeout, concurrency, and monitoring checks pending | No | `cinste-maintenance-v1` intentionally inactive |
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
 | `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | No; 6 disposable-PostgreSQL and 14 server-action assertions passed locally only | No | Applied in DEV/QA; hosted behavioral validation pending; no Production environment exists |
-| `0023_native_bff_rate_limits.sql` | Yes | Yes | No | No; 3 disposable-PostgreSQL privilege/quota assertions passed locally | No | Private HMAC-fingerprint limiter for reviewed native Giver BFF; must be applied after `0022` |
+| `0023_native_bff_rate_limits.sql` | Yes | Yes | Yes, owner-confirmed | No; 3 disposable-PostgreSQL privilege/quota assertions passed locally | No | Private HMAC-fingerprint limiter for reviewed native Giver BFF; QA secret/callback configuration and hosted validation pending |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -108,8 +110,8 @@ ad-hoc hosted objects to bypass migration order.
 - Native Giver, Partner, and Organization Operator surfaces required by the
   locked platform strategy are absent; native routing does not yet resolve
   additive workspaces.
-- The reviewed native Giver BFF requires ordered `0023` application plus a
-  configured QA Next.js server secret and exact callback allowlist before use.
+- The reviewed native Giver BFF requires its configured QA Next.js server
+  secret, exact callback allowlist, and hosted validation before use.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -152,13 +154,13 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**IMPLEMENT:** apply and validate `0023` in DEV/QA with the isolated server
-secret and exact callback allowlist configured, then implement the native
-workspace foundation and Giver auth/read-only surfaces. Reuse the existing
-catalog and `list_my_giving_outcomes()` read authority; do not grant
-service-only funding RPCs to the mobile client. Partner acquisition remains an
-owner decision but no longer supersedes the mobile-first Giver gap as the
-single next product workstream.
+**IMPLEMENT:** run the focused hosted DEV/QA validation for already-applied
+`0023`, while confirming the isolated server secret and exact callback
+allowlist. Then implement the native workspace foundation and Giver auth/
+read-only surfaces. Reuse the existing catalog and `list_my_giving_outcomes()`
+read authority; do not grant service-only funding RPCs to the mobile client.
+Partner acquisition remains an owner decision but no longer supersedes the
+mobile-first Giver gap as the single next product workstream.
 
 ## COMPLETE
 - Core backend hardening implemented
