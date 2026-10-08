@@ -1,14 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
-
-export const partnerOfferDraftInput = z.object({
-  partnerId: z.string().uuid(), categoryId: z.string().uuid(), name: z.string().trim().min(2).max(160),
-  description: z.string().trim().min(2).max(2000), fulfillment: z.enum(['instant', 'appointment_required', 'scheduled_event']),
-  instructions: z.string().trim().max(1000).optional().or(z.literal('')), bookingUrl: z.string().url().optional().or(z.literal('')),
-}).strict();
+import { partnerOfferDraftInput } from './offer-draft-schema';
 
 export async function savePartnerOfferDraft(form: FormData) {
   const input = partnerOfferDraftInput.parse(Object.fromEntries(form)); const db = await createClient();

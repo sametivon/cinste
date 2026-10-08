@@ -95,6 +95,12 @@ Production evidence.
 
 ## Current active workstream
 
+The Vercel deployment for `15022d5` failed during page-data collection because
+the Partner server-action module exported its validation schema. The schema is
+now a regular module, leaving the server-action file with async action exports
+only. Typecheck and 22 focused local tests pass; a replacement deployment is
+pending. The public QA host is still serving the prior successful deployment.
+
 The public web acquisition flow now sends every Student and Giver landing CTA
 through the localized role explainer before authentication. The explainer says
 what each path receives and what happens next, keeps Partner and Organization

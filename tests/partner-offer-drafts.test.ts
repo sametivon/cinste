@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { partnerOfferDraftInput } from '@/app/partner/actions';
+import { partnerOfferDraftInput } from '@/app/partner/offer-draft-schema';
 
 describe('partner offer drafts', () => {
   const input = { partnerId: '00000000-0000-4000-8000-000000000001', categoryId: '00000000-0000-4000-8000-000000000002', name: 'Haircut', description: 'A student haircut.', fulfillment: 'appointment_required', instructions: '', bookingUrl: '' };
