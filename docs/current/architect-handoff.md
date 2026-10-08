@@ -74,9 +74,11 @@ iOS-specific build, signing, TestFlight, or release work.
   compact Your journey guidance on Student Profile and Giver Offers. Existing
   resolver continuation, protected route guards, revisitable orientation
   entry points, and the fixed unauthenticated Giver callback are unchanged.
-  Typecheck and the full 51-test mobile suite pass; physical-device acceptance
-  remains pending. The latest owner screenshots are from a stale Expo Go
-  bundle and must be reloaded before acceptance.
+  Typecheck and the full 51-test mobile suite pass. Reconciliation found two
+  required corrections before Expo Go review: the system-map labels/accessibility
+  label are hard-coded English, and its paths fade together rather than
+  presenting the approved sequential journey. The latest owner screenshots are
+  from a stale Expo Go bundle and must be reloaded only after those corrections.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -92,11 +94,13 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Reload Expo Go from the current bundle, then re-run manual acceptance for
+1. Correct system-map localization/accessibility and purposeful sequential
+   journey motion without changing routing, authority, or the flow's content.
+2. Reload Expo Go from the current bundle, then re-run manual acceptance for
    onboarding, Student/Giver routing, Giver catalog/detail, My Giving privacy
    states, durable guidance, navigation, and absence of checkout/payment
    controls.
-2. After Apple Developer enrollment, implement the Astra-reviewed
+3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
 3. Resolve native Partner and Organization operational-surface gaps in the
@@ -291,14 +295,12 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** replace the shallow two-step orientation with a coherent
-role-based guided native launch flow. It must show an animated shared CINSTE
-system story, then a personalized role/state journey with the resolver-derived
-next action, and leave compact contextual guidance available in the destination
-workspace. Use only versioned per-user local presentation state, purposeful
-reduced-motion-safe effects, and truthful current-surface boundaries. Do not
-change BFF, funding, Auth protocol, role, database authority, verification,
-assignments, or workspace choice. Preserve the exact unauthenticated callback
-outside the workspace guard. Reload Expo Go from the current Metro bundle only
-after implementation, then collect device evidence. Do not claim signed-iOS,
+**NEXT BOUNDED TASK:** correct the guided-launch system map before acceptance:
+move every visible and accessibility label into the RO/EN/TR/AR dictionaries,
+and animate the map as a clear sequential Giver-to-Partner-to-Student-to-Impact
+journey rather than simultaneous path fading. Preserve the current three-phase
+flow, versioned local state, reduced-motion behavior, resolver continuation,
+route guards, exact unauthenticated callback boundary, and all authority/
+funding exclusions. Add focused regression coverage, then reload Expo Go from
+the current Metro bundle and collect device evidence. Do not claim signed-iOS,
 TestFlight, or Production acceptance.
