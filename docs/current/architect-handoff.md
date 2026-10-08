@@ -45,13 +45,11 @@ a QA Vercel host is live; the native confirmation callback remains absent.
 
 ### Next
 
-1. Implement the reviewed native multi-workspace foundation and Giver shell
-   while preserving Student navigation and verification behavior.
-2. Implement native Giver signup and the exact confirmation callback, then
+1. Implement native Giver signup and the exact confirmation callback, then
    configure its HTTPS Supabase Auth redirect allowlist before BFF use.
-3. Implement the remaining read-only Giver catalog and outcomes surfaces.
-4. Run focused hosted DEV/QA behavioral validation for `0022`.
-5. Resolve native Partner and Organization operational-surface gaps in the
+2. Implement the remaining read-only Giver catalog and outcomes surfaces.
+3. Run focused hosted DEV/QA behavioral validation for `0022`.
+4. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -128,9 +126,9 @@ reports `NATIVE_BFF_RATE_LIMIT_KEY` configured server-side; its value was not
 inspected. No exact native confirmation callback redirect is configured.
 
 The web app has public/auth routes and functional Giver, Partner, Organization
-Operator, and Admin workspaces. Native has the Student journey, but its current
-`resolveMobileDestination` sends every non-Student profile to `role-boundary`;
-there are no Giver, Partner, or Organization routes. `0021` provisioning and
+Operator, and Admin workspaces. Native has the Student journey plus the reviewed
+workspace resolver, chooser, and safe Giver entry shell; Partner and
+Organization operations remain at `role-boundary`. `0021` provisioning and
 the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Active workstreams
@@ -140,7 +138,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
   server-only rate-limit key are owner-confirmed, but the confirmation callback
   remains before use.
 - The mobile-first audit and native Giver vertical-slice plan remain the
-  implementation guide for the unstarted native router and UI work.
+  implementation guide for the next auth/callback and read-only surfaces.
 - Separate operational work remains: hosted behavioral validation of `0022`.
 
 ## Blocked / waiting workstreams
@@ -149,7 +147,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
   and its exact HTTPS Supabase Auth redirect configuration exist. Focused
   hosted limiter validation has passed and the rate-limit key is
   owner-confirmed server-side. Native
-  workspace routing and UI remain separate, unimplemented work.
+  workspace routing and UI now exist as repository-only presentation surfaces;
+  physical-device and hosted mobile validation remain pending.
 - Partner public acquisition/onboarding and Organization public acquisition
   await the owner decisions above.
 - External beta remains blocked by production infrastructure, real payments,
@@ -207,16 +206,15 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Implement the reviewed native multi-workspace foundation and Giver shell,
-   preserving existing Student behavior.
-2. Implement native Giver signup plus the exact confirmation callback and
+1. Implement native Giver signup plus the exact confirmation callback and
    redirect allowlist configuration.
-3. Run hosted behavioral validation for already-applied `0022` as a separate
+2. Run hosted behavioral validation for already-applied `0022` as a separate
    DEV/QA task.
+3. Add read-only native Giver catalog and outcomes surfaces after the auth
+   callback boundary is complete.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** implement the reviewed native workspace-envelope
-resolver and chooser with a Giver shell. Preserve Student navigation and
-verification behavior; do not add native signup, confirmation/deep-link
-handling, funding calls, or Partner/Organization functionality.
+**NEXT BOUNDED TASK:** implement native Giver signup plus the exact reviewed
+confirmation callback and redirect allowlist. Preserve the new resolver and
+Giver shell; do not add funding or Partner/Organization functionality.
