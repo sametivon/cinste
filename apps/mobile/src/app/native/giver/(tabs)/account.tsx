@@ -1,0 +1,10 @@
+import { ScrollView, StyleSheet, Text } from 'react-native';
+import { router } from 'expo-router';
+import { Button, Card } from '@/components/ui';
+import { supportedLocales, useAppLocale, type SupportedLocale } from '@/i18n';
+import { useAuth } from '@/context/auth';
+import { color, space, type } from '@/design/tokens';
+
+const languageNames: Record<SupportedLocale, string> = { ro: 'Română', en: 'English', tr: 'Türkçe', ar: 'العربية' };
+export default function GiverAccount() { const { session, signOut } = useAuth(); const { locale, setLocale, t, isRTL } = useAppLocale(); const logout = async () => { await signOut(); router.replace('/(auth)/login'); }; return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}><Text style={[styles.title, isRTL && styles.textRtl]}>{t('giver.account')}</Text><Card><Text style={[styles.name, isRTL && styles.textRtl]}>{session?.user.email}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('giver.accountCopy')}</Text></Card><Card><Text style={[styles.heading, isRTL && styles.textRtl]}>{t('profile.language')}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('profile.languageHint')}</Text>{supportedLocales.map((candidate) => <Button key={candidate} label={languageNames[candidate]} variant={locale === candidate ? 'primary' : 'quiet'} onPress={() => setLocale(candidate)} />)}</Card><Button label={t('giver.logout')} variant="quiet" onPress={() => void logout()} /></ScrollView>; }
+const styles = StyleSheet.create({ page: { flexGrow: 1, padding: space.lg, paddingBottom: space.xxl, gap: space.sm, backgroundColor: color.canvas }, rtl: {}, textRtl: { textAlign: 'right', writingDirection: 'rtl' }, title: { ...type.title, color: color.ink }, heading: { ...type.cardTitle, color: color.ink, marginBottom: space.xs }, name: { ...type.cardTitle, color: color.ink }, copy: { ...type.bodySmall, color: color.secondaryText, marginBottom: space.sm } });

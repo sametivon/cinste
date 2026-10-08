@@ -48,7 +48,10 @@ and mobile typecheck passes. Manual iPhone Expo Go evidence confirms that the
 read-only data loads, but exposes a product-quality gap: the Giver surface is a
 direct screen without a role-local native navigator or safe-area header, so it
 has no bottom navigation, overlaps the status bar, and renders long QA fixture
-content poorly. This is not accepted mobile UX evidence.
+content poorly. The scoped repository correction now provides a native Giver
+Stack, Offers/My Giving/Account tabs, safe-area-aware detail content, and
+bounded catalog card hierarchy. This remains repository/local evidence only;
+fresh Expo Go acceptance is still required.
 
 The preceding implementation batch is the reviewed native workspace-envelope
 and Giver shell batch. Mobile now derives a presentation-only workspace envelope

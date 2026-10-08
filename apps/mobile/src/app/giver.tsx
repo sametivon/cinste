@@ -1,35 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Redirect, router } from 'expo-router';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Button, Card, EmptyState, Loading, colors } from '@/components/ui';
-import { OfferCard } from '@/components/offer-card';
-import { useAuth } from '@/context/auth';
-import { useAppLocale } from '@/i18n';
-import { localizedCategory, localizedOffer, formatRon } from '@/lib/presentation';
-import { getActiveGiverOffers, getMyGivingOutcomes, presentGivingOutcome } from '@/lib/giver-reads';
-import { resolveMobileDestination } from '@/lib/mobile-routing';
-import type { GiverOffer, GivingOutcome } from '@/lib/types';
+import { Redirect } from 'expo-router';
 
-export default function GiverShell() {
-  const { session, loading: authLoading, role, student, workspaceEnvelope, selectedWorkspace, signOut } = useAuth();
-  const { t, isRTL, locale } = useAppLocale();
-  const destination = resolveMobileDestination({ hasSession: Boolean(session), resolved: !authLoading, role, verificationStatus: student?.verification_status ?? null, envelope: workspaceEnvelope, selectedWorkspace });
-  const [tab, setTab] = useState<'catalog' | 'outcomes'>('catalog');
-  const [offers, setOffers] = useState<GiverOffer[]>([]); const [outcomes, setOutcomes] = useState<GivingOutcome[]>([]); const [busy, setBusy] = useState(true); const [error, setError] = useState(false);
-  const load = useCallback(async () => { setBusy(true); setError(false); try { if (tab === 'catalog') setOffers(await getActiveGiverOffers()); else setOutcomes(await getMyGivingOutcomes()); } catch { setError(true); } finally { setBusy(false); } }, [tab]);
-  useEffect(() => { if (destination === 'giver') void load(); }, [destination, load]);
-  if (destination === 'loading') return <Loading label={t('common.loading')} />;
-  if (destination !== 'giver') return <Redirect href="/" />;
-  const logout = async () => { await signOut(); router.replace('/(auth)/login'); };
-  return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]} refreshControl={<RefreshControl refreshing={busy} onRefresh={() => void load()} tintColor={colors.coral} />}>
-    <Text style={[styles.brand, isRTL && styles.textRtl]}>CINSTE<Text style={{ color: colors.coral }}>.</Text></Text><Text style={[styles.title, isRTL && styles.textRtl]}>{t('giver.title')}</Text>
-    <View style={[styles.tabs, isRTL && styles.rowRtl]}><Tab label={t('giver.catalog')} selected={tab === 'catalog'} onPress={() => setTab('catalog')} /><Tab label={t('giver.outcomes')} selected={tab === 'outcomes'} onPress={() => setTab('outcomes')} /></View>
-    {busy ? <Loading label={t('giver.loading')} /> : error ? <Card><Text style={[styles.heading, isRTL && styles.textRtl]}>{t('giver.errorTitle')}</Text><Text style={[styles.copy, isRTL && styles.textRtl]}>{t('giver.errorCopy')}</Text><Button label={t('common.retry')} variant="quiet" onPress={() => void load()} /></Card> : tab === 'catalog' ? <Catalog offers={offers} locale={locale} t={t} isRTL={isRTL} /> : <Outcomes outcomes={outcomes} t={t} isRTL={isRTL} />}
-    <Button label={t('giver.logout')} variant="quiet" onPress={() => void logout()} />
-  </ScrollView>;
+/** Compatibility entry retained for the resolver's safe `/giver` destination. */
+export default function GiverEntry() {
+  return <Redirect href={'/native/giver' as any} />;
 }
-function Tab({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) { return <Pressable accessibilityRole="tab" accessibilityState={{ selected }} onPress={onPress} style={[styles.tab, selected && styles.tabSelected]}><Text style={[styles.tabText, selected && styles.tabTextSelected]}>{label}</Text></Pressable>; }
-function Catalog({ offers, locale, t, isRTL }: { offers: GiverOffer[]; locale: any; t: any; isRTL: boolean }) { if (!offers.length) return <EmptyState title={t('giver.emptyCatalog')} copy={t('giver.emptyCatalogCopy')} />; return <View style={styles.stack}>{offers.map((item) => { const offer = localizedOffer(item, t); return <OfferCard key={item.id} category={offer.categories ? localizedCategory(offer.categories.slug, t, offer.categories.name) : t('giver.unavailable')} categorySlug={offer.categories?.slug ?? 'default'} title={offer.name} partner={offer.partners?.name ?? t('giver.unavailable')} availability={formatRon(offer.giver_price_bani, locale)} fulfillment={t(`fulfillment.${offer.fulfillment_type}`)} imageUrl={offer.image_path} rtl={isRTL} onPress={() => router.push({ pathname: '/native/giver/offer/[offerId]' as any, params: { offerId: item.id } })} />; })}</View>; }
-function Outcomes({ outcomes, t, isRTL }: { outcomes: GivingOutcome[]; t: any; isRTL: boolean }) { if (!outcomes.length) return <EmptyState title={t('giver.emptyOutcomes')} copy={t('giver.emptyOutcomesCopy')} />; return <View style={styles.stack}>{outcomes.map((outcome) => { const view = presentGivingOutcome(outcome); return <Card key={outcome.order_item_id}><Text style={[styles.funded, isRTL && styles.textRtl]}>{t(outcome.funded_quantity === 1 ? 'giver.fundedOne' : 'giver.fundedMany', { count: outcome.funded_quantity })}</Text><Text style={[styles.heading, isRTL && styles.textRtl]}>{outcome.offer_title}</Text><Text style={[styles.state, isRTL && styles.textRtl]}>{t(`giver.outcome.${view.state}`)}</Text>{view.metrics ? <View style={styles.metrics}><Metric label={t('giver.reserved')} value={view.metrics.reserved} /><Metric label={t('giver.redeemed')} value={view.metrics.redeemed} />{view.metrics.recordedUnreserved !== null && <Metric label={t('giver.recordedAvailable')} value={view.metrics.recordedUnreserved} />}{view.metrics.availableNow !== null && <Metric label={t('giver.available')} value={view.metrics.availableNow} />}</View> : <Text style={[styles.copy, isRTL && styles.textRtl]}>{t(`giver.outcomeCopy.${view.state}`)}</Text>}</Card>; })}</View>; }
-function Metric({ label, value }: { label: string; value: number }) { return <View style={styles.metric}><Text style={styles.metricLabel}>{label}</Text><Text style={styles.metricValue}>{value}</Text></View>; }
-const styles = StyleSheet.create({ page: { flexGrow: 1, padding: 24, gap: 18, backgroundColor: colors.cream }, rtl: {}, rowRtl: { flexDirection: 'row-reverse' }, textRtl: { textAlign: 'right', writingDirection: 'rtl' }, brand: { fontSize: 24, fontWeight: '900', letterSpacing: -1, color: colors.ink }, title: { fontSize: 34, fontWeight: '900', color: colors.ink }, tabs: { flexDirection: 'row', gap: 8 }, tab: { flex: 1, padding: 12, borderRadius: 12, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, alignItems: 'center' }, tabSelected: { backgroundColor: colors.coral }, tabText: { fontWeight: '700', color: colors.coral }, tabTextSelected: { color: colors.white }, stack: { gap: 14 }, heading: { fontSize: 20, fontWeight: '700', color: colors.ink, marginBottom: 8 }, copy: { fontSize: 16, lineHeight: 24, color: colors.muted, marginBottom: 12 }, funded: { color: colors.coral, fontWeight: '700', marginBottom: 8 }, state: { color: colors.muted, fontWeight: '700', marginBottom: 12 }, metrics: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, metric: { minWidth: '46%', padding: 10, borderRadius: 12, backgroundColor: colors.cream }, metricLabel: { color: colors.muted, fontSize: 12 }, metricValue: { color: colors.ink, fontSize: 20, fontWeight: '800' } });
