@@ -123,6 +123,11 @@ generic sign-in. Admin context eyebrows remain limited to operational
 boundaries. Typecheck and the focused auth/provisioning tests pass locally;
 hosted visual acceptance is still pending.
 
+The auth hero now uses the existing Motion dependency for a role-aware animated
+network: SVG path flow, staggered nodes, subtle pointer depth, and a reduced
+motion fallback. Auth behavior and role authority are unchanged. Typecheck and
+the focused auth/provisioning tests pass locally.
+
 Partner offer drafts are implemented in repository migration `0024`, pending
 application to development/QA. The security review keeps partner-authored
 descriptive drafts separate from canonical offers and campaigns. An assigned

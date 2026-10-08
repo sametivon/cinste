@@ -56,3 +56,18 @@ body:has(.admin-v1-page) { background:#FFF8F3; color:#231F20; font-family:"Plus 
 .auth-intro-giver .auth-visual-mark span:first-child { background:#E5F5F0 }
 .auth-intro-student .auth-visual-mark span:first-child { background:#E8F3FB }
 @media (max-width:760px) { .auth-journey { margin-top:24px } }
+.auth-page:has(.auth-grid) { perspective:1200px }
+.auth-page:has(.auth-grid) .auth-intro { transform-style:preserve-3d; will-change:transform }
+.auth-network { height:180px; margin:-18px -18px 16px; opacity:.95; overflow:visible; transform:translateZ(18px) }
+.auth-network svg { display:block; height:100%; overflow:visible; width:100% }
+.auth-network-path { fill:none; stroke:#C93F4A; stroke-linecap:round; stroke-width:2.5; opacity:.72 }
+.auth-network-path-soft { stroke:#7658B5; stroke-dasharray:4 9; opacity:.4 }
+.auth-network-node { fill:#C93F4A; stroke:#FFF8F3; stroke-width:5 }
+.auth-intro-giver .auth-network-node { fill:#177965 }
+.auth-intro-student .auth-network-node { fill:#2F6FA8 }
+.auth-network-pulse { fill:none; stroke:#C93F4A; stroke-width:2; transform-box:fill-box; transform-origin:center }
+.auth-intro-giver .auth-network-pulse { stroke:#177965 }
+.auth-intro-student .auth-network-pulse { stroke:#2F6FA8 }
+.auth-hero-copy { position:relative; z-index:1 }
+@media (max-width:760px) { .auth-network { height:140px; margin:-10px -10px 8px } }
+@media (prefers-reduced-motion:reduce) { .auth-page:has(.auth-grid) .auth-intro { transform:none!important } }
