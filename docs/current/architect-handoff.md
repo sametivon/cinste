@@ -68,6 +68,12 @@ iOS-specific build, signing, TestFlight, or release work.
   local-only orientation before authoritative routing, followed by a role- and
   state-specific next step. It must not bypass verification, assignments,
   workspace choice, or role boundaries.
+- The shared native orientation is now implemented: versioned per-user
+  SecureStore state, two concise localized steps, authoritative resolver
+  continuation, revisitable Student/Giver/boundary entry points, and protected
+  route guards. Typecheck and the full 48-test mobile suite pass; physical
+  device acceptance remains pending. The fixed Giver confirmation callback is
+  unchanged and remains outside protected workspace/onboarding guards.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -83,17 +89,13 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Add a shared first-run and revisitable native CINSTE orientation for every
-   authenticated user before role/state routing, followed by a safe role- and
-   state-specific next-step screen. Persist only local presentation state per
-   authenticated user.
-2. Re-run manual Expo Go acceptance for orientation, Student/Giver routing,
+1. Re-run manual Expo Go acceptance for orientation, Student/Giver routing,
    Giver catalog/detail, My Giving privacy states, navigation, and absence of
    checkout/payment controls.
-3. After Apple Developer enrollment, implement the Astra-reviewed
+2. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-4. Resolve native Partner and Organization operational-surface gaps in the
+3. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked

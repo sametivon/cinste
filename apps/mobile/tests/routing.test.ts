@@ -1,12 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
-import { canAccessVerifiedStudentRoute, mobileNavigationKey, resolveMobileDestination, resolveWorkspaceEnvelope, type MobileRouteState } from '@/lib/mobile-routing';
+import { canAccessVerifiedStudentRoute, mobileNavigationKey, resolveMobileDestination, resolveMobileEntry, resolveWorkspaceEnvelope, type MobileRouteState } from '@/lib/mobile-routing';
 import { FIXED_GIVER_CONFIRMATION_PATH } from '@/lib/native-giver-confirmation';
 import { NATIVE_GIVER_WORKSPACE_ROUTE, NATIVE_GIVER_WORKSPACE_SCREENS } from '@/lib/native-giver-route-topology';
 
 const state = (overrides: Partial<MobileRouteState> = {}): MobileRouteState => ({ hasSession: true, resolved: true, role: 'student', verificationStatus: 'verified', ...overrides });
 
 describe('authoritative mobile account gate', () => {
+  it('shows orientation before any authoritative role or verification destination', () => {
+    expect(resolveMobileEntry({ ...state(), orientationComplete: false })).toBe('orientation');
+    expect(resolveMobileEntry({ ...state({ verificationStatus: null }), orientationComplete: false })).toBe('orientation');
+    expect(resolveMobileEntry({ ...state({ role: 'giver', envelope: { status: 'resolved', workspaces: ['giver'] } }), orientationComplete: false })).toBe('orientation');
+  });
+
+  it('re-runs the existing resolver after orientation without bypassing role state', () => {
+    expect(resolveMobileEntry({ ...state({ verificationStatus: null }), orientationComplete: true })).toBe('verification');
+    expect(resolveMobileEntry({ ...state({ verificationStatus: 'pending' }), orientationComplete: true })).toBe('impact-history');
+    expect(resolveMobileEntry({ ...state({ role: 'giver', envelope: { status: 'resolved', workspaces: ['giver', 'organization'] } }), orientationComplete: true })).toBe('workspace-chooser');
+    expect(resolveMobileEntry({ ...state({ role: 'partner', envelope: { status: 'resolved', workspaces: [] } }), orientationComplete: true })).toBe('role-boundary');
+  });
+
   it('keeps the fixed confirmation callback outside the protected Giver workspace route', () => {
     expect(FIXED_GIVER_CONFIRMATION_PATH).toBe('/native/giver/confirm');
     expect(FIXED_GIVER_CONFIRMATION_PATH).not.toBe(NATIVE_GIVER_WORKSPACE_ROUTE);

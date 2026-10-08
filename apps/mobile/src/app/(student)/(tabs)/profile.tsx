@@ -34,6 +34,7 @@ export default function Profile() {
       <Text style={[styles.section, isRTL && styles.textRtl]}>{t('profile.howItWorks')}</Text>
       <Text style={[styles.copy, isRTL && styles.textRtl]}>{t('profile.howItWorksCopy')}</Text>
     </Card>
+    <Button label={t('orientation.title')} variant="quiet" onPress={() => router.push('/orientation?revisit=1' as any)} />
     <Button label={t('profile.logout')} variant="quiet" onPress={logout} />
   </ScrollView>;
 }

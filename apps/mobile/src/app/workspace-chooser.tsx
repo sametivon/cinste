@@ -4,13 +4,14 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 import { Button, Card, Loading, colors } from '@/components/ui';
 import { useAuth } from '@/context/auth';
 import { useAppLocale } from '@/i18n';
-import { resolveMobileDestination, type MobileWorkspace } from '@/lib/mobile-routing';
+import { resolveMobileEntry, type MobileWorkspace } from '@/lib/mobile-routing';
 
 export default function WorkspaceChooser() {
-  const { session, loading, role, student, workspaceEnvelope, selectedWorkspace, selectWorkspace, signOut } = useAuth();
+  const { session, loading, role, student, workspaceEnvelope, selectedWorkspace, orientationComplete, selectWorkspace, signOut } = useAuth();
   const { t, isRTL } = useAppLocale();
-  const destination = resolveMobileDestination({ hasSession: Boolean(session), resolved: !loading, role, verificationStatus: student?.verification_status ?? null, envelope: workspaceEnvelope, selectedWorkspace });
+  const destination = resolveMobileEntry({ hasSession: Boolean(session), resolved: !loading, role, verificationStatus: student?.verification_status ?? null, envelope: workspaceEnvelope, selectedWorkspace, orientationComplete });
   if (destination === 'loading') return <Loading label={t('common.loading')} />;
+  if (destination === 'orientation') return <Redirect href="/orientation" />;
   if (destination !== 'workspace-chooser') return <Redirect href="/" />;
   const workspaces = workspaceEnvelope.workspaces;
   const choose = async (workspace: MobileWorkspace) => { await selectWorkspace(workspace); router.replace('/'); };

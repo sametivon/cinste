@@ -95,6 +95,18 @@ Production evidence.
 
 ## Current active workstream
 
+The shared native CINSTE orientation batch is implemented in the repository.
+Authenticated native entry is gated by a versioned SecureStore presentation
+marker keyed by Supabase user ID; the two-step orientation describes CINSTE,
+privacy, and the authoritative role/state next step, then records completion
+only after Continue and re-runs the existing resolver. Student Profile, Giver
+Account, and the native role-boundary surface can revisit it. Protected Student,
+Giver, verification, history, workspace, and offer routes redirect incomplete
+users to orientation. The unauthenticated `/native/giver/confirm` callback
+remains outside those guards. Mobile typecheck passes and the full suite is
+48/48; Expo Go/manual device acceptance remains pending. No migration,
+database, web, funding, callback, or Production state changed.
+
 The native workspace-envelope/Giver-shell, onboarding, and read-only catalog/
 outcomes batches are complete in the repository:
 the resolver fails closed on missing/failed reads and does not call BFF, funding

@@ -2,6 +2,7 @@ import type { AppRole, VerificationStatus } from '@/lib/types';
 
 export type MobileWorkspace = 'student' | 'giver' | 'partner' | 'organization';
 export type MobileDestination = 'loading' | 'login' | 'student' | 'giver' | 'impact-history' | 'verification' | 'workspace-chooser' | 'role-boundary';
+export type MobileEntryDestination = MobileDestination | 'orientation';
 export type WorkspaceEnvelope = { status: 'resolved' | 'unavailable'; workspaces: MobileWorkspace[] };
 export type WorkspaceReadState = { profileRole: AppRole | null; partnerAssignment: boolean; organizationAssignment: boolean; readsAvailable: boolean };
 export type WorkspaceResolution = { status: WorkspaceEnvelope['status']; workspaces: MobileWorkspace[] };
@@ -13,6 +14,8 @@ export type MobileRouteState = {
   envelope?: WorkspaceEnvelope;
   selectedWorkspace?: MobileWorkspace | null;
 };
+
+export type MobileEntryState = MobileRouteState & { orientationComplete: boolean };
 
 export function resolveWorkspaceEnvelope(state: WorkspaceReadState): WorkspaceResolution {
   if (!state.readsAvailable || !state.profileRole) return { status: 'unavailable', workspaces: [] };
@@ -43,6 +46,13 @@ export function resolveMobileDestination(state: MobileRouteState): MobileDestina
   if (workspace !== 'student') return 'role-boundary';
   if (state.verificationStatus === 'verified') return 'student';
   return state.verificationStatus === 'pending' || state.verificationStatus === 'rejected' ? 'impact-history' : 'verification';
+}
+
+export function resolveMobileEntry(state: MobileEntryState): MobileEntryDestination {
+  if (!state.resolved) return 'loading';
+  if (!state.hasSession) return 'login';
+  if (!state.orientationComplete) return 'orientation';
+  return resolveMobileDestination(state);
 }
 
 export function mobileNavigationKey(userId: string | undefined) {

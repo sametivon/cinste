@@ -5,18 +5,19 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { supabase } from '@/lib/supabase';
 import { shouldRefreshOnForeground } from '@/lib/freshness';
 import { resolveWorkspaceEnvelope, type MobileWorkspace, type WorkspaceEnvelope } from '@/lib/mobile-routing';
+import { completeMobileOrientation, hasCompletedMobileOrientation } from '@/lib/orientation';
 import type { AppRole, VerificationStatus } from '@/lib/types';
 
 type StudentState = { full_name: string; university_id: string | null; faculty: string | null; verification_status: VerificationStatus; rejection_reason: string | null } | null;
-type AuthContextValue = { session: Session | null; loading: boolean; role: AppRole | null; student: StudentState; workspaceEnvelope: WorkspaceEnvelope; selectedWorkspace: MobileWorkspace | null; refreshStudent: (userId?: string) => Promise<StudentState>; selectWorkspace: (workspace: MobileWorkspace) => Promise<void>; signOut: () => Promise<void> };
+type AuthContextValue = { session: Session | null; loading: boolean; role: AppRole | null; student: StudentState; workspaceEnvelope: WorkspaceEnvelope; selectedWorkspace: MobileWorkspace | null; orientationComplete: boolean; refreshStudent: (userId?: string) => Promise<StudentState>; completeOrientation: () => Promise<void>; selectWorkspace: (workspace: MobileWorkspace) => Promise<void>; signOut: () => Promise<void> };
 const AuthContext = createContext<AuthContextValue | null>(null);
 const workspaceStorageKey = 'cinste.mobile.workspace';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null); const [role, setRole] = useState<AppRole | null>(null); const [student, setStudent] = useState<StudentState>(null); const [workspaceEnvelope, setWorkspaceEnvelope] = useState<WorkspaceEnvelope>({ status: 'unavailable', workspaces: [] }); const [selectedWorkspace, setSelectedWorkspace] = useState<MobileWorkspace | null>(null); const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null); const [role, setRole] = useState<AppRole | null>(null); const [student, setStudent] = useState<StudentState>(null); const [workspaceEnvelope, setWorkspaceEnvelope] = useState<WorkspaceEnvelope>({ status: 'unavailable', workspaces: [] }); const [selectedWorkspace, setSelectedWorkspace] = useState<MobileWorkspace | null>(null); const [orientationComplete, setOrientationComplete] = useState(false); const [loading, setLoading] = useState(true);
   const refreshStudent = useCallback(async (userId?: string) => {
     const id = userId ?? (await supabase.auth.getUser()).data.user?.id;
-    if (!id) { setRole(null); setStudent(null); setWorkspaceEnvelope({ status: 'unavailable', workspaces: [] }); setSelectedWorkspace(null); return null; }
+    if (!id) { setRole(null); setStudent(null); setWorkspaceEnvelope({ status: 'unavailable', workspaces: [] }); setSelectedWorkspace(null); setOrientationComplete(false); return null; }
     const [{ data: profile, error: profileError }, { data: partnerAssignments, error: partnerError }, { data: organizationAssignments, error: organizationError }] = await Promise.all([
       supabase.from('profiles').select('role').eq('id', id).maybeSingle(),
       supabase.from('partner_users').select('partner_id').eq('user_id', id),
@@ -35,12 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data.verification_status === 'rejected') { const { data: rejection } = await supabase.from('student_verifications').select('rejection_reason').eq('student_id', id).eq('status', 'rejected').order('reviewed_at', { ascending: false }).limit(1).maybeSingle(); rejection_reason = rejection?.rejection_reason ?? null; }
     const next = { ...data, rejection_reason } as StudentState; setStudent(next); return next;
   }, []);
-  const resolveSession = useCallback(async (next: Session | null) => { setLoading(true); setSession(next); try { if (next) await refreshStudent(next.user.id); else { setRole(null); setStudent(null); setWorkspaceEnvelope({ status: 'unavailable', workspaces: [] }); setSelectedWorkspace(null); } } finally { setLoading(false); } }, [refreshStudent]);
+  const resolveSession = useCallback(async (next: Session | null) => { setLoading(true); setSession(next); try { if (next) { await Promise.all([refreshStudent(next.user.id), hasCompletedMobileOrientation(next.user.id).then(setOrientationComplete)]); } else { setRole(null); setStudent(null); setWorkspaceEnvelope({ status: 'unavailable', workspaces: [] }); setSelectedWorkspace(null); setOrientationComplete(false); } } finally { setLoading(false); } }, [refreshStudent]);
   useEffect(() => { void supabase.auth.getSession().then(({ data: { session: next } }) => resolveSession(next)); const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, next) => { void resolveSession(next); }); return () => subscription.unsubscribe(); }, [resolveSession]);
   useEffect(() => { const listener = AppState.addEventListener('change', (state) => { if (shouldRefreshOnForeground(state, Boolean(session))) void (async () => { setLoading(true); try { await refreshStudent(); } finally { setLoading(false); } })(); }); return () => listener.remove(); }, [session, refreshStudent]);
   const selectWorkspace = useCallback(async (workspace: MobileWorkspace) => { if (!workspaceEnvelope.workspaces.includes(workspace)) return; await SecureStore.setItemAsync(workspaceStorageKey, workspace); setSelectedWorkspace(workspace); }, [workspaceEnvelope]);
+  const completeOrientation = useCallback(async () => { const id = session?.user.id; if (!id) return; await completeMobileOrientation(id); setOrientationComplete(true); }, [session]);
   const signOut = useCallback(async () => { await supabase.auth.signOut(); await SecureStore.deleteItemAsync(workspaceStorageKey); }, []);
-  const value = useMemo(() => ({ session, loading, role, student, workspaceEnvelope, selectedWorkspace, refreshStudent, selectWorkspace, signOut }), [session, loading, role, student, workspaceEnvelope, selectedWorkspace, refreshStudent, selectWorkspace, signOut]);
+  const value = useMemo(() => ({ session, loading, role, student, workspaceEnvelope, selectedWorkspace, orientationComplete, refreshStudent, completeOrientation, selectWorkspace, signOut }), [session, loading, role, student, workspaceEnvelope, selectedWorkspace, orientationComplete, refreshStudent, completeOrientation, selectWorkspace, signOut]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 export function useAuth() { const value = useContext(AuthContext); if (!value) throw new Error('useAuth must be used inside AuthProvider'); return value; }
