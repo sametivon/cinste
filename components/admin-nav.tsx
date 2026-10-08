@@ -4,6 +4,7 @@ const items = [
   { href: '/admin', label: 'Overview' },
   { href: '/admin#verification', label: 'Student verification' },
   { href: '/admin/manage', label: 'Catalog & partners' },
+  { href: '/admin/offer-drafts', label: 'Partner drafts' },
   { href: '/admin/operations', label: 'Core operations' },
   { href: '/admin/impact', label: 'Impact & organizations' },
 ];

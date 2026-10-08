@@ -95,6 +95,15 @@ Production evidence.
 
 ## Current active workstream
 
+Partner offer drafts are implemented in repository migration `0024`, pending
+application to development/QA. The security review keeps partner-authored
+descriptive drafts separate from canonical offers and campaigns. An assigned
+Partner may submit a draft for its own Partner only; Admin alone reviews it,
+sets the commercial terms, and atomically creates the live offer. Partners
+cannot set price or inventory, publish a campaign, or alter claim/payment
+authority. Typecheck and focused local tests pass; no migration, hosted, or
+Production evidence exists.
+
 The web acquisition correction is implemented in the repository. Standard web
 login now sends prospective users to a localized role-intent chooser before
 account creation: Student and Giver enter their existing distinct signup
