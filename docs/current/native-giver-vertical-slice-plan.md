@@ -6,8 +6,8 @@ kod-kapsami: []
 # Native Giver Vertical Slice Architecture Plan
 
 **Date:** 2026-10-07  
-**Mode:** Owner-directed analysis only. No application, database, RPC, RLS, or
-credential behavior changed.
+**Mode:** Astra-reviewed implementation contract. No application, database,
+RPC, RLS, or credential behavior has changed yet.
 
 ## Purpose and constraints
 
@@ -59,8 +59,21 @@ The existing native `auth.signUp` is Student-only and must remain that way.
 The Giver flow needs a separate role-intent entry and must not set a role from
 client metadata.
 
-Use a trusted server endpoint/BFF for new Giver signup. It accepts only
-validated normalized email, password, and display name; it then performs the
+Use dedicated Node-runtime route handlers in the existing Next.js deployment
+as the trusted BFF host. Do not use Server Actions for the Expo contract. The
+service-role key exists only in server-side, isolated non-production secrets;
+it must never appear in `EXPO_PUBLIC_*`, Expo config/extra, mobile build
+inputs, source maps, client bundles, logs, or fixtures. A separately operated
+edge service is not approved for this slice without a new equivalent-controls
+review.
+
+`POST /api/native/giver/signup` accepts exactly
+`{ email, password, displayName? }`, with strict server validation and no role,
+user ID, redirect URL, workspace, grant, or arbitrary metadata field. It
+normalizes the email server-side, applies password/display-name bounds, and
+returns only `202 { status: "confirmation_needed" }` for both new and
+duplicate accounts. Invalid shapes, throttling, and temporary failures may
+return only generic `400`, `429`, and `503` outcomes. It then performs the
 same sequence as the web Giver action inside trusted server execution:
 
 1. Issue the ten-minute opaque provisioning grant using the service-only
@@ -78,11 +91,14 @@ The Auth INSERT trigger remains the only writer of the initial literal
 must not upgrade an existing Student or other account. Preserve generic
 duplicate/error treatment and add abuse/rate controls at the public endpoint.
 
-Email confirmation requires a reviewed native callback: configure an exact
-app-link redirect allowlist, exchange only the expected Auth code/session, and
-then rerun the workspace resolver. The current app has no such callback, so it
-is part of the slice rather than an assumed capability. Password recovery is a
-separate release gap unless it is deliberately included in this auth change.
+Email confirmation requires one exact callback path. Use a verified HTTPS
+Universal/App Link for release; accept only an expected authorization code on
+that path, complete the PKCE/session exchange, discard link intent, and rerun
+the workspace resolver. Do not accept raw access/refresh-token fragments, an
+arbitrary `redirectTo`, workspace, return path, or route parameter. The current
+app has no such callback, so it is part of the slice rather than an assumed
+capability. Password recovery is a separate release gap unless it is
+deliberately included in this auth change.
 
 ## Giver data and funding boundary
 
@@ -98,9 +114,31 @@ The native app may reuse these existing client-safe contracts:
 by `service_role`. The mobile app must not call either RPC, write financial
 tables, use a service key, or send a claimed Giver ID as authority.
 
-For the current mock provider, add a reviewed authenticated funding BFF:
+For the current mock provider, add these reviewed authenticated funding BFF
+routes:
 
-- The app sends its access token plus an offer ID/quantity (create) or order
+```
+POST /api/native/giver/funding/checkout
+body: { offerId, quantity }
+201: { status: "pending", order: { id, status, totalBani } }
+
+POST /api/native/giver/funding/confirm
+body: { orderId, success }
+200: { status: "paid" | "failed" | "already_paid" | "already_failed" }
+```
+
+Each route requires exactly one bearer token and verifies it server-side with
+Supabase Auth `getUser(accessToken)` (or an equivalently maintained JWKS
+verifier). Decoding JWT claims or accepting a client-supplied Giver ID is not
+verification. The route rereads the stored profile role, requires literal
+`giver`, validates UUIDs, quantity `1..100`, and the boolean before invoking a
+service RPC. A cross-user order is a generic unavailable/not-found result.
+Confirmation is idempotent and returns the current safe state without creating
+additional campaigns, inventory, or analytics events.
+
+The reviewed BFF rules are:
+
+- The app sends its bearer token plus an offer ID/quantity (create) or order
   ID/success simulation (confirm).
 - The BFF verifies the token, derives the caller ID itself, rechecks the
   literal Giver role, validates the bounded input, and invokes the
@@ -111,6 +149,15 @@ For the current mock provider, add a reviewed authenticated funding BFF:
 - Responses are minimal and safe: order/checkout state and a display-safe
   receipt; they do not expose service errors, payment internals, or an
   arbitrary-user checkout path.
+
+Rate-limit signup by IP plus a privacy-preserving keyed email fingerprint, and
+funding by verified user plus IP, with short-burst and sustained quotas. On a
+validation, rate-limit, or bearer failure, do not issue a grant or invoke a
+service RPC. CORS is not native authentication: do not emit permissive CORS;
+any later browser origin allowlist must be exact. Structured logs may contain
+a request ID, endpoint, result class, and redacted/hash identifiers only; they
+must never contain bearer tokens, passwords, grants, confirmation URLs/codes,
+service errors, or raw email.
 
 The mock success/failure controls must be visibly marked as the existing
 non-production simulation. A real provider, payment intent, signed webhook,
@@ -145,12 +192,10 @@ this slice and need their own owner decision and Astra review.
 
 ## Smallest complete implementation sequence
 
-1. **ASTRA REVIEW REQUIRED:** approve the public Giver-signup BFF, native
-   confirmation app-link callback, authenticated mock-funding BFF, bearer
-   verification, response schemas, rate/abuse controls, and credential
-   placement. Confirm whether this contract is implemented in the existing
-   Next.js deployment or a separately operated edge service; the security
-   properties above are mandatory either way.
+1. **Astra review completed with binding changes:** use the existing Next.js
+   Node-runtime BFF, server-side secret isolation, exact route schemas,
+   server-side bearer verification, profile recheck, no permissive CORS,
+   rate/abuse controls, redacted logs, and exact PKCE confirmation callback.
 2. Add a tested native workspace-envelope resolver and chooser, retaining the
    current Student routes and verification gate unchanged. Add only the Giver
    shell at this stage; do not broaden Partner/Organization functionality.
@@ -172,13 +217,16 @@ this slice and need their own owner decision and Astra review.
    Keep web Giver live until native parity evidence exists and the owner makes
    the already-recorded companion-versus-handoff decision.
 
-## Required decision/checkpoint
+## Required acceptance and deployment checkpoint
 
-No new product-semantic owner decision is required for the mock vertical slice:
-the role, provisioning, funding eligibility, and privacy behavior are already
-locked. However, implementation cannot begin on the provisioning/funding or
-confirmation-link boundary without the required Astra security review. The
-only implementation-shaping choice to record during that review is the
-operational host for the trusted BFF (existing Next.js deployment versus a
-separately operated edge service); it must preserve the specified contract and
-does not change product behavior.
+The Astra review is complete: the existing Next.js deployment is the approved
+Node-runtime BFF host, subject to the binding contract above. Before hosted
+DEV/QA acceptance, confirm the isolated server-side service credential and the
+exact app-link configuration. Required tests include direct client RPC denial;
+no privileged credentials or service-RPC names in native source/bundles;
+forged, expired, and replayed grant denial; existing-account non-upgrade;
+malformed or over-posted payloads with zero side effects; rejected/missing/
+invalid bearer requests that never reach a service RPC; non-Giver and
+cross-user funding denial; changed-offer/price failure; duplicate confirmation;
+and confirmation-link allowlist rejection. Run the hosted set only after
+confirming `0021` and `0022` are applied.

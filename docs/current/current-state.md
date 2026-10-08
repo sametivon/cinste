@@ -30,9 +30,12 @@ The owner-approved mobile-first platform strategy is now recorded in
 reconciled against actual web, native, and backend capability in
 `docs/current/cross-platform-role-surface-audit.md`. The concrete native Giver
 vertical-slice auth, workspace, provisioning, funding, and reuse plan is now
-recorded in `docs/current/native-giver-vertical-slice-plan.md`. These were
-documentation and architecture work only; no product feature, authorization,
-RLS, RPC, funding, or Impact behavior changed.
+recorded in `docs/current/native-giver-vertical-slice-plan.md`. Astra has
+reviewed that boundary and requires the existing Next.js deployment's dedicated
+Node-runtime route handlers, verified bearer identity, stored-role recheck,
+strict schemas, exact PKCE confirmation callback, rate controls, redacted
+logs, and isolated service credentials. The review is documented; no product
+feature, authorization, RLS, RPC, funding, or Impact behavior has changed.
 
 The latest product implementation remains the V1 cross-role funding correction
 in migration `0022_funding_eligibility.sql` and the matching web server actions.
@@ -49,10 +52,12 @@ inspect the remote project.
 
 ## Current active workstream
 
-No product implementation is active. Platform strategy reconciliation and the
-cross-platform audit are complete. Migration `0022` is applied to DEV/QA and
-awaits hosted behavioral validation; that validation remains separate from the
-next product-surface workstream.
+No product implementation is active. The Astra-reviewed native Giver contract
+is ready for an implementation batch, but a shared, durable rate-limit facility
+and deployed QA Next.js host are not evidenced; an in-memory limiter would not
+meet the review requirement across instances. Migration `0022` is applied to
+DEV/QA and awaits hosted behavioral validation; that validation remains
+separate from the next product-surface workstream.
 
 ## Hosted environments
 
@@ -98,6 +103,8 @@ ad-hoc hosted objects to bypass migration order.
 - Native Giver, Partner, and Organization Operator surfaces required by the
   locked platform strategy are absent; native routing does not yet resolve
   additive workspaces.
+- The reviewed native Giver BFF requires a shared durable rate-limit control
+  and a configured QA Next.js host; neither is currently evidenced.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -122,7 +129,8 @@ ad-hoc hosted objects to bypass migration order.
 - Review real payments, privileged scheduler activation/identity, Production
   migration/RLS/grant verification, QA target allow-listing, sensitive
   telemetry/redaction, and any deletion or material Auth/deep-link change
-  before implementation or activation.
+  before implementation or activation. The native Giver BFF/app-link boundary
+  has received Astra requirements; preserve them during implementation.
 
 ## Remaining acceptance gaps
 
@@ -139,14 +147,16 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**ASTRA REVIEW REQUIRED, then IMPLEMENT:** start the native Giver end-to-end
-vertical slice using `docs/current/native-giver-vertical-slice-plan.md`:
-first approve the trusted signup/funding BFF and confirmation app-link
-contract, then add the shared native multi-workspace foundation and Giver
-slice. Reuse the existing catalog and `list_my_giving_outcomes()` read
-authority; do not grant service-only funding RPCs to the mobile client. Partner
-acquisition remains an owner decision but no longer supersedes the mobile-first
-Giver gap as the single next product workstream.
+**OWNER DECISION REQUIRED, then IMPLEMENT:** select the shared durable
+rate-limit facility for the Astra-reviewed native Giver BFF (for example, a
+managed edge rate-limit service or a database-backed design with its retention
+and privilege boundaries reviewed), and configure its QA Next.js host. Then
+implement the reviewed Node-runtime BFF, exact confirmation callback, native
+workspace foundation, and Giver slice. Reuse the existing catalog and
+`list_my_giving_outcomes()` read authority; do not grant service-only funding
+RPCs to the mobile client. Partner acquisition remains an owner decision but no
+longer supersedes the mobile-first Giver gap as the single next product
+workstream.
 
 ## COMPLETE
 - Core backend hardening implemented

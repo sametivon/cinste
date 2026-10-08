@@ -9,9 +9,9 @@ kod-kapsami: []
 
 Realign the implemented V1 with the locked mobile-first platform strategy, then
 prepare for controlled external beta. The immediate product objective is the
-smallest safe native Giver vertical slice, preceded by its required Astra
-review. This handoff establishes Architect Mode only; it changes no product
-behavior.
+smallest safe native Giver vertical slice. Astra has reviewed its trust
+boundary and set binding BFF/app-link requirements; implementation has not yet
+started.
 
 ## Roadmap snapshot
 
@@ -26,25 +26,26 @@ behavior.
 
 ### In Progress
 
-- No product implementation is active. The current immediate work is the
-  required Astra review of the native Giver trusted boundary.
+- The Astra-reviewed native Giver contract is captured. Its implementation is
+  waiting for a shared durable rate-limit facility and configured QA Next.js
+  host; an in-memory limiter is not sufficient across instances.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
 
-1. Astra-review the native Giver signup/funding BFF, bearer verification,
-   confirmation app-link, rate controls, credential placement, and BFF host.
-2. Implement the reviewed native multi-workspace foundation and Giver vertical
+1. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice while preserving Student and web Giver behavior.
-3. Run focused hosted DEV/QA behavioral validation for `0022`.
-4. Resolve native Partner and Organization operational-surface gaps in the
+2. Run focused hosted DEV/QA behavioral validation for `0022`.
+3. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
-5. Close production-readiness work needed for controlled external beta.
+4. Close production-readiness work needed for controlled external beta.
 
 ### Blocked
 
-- Native Giver implementation is Astra-gated; native Partner and Organization
-  surfaces are absent, and the mobile router is still Student-centric.
+- Native Giver implementation is scoped and reviewed, but awaits selection of
+  its shared durable rate-limit facility and QA host configuration; native
+  Partner and Organization surfaces are absent, and the mobile router is still
+  Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
   deletion/retention delivery.
@@ -122,11 +123,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Blocked / waiting workstreams
 
-- Native Giver implementation is blocked on Astra review of the public
-  Giver-signup BFF, authenticated mock-funding BFF, bearer verification,
-  response schemas, rate/abuse controls, credential placement, and exact
-  confirmation app-link callback. The review must also choose the trusted BFF
-  host (existing Next.js deployment or a separately operated edge service).
+- Native Giver implementation and hosted acceptance remain blocked until the
+  shared durable rate-limit facility and QA host are selected/configured; the
+  resulting Node-runtime BFF must include redacted logging, exact confirmation
+  callback, isolated server-side QA secret, and required hosted tests.
 - Partner public acquisition/onboarding and Organization public acquisition
   await the owner decisions above.
 - External beta remains blocked by production infrastructure, real payments,
@@ -152,9 +152,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Open architecture or product questions
 
-- During the required Astra review, select the BFF operating host while
-  preserving the reviewed contract; this is implementation-shaping, not a new
-  product semantic.
+- Astra selected the existing Next.js deployment as the Node-runtime BFF host.
+  A separate edge host requires a new equivalent-controls review.
 - After native Giver parity evidence, decide whether Giver web stays a
   permanent companion or is reduced to acquisition/handoff.
 - Owner decisions remain needed for Partner acquisition/onboarding authority,
@@ -163,8 +162,10 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Security / Astra checkpoints
 
-- Required before native Giver work: provisioning/funding BFF, confirmation
-  app-link, bearer verification, rate controls, and credential placement.
+- Native Giver boundary review completed: implementation must use Node-runtime
+  route handlers, server-side bearer verification and profile recheck, strict
+  schemas, rate limits, redacted logs, isolated secrets, and an exact PKCE
+  confirmation callback. No Server Actions or native service-RPC calls.
 - Required before real payments, scheduler identity/activation, Production
   migration/RLS/grant verification, QA target allow-listing, sensitive
   telemetry/redaction, deletion/erasure, and material Auth/deep-link changes.
@@ -183,8 +184,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Obtain the required Astra review for the native Giver trusted-boundary
-   contract.
+1. Select the shared durable rate-limit facility and configure the QA Next.js
+   host for the reviewed native Giver BFF.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice in the recorded sequence, preserving existing Student behavior.
 3. Run hosted behavioral validation for already-applied `0022` as a separate
@@ -192,7 +193,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**ASTRA REVIEW REQUIRED:** review and approve the native Giver signup,
-confirmation-app-link, and mock-funding BFF boundary described in
-`docs/current/native-giver-vertical-slice-plan.md`; do not begin that boundary
-implementation until approved.
+**OWNER DECISION REQUIRED:** select the shared durable rate-limit facility for
+the reviewed native Giver BFF and configure its QA Next.js host. Then build the
+Node-runtime BFF and exact confirmation callback contract with token
+verification, secret isolation, source/bundle scanning, and malformed-request
+tests, before native UI or funding calls.
