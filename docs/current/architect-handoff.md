@@ -53,11 +53,15 @@ iOS-specific build, signing, TestFlight, or release work.
   scaffold are locally tested, but the BFF cannot be used: the server-created
   signup does not provide a mobile-held PKCE verifier, and the hosted HTTPS
   callback/app-link association delivery is absent.
-- Separate DEV/QA operational work: hosted behavioral validation of `0022`.
+- Separate DEV/QA operational work: the reusable fail-closed hosted runner for
+  `0022` is committed; hosted behavioral validation itself remains pending.
+  The existing local funding suite passes, and this session did not contact
+  hosted DEV/QA.
 
 ### Next
 
-1. Run focused hosted DEV/QA behavioral validation for already-applied `0022`.
+1. Run focused hosted DEV/QA behavioral validation for already-applied `0022`
+   with the explicit non-production flags: `$env:NODE_ENV='development'; $env:CINSTE_HOSTED_QA_VALIDATION='1'; $env:CINSTE_VALIDATE_0022='1'; npm run test:integration:funding-eligibility`.
 2. Implement the remaining read-only Giver catalog and outcomes surfaces.
 3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
@@ -165,6 +169,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 - The mobile-first audit and native Giver vertical-slice plan remain the
   implementation guide for the next auth/callback and read-only surfaces.
 - Separate operational work remains: hosted behavioral validation of `0022`.
+  The runner is present and local funding tests pass; no hosted result is
+  claimed until the owner runs it against confirmed DEV/QA.
 
 ## Blocked / waiting workstreams
 

@@ -13,6 +13,7 @@
     "test:funding": "node --test tests/funding-eligibility.test.mjs",
     "test:native-giver-bff": "node --test tests/native-giver-bff-rate-limits.test.mjs",
     "test:integration:native-giver-bff-rate-limits": "node --env-file=.env.local scripts/native-giver-bff-rate-limits-hosted-validation.mjs",
+    "test:integration:funding-eligibility": "node --env-file=.env.local scripts/funding-eligibility-hosted-validation.mjs",
     "test:native-giver-bff:routes": "vitest run tests/native-giver-bff-routes.test.ts",
     "mobile": "node scripts/sync-mobile-env.mjs && npm --prefix apps/mobile run start",
     "bootstrap:test-users": "node --env-file=.env.local scripts/bootstrap-test-users.mjs",

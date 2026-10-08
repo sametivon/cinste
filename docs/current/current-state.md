@@ -71,7 +71,10 @@ assertions passing. The owner also confirms that `0022` was manually applied
 successfully to the same hosted environment through the Supabase SQL Editor;
 hosted behavioral validation of `0022` has not been completed. This repository
 reconciliation did not rerun the migration, run hosted tests, or independently
-inspect the remote project.
+inspect the remote project. A reusable fail-closed runner is now present at
+`scripts/funding-eligibility-hosted-validation.mjs` with package command
+`test:integration:funding-eligibility`; this session did not use the local env
+file or contact hosted DEV/QA, so no hosted 0022 evidence is added.
 
 ## Current active workstream
 
@@ -98,7 +101,8 @@ Expo callback scaffold exists, but the hosted callback/app-link and PKCE
 handoff remain unresolved. Migration `0022` is
 applied to DEV/QA and awaits hosted
 behavioral validation; that validation remains separate from the next
-product-surface workstream.
+product-surface workstream. The runner requires `NODE_ENV` other than
+production, `CINSTE_HOSTED_QA_VALIDATION=1`, and `CINSTE_VALIDATE_0022=1`.
 
 ## Hosted environments
 
@@ -201,6 +205,8 @@ and Admin-controlled Organization provisioning already exist.
 **NEXT:** run focused hosted DEV/QA behavioral validation for already-applied
 `0022_funding_eligibility.sql`. This is independent of iOS signing and must
 not alter the migration, native Giver UI, BFF routes, or funding semantics.
+The owner-run PowerShell command is:
+`$env:NODE_ENV='development'; $env:CINSTE_HOSTED_QA_VALIDATION='1'; $env:CINSTE_VALIDATE_0022='1'; npm run test:integration:funding-eligibility`
 The approved iOS confirmation correction remains blocked until Apple Developer
 membership provides a real bundle ID and Team ID.
 
