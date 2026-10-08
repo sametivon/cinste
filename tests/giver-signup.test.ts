@@ -15,7 +15,7 @@ vi.mock('@/lib/supabase/admin', () => ({ adminDb: mocks.adminDb }));
 vi.mock('@/lib/organization-workspace', () => ({ activeOrganizationWorkspaces: mocks.activeOrganizationWorkspaces }));
 vi.mock('@/lib/i18n/server', () => ({ getWebLocale: mocks.getWebLocale }));
 
-import { login, signupGiver } from '@/app/actions';
+import { login, signup, signupGiver } from '@/app/actions';
 
 const userId = '00000000-0000-4000-8000-000000000123';
 const grantToken = 'a'.repeat(64);
@@ -64,6 +64,16 @@ describe('dedicated Giver signup action', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.activeOrganizationWorkspaces.mockResolvedValue([]);
+  });
+
+  it('sends a new standard account to the Student app handoff', async () => {
+    mocks.createClient.mockResolvedValue(client());
+    const input = new FormData();
+    input.set('email', 'student@example.com');
+    input.set('password', 'correct-horse');
+    input.set('displayName', 'Student');
+
+    await expect(signup(input)).rejects.toThrow('REDIRECT:/student');
   });
 
   it('keeps an authenticated existing account on its stored-role destination without issuing a grant', async () => {

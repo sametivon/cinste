@@ -55,7 +55,7 @@ export async function signup(form: FormData) {
   if (error) redirect(loginError(error.message, context));
   // The database trigger is deliberately the only profile-provisioning path.
   // Do not turn URL/form intent into a role mutation here.
-  redirect('/onboarding');
+  redirect('/student');
 }
 
 export async function signupGiver(form: FormData) {

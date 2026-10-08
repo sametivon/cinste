@@ -95,6 +95,16 @@ Production evidence.
 
 ## Current active workstream
 
+The web acquisition correction is implemented in the repository. Standard web
+login now sends prospective users to a localized role-intent chooser before
+account creation: Student and Giver enter their existing distinct signup
+flows; Partner and Organization remain truthful invitation-only states; Admin
+remains sign-in-only. A standard signup now reaches the Student app handoff
+rather than the chooser, so a visual intent never mutates a stored role or
+assignment. Typecheck and 21 focused routing/provisioning tests pass locally.
+This is repository and local automated evidence only; no hosted or device
+acceptance is claimed.
+
 The role-based guided native launch flow is implemented in the repository.
 Orientation version 2 uses per-user SecureStore presentation state, an animated
 SVG CINSTE system map, role/state-specific journeys, a truthful next action,
