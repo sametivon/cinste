@@ -53,20 +53,18 @@ iOS-specific build, signing, TestFlight, or release work.
   scaffold are locally tested, but the BFF cannot be used: the server-created
   signup does not provide a mobile-held PKCE verifier, and the hosted HTTPS
   callback/app-link association delivery is absent.
-- Separate DEV/QA operational work: the reusable fail-closed hosted runner for
-  `0022` is committed; hosted behavioral validation itself remains pending.
-  The existing local funding suite passes, and this session did not contact
-  hosted DEV/QA.
+- Separate DEV/QA operational work is complete: the owner ran the guarded
+  `0022` runner on 2026-10-08 and all 61 hosted non-production assertions
+  passed. This does not establish Production evidence.
 
 ### Next
 
-1. Run focused hosted DEV/QA behavioral validation for already-applied `0022`
-   with the explicit non-production flags: `$env:NODE_ENV='development'; $env:CINSTE_HOSTED_QA_VALIDATION='1'; $env:CINSTE_VALIDATE_0022='1'; npm run test:integration:funding-eligibility`.
-2. Implement the remaining read-only Giver catalog and outcomes surfaces.
-3. After Apple Developer enrollment, implement the Astra-reviewed
+1. Implement the remaining read-only native Giver catalog and outcomes
+   surfaces.
+2. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-4. Resolve native Partner and Organization operational-surface gaps in the
+3. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -136,8 +134,8 @@ The repository tracks `main`/`origin/main`; the only pre-existing working-tree
 entry is the intentional untracked `docs/brand/` owner-review area. Migrations
 `0001` through `0023` exist and are pushed. DEV/QA application of `0018`
 through `0023` is owner-confirmed; `0023` passed its focused hosted database
-validation on 2026-10-08, while `0022_funding_eligibility.sql` remains
-unvalidated on hosted DEV/QA. Production Supabase and evidenced
+validation on 2026-10-08, while `0022_funding_eligibility.sql` passed 61
+owner-run hosted non-production assertions on the same date. Production Supabase and evidenced
 production web/mobile deployment do not exist. Payments are mock-only. The
 maintenance Cron is registered in DEV/QA but intentionally inactive. No EAS
 production profile, signing, or TestFlight evidence exists. Windows is the
@@ -168,9 +166,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
   is Astra-reviewed but awaits implementation and mobile signing identities.
 - The mobile-first audit and native Giver vertical-slice plan remain the
   implementation guide for the next auth/callback and read-only surfaces.
-- Separate operational work remains: hosted behavioral validation of `0022`.
-  The runner is present and local funding tests pass; no hosted result is
-  claimed until the owner runs it against confirmed DEV/QA.
+- Hosted behavioral validation of `0022` is complete in DEV/QA: the guarded
+  runner passed 61 owner-run non-production assertions on 2026-10-08.
 
 ## Blocked / waiting workstreams
 
@@ -246,8 +243,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Run hosted behavioral validation for already-applied `0022` as a separate
-   DEV/QA task.
+1. Implement read-only native Giver catalog and outcomes surfaces without
+   adding funding or changing BFF/RPC/migration behavior.
 2. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link
    correction and validate hosted QA signup/confirmation.
@@ -256,8 +253,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** run hosted DEV/QA behavioral validation for
-already-applied `0022_funding_eligibility.sql`. Do not alter the migration,
-native Giver UI, BFF routes, funding semantics, or Apple/Expo configuration.
-Report hosted evidence separately from local, Expo Go, and future signed-iOS
-acceptance.
+**NEXT BOUNDED TASK:** implement read-only native Giver catalog and “My
+Giving” outcomes surfaces using existing read contracts. Do not add funding,
+modify BFF/RPC/migration behavior, or alter Apple/Expo configuration. Preserve
+the resolver and Giver shell, and report local, Expo Go, hosted, and signed-iOS
+evidence separately.

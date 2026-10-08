@@ -68,13 +68,11 @@ unchanged.
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
 assertions passing. The owner also confirms that `0022` was manually applied
-successfully to the same hosted environment through the Supabase SQL Editor;
-hosted behavioral validation of `0022` has not been completed. This repository
-reconciliation did not rerun the migration, run hosted tests, or independently
-inspect the remote project. A reusable fail-closed runner is now present at
-`scripts/funding-eligibility-hosted-validation.mjs` with package command
-`test:integration:funding-eligibility`; this session did not use the local env
-file or contact hosted DEV/QA, so no hosted 0022 evidence is added.
+successfully to the same hosted environment through the Supabase SQL Editor.
+On 2026-10-08, the owner ran the guarded reusable runner against DEV/QA and
+reported all 61 hosted non-production `0022` assertions passing. This is
+owner-run DEV/QA evidence only; it neither reran the migration nor establishes
+Production evidence.
 
 ## Current active workstream
 
@@ -98,18 +96,17 @@ the shared limiter is database-backed, private, and service-only. Migration
 its targeted hosted database validation. The isolated QA Next.js
 secret/callback configuration is not evidenced, so the BFF is not usable. The
 Expo callback scaffold exists, but the hosted callback/app-link and PKCE
-handoff remain unresolved. Migration `0022` is
-applied to DEV/QA and awaits hosted
-behavioral validation; that validation remains separate from the next
-product-surface workstream. The runner requires `NODE_ENV` other than
-production, `CINSTE_HOSTED_QA_VALIDATION=1`, and `CINSTE_VALIDATE_0022=1`.
+handoff remain unresolved. Migration `0022` is applied to DEV/QA and passed
+its 61-assertion owner-run hosted behavioral validation on 2026-10-08. That
+evidence remains separate from the next product-surface workstream and does
+not establish Production readiness.
 
 ## Hosted environments
 
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0023` are owner-confirmed applied. On 2026-10-08, 12 non-production hosted assertions passed for `0023`; `0022` hosted behavioral validation remains pending. Fixtures and focused hosted validation are allowed |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0023` are owner-confirmed applied. On 2026-10-08, 12 hosted assertions passed for `0023` and the owner-run `0022` runner passed 61 hosted non-production assertions. Fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
@@ -130,7 +127,7 @@ not imply Production status.
 | `0019_database_maintenance_runner.sql` | Yes | Yes | Yes, owner-confirmed | Partial: local atomic runner coverage passed; real concurrent hosted execution remains pending | No | Private runner present; no API-role execution grant |
 | `0020_database_maintenance_cron.sql` | Yes | Yes | Yes, owner-confirmed | Partial: registration/inactive state confirmed; live worker, timeout, concurrency, and monitoring checks pending | No | `cinste-maintenance-v1` intentionally inactive |
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
-| `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | No; 6 disposable-PostgreSQL and 14 server-action assertions passed locally only | No | Applied in DEV/QA; hosted behavioral validation pending; no Production environment exists |
+| `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | Yes, DEV/QA only: owner ran 61 hosted non-production assertions on 2026-10-08 | No | Service-only Giver eligibility, ownership, pricing/activity rechecks, direct API-role denial, and idempotent state behavior validated; no Production environment exists |
 | `0023_native_bff_rate_limits.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 12 hosted assertions passed on 2026-10-08 (service execution; anon/authenticated denial; private API storage denial; configured 5-per-minute quota; invalid non-fingerprint rejection) | No | Active private HMAC-fingerprint limiter. The QA Next.js host's server-only `NATIVE_BFF_RATE_LIMIT_KEY` and exact HTTPS Supabase Auth redirect allowlist remain unverified; do not use the BFF |
 
 For every future migration, update every column explicitly. Apply tracked
@@ -202,12 +199,10 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** run focused hosted DEV/QA behavioral validation for already-applied
-`0022_funding_eligibility.sql`. This is independent of iOS signing and must
-not alter the migration, native Giver UI, BFF routes, or funding semantics.
-The owner-run PowerShell command is:
-`$env:NODE_ENV='development'; $env:CINSTE_HOSTED_QA_VALIDATION='1'; $env:CINSTE_VALIDATE_0022='1'; npm run test:integration:funding-eligibility`
-The approved iOS confirmation correction remains blocked until Apple Developer
+**NEXT:** implement read-only native Giver catalog and “My Giving” outcomes
+surfaces. Reuse existing authenticated read contracts; do not add funding,
+modify BFF/RPC/migration behavior, or alter Apple/Expo configuration. The
+approved iOS confirmation correction remains blocked until Apple Developer
 membership provides a real bundle ID and Team ID.
 
 ## COMPLETE
@@ -698,5 +693,5 @@ recheck, direct RPC denial, all direct financial-table mutation verbs,
 service-only grants, fixed function ownership/search paths, and zero
 financial/inventory/event side effects on denial. Migration `0022` is
 owner-confirmed manually applied to hosted DEV/QA through the Supabase SQL
-Editor, but hosted behavioral validation has not been completed. It is not
+Editor and passed 61 owner-run hosted DEV/QA assertions on 2026-10-08. It is not
 applied to Production; no separate Production environment exists.
