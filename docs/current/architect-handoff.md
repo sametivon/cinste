@@ -62,6 +62,10 @@ iOS-specific build, signing, TestFlight, or release work.
   the protected `(workspace)` layout, while `/giver` and catalog, detail, My
   Giving, and Account remain in the guarded workspace. Signed-iOS, TestFlight,
   and Production validation remain unevidenced.
+- The owner identified an onboarding comprehension gap: the workspace is now
+  navigable but does not explain the Giver journey, privacy-protected outcomes,
+  or the current mobile/Web funding boundary. The next product task is a
+  first-run, revisitable, local-only orientation inside the guarded workspace.
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
@@ -77,12 +81,16 @@ iOS-specific build, signing, TestFlight, or release work.
 
 ### Next
 
-1. Re-run manual Expo Go acceptance for catalog, detail, My Giving privacy
-   states, navigation, and absence of checkout/payment controls.
-2. After Apple Developer enrollment, implement the Astra-reviewed
+1. Add a guided first-run and revisitable native Giver orientation that explains
+   the journey, Offers, My Giving privacy states, and that funding remains on
+   CINSTE web in the current mobile slice. Persist only local presentation
+   state per authenticated user.
+2. Re-run manual Expo Go acceptance for orientation, catalog, detail, My Giving
+   privacy states, navigation, and absence of checkout/payment controls.
+3. After Apple Developer enrollment, implement the Astra-reviewed
    native-owned PKCE and verified iOS Universal Link correction, then configure
    and validate hosted QA signup/confirmation.
-3. Resolve native Partner and Organization operational-surface gaps in the
+4. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
 ### Blocked
@@ -262,21 +270,26 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Run the bounded Expo Go manual acceptance below for the read-only Giver
-   surface; it does not require Apple signing or a Mac.
-2. When Apple Developer membership exists, owner supplies the iOS bundle ID
+1. Add the local-only native Giver orientation before acceptance testing; it
+   does not require Apple signing or a Mac.
+2. Run the bounded Expo Go manual acceptance below for the orientation and
+   read-only Giver surface.
+3. When Apple Developer membership exists, owner supplies the iOS bundle ID
    and Apple Team ID; then implement the approved PKCE/Universal Link
    correction and validate hosted QA signup/confirmation.
-3. Resolve native Partner and Organization operational-surface decisions and
+4. Resolve native Partner and Organization operational-surface decisions and
    implementation gaps.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** collect fresh Expo Go iPhone evidence for the completed
-native Giver workspace shell. The exact unauthenticated
-`native/giver/confirm` callback is outside the authenticated workspace guard;
-catalog, detail, My Giving, and Account remain guarded. Preserve the existing
-blocked PKCE/BFF state and do not alter Auth semantics. Then validate catalog/detail, My Giving privacy states, native
+**NEXT BOUNDED TASK:** add a guided first-run and revisitable Giver orientation
+inside the guarded native workspace. Explain the giver-to-student-to-partner
+journey, Offers, My Giving privacy states, and the current boundary that
+browsing/outcome updates are available in mobile while funding remains on
+CINSTE web. Persist only a versioned, per-user local presentation choice; do
+not change BFF, funding, Auth, role, or database authority. Preserve the exact
+unauthenticated callback outside the workspace guard. Then collect Expo Go
+iPhone evidence for orientation, catalog/detail, My Giving privacy states,
 navigation/back behavior, safe-area presentation, and absence of
 checkout/payment controls. Do not claim signed-iOS, TestFlight, or Production
 acceptance.

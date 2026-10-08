@@ -218,12 +218,15 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** rerun bounded Expo Go acceptance on iPhone for the Giver workspace
-shell: catalog/detail, My Giving privacy states, native navigation/back behavior,
-safe-area presentation, and absence of checkout/payment controls. The fixed
-unauthenticated callback is now outside the guarded workspace; the existing
-Astra-reviewed callback contract and blocked BFF flow remain unchanged. The
-native-owned PKCE and verified iOS Universal
+**NEXT:** add a guided, first-run and revisitable Giver orientation inside the
+authenticated native Giver workspace. It must explain the giver-to-student-to-
+partner journey, what Offers and My Giving mean, the privacy-protected outcome
+states, and the current mobile boundary: browsing and outcome updates are
+available while funding remains on CINSTE web. Use per-user local presentation
+state only; do not add a database onboarding flag or change funding, BFF, Auth,
+or role authority. Then run bounded Expo Go acceptance on iPhone for both the
+orientation and workspace shell. The fixed unauthenticated callback remains
+outside the guarded workspace; the native-owned PKCE and verified iOS Universal
 Link correction remains blocked until Apple Developer membership provides a
 real bundle ID and Team ID. No signed-iOS, TestFlight, or Production evidence
 is claimed.
