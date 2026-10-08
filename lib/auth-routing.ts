@@ -8,8 +8,8 @@ export type AuthIntent = 'student' | 'giver';
 /** Public routes that may be restored after an auth form submission. */
 export const safeAuthReturnPaths = ['/giver', '/student', '/account'] as const;
 export const publicRoleDestinations = {
-  student: '/student',
-  giver: '/giver',
+  student: '/onboarding?role=student',
+  giver: '/onboarding?role=giver',
 } as const;
 
 export function parseAuthIntent(value: unknown): AuthIntent | undefined {

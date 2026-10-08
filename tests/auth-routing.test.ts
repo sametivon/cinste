@@ -37,9 +37,9 @@ describe("authenticated account routing", () => {
     expect(logoDestination(true, "giver", true)).toBe("/account");
   });
 
-  it("exposes public Student and Giver destinations without exposing protected workspaces", () => {
-    expect(publicRoleDestinations.student).toBe('/student');
-    expect(publicRoleDestinations.giver).toBe('/giver');
+  it("sends public Student and Giver journeys through the role explainer without exposing protected workspaces", () => {
+    expect(publicRoleDestinations.student).toBe('/onboarding?role=student');
+    expect(publicRoleDestinations.giver).toBe('/onboarding?role=giver');
     expect(Object.values(publicRoleDestinations)).not.toContain('/partner');
     expect(Object.values(publicRoleDestinations)).not.toContain('/organization');
   });

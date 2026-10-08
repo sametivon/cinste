@@ -95,6 +95,16 @@ Production evidence.
 
 ## Current active workstream
 
+The public web acquisition flow now sends every Student and Giver landing CTA
+through the localized role explainer before authentication. The explainer says
+what each path receives and what happens next, keeps Partner and Organization
+truthfully invitation-only, and keeps Admin sign-in-only. Role-aware login
+puts account creation before returning-user sign-in. Role selection remains
+presentation-only: it cannot set a stored role, assignment, or workspace.
+Typecheck and 21 focused routing/provisioning tests pass locally. This is
+repository and local automated evidence only; no hosted or device acceptance
+is claimed.
+
 Partner offer drafts are implemented in repository migration `0024`, pending
 application to development/QA. The security review keeps partner-authored
 descriptive drafts separate from canonical offers and campaigns. An assigned
