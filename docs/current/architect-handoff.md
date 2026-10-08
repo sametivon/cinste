@@ -19,6 +19,10 @@ challenge to the BFF; after the exact verified HTTPS app link, native redeems
 the Auth code with that verifier over HTTPS and sets the returned session.
 Hosted configuration waits for that correction and the real iOS signing ID.
 Android is explicitly out of scope for the current native Giver slice.
+The owner has no Apple Developer Program membership yet. Windows is the
+primary development machine and iPhone testing uses Expo Go; retain that
+workflow where possible. The older MacBook is required only for genuine
+iOS-specific build, signing, TestFlight, or release work.
 
 ## Roadmap snapshot
 
@@ -53,10 +57,11 @@ Android is explicitly out of scope for the current native Giver slice.
 
 ### Next
 
-1. Implement the Astra-reviewed native-owned PKCE and verified HTTPS app-link
-   correction, then configure the exact callback and run hosted QA validation.
+1. Run focused hosted DEV/QA behavioral validation for already-applied `0022`.
 2. Implement the remaining read-only Giver catalog and outcomes surfaces.
-3. Run focused hosted DEV/QA behavioral validation for `0022`.
+3. After Apple Developer enrollment, implement the Astra-reviewed
+   native-owned PKCE and verified iOS Universal Link correction, then configure
+   and validate hosted QA signup/confirmation.
 4. Resolve native Partner and Organization operational-surface gaps in the
    locked mobile-first sequence.
 
@@ -69,6 +74,10 @@ Android is explicitly out of scope for the current native Giver slice.
   allowlist until the corrected implementation is ready. Native Partner and
   Organization surfaces are absent, and the mobile router is still
   Student-centric.
+- iOS Universal Link, signed-build, TestFlight, and release acceptance are
+  blocked by the absence of an Apple Developer Program membership. Expo Go on
+  the owner's iPhone remains appropriate for ordinary Windows-based native
+  development but cannot prove the release app's signed Universal Link.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
   deletion/retention delivery.
@@ -127,7 +136,9 @@ validation on 2026-10-08, while `0022_funding_eligibility.sql` remains
 unvalidated on hosted DEV/QA. Production Supabase and evidenced
 production web/mobile deployment do not exist. Payments are mock-only. The
 maintenance Cron is registered in DEV/QA but intentionally inactive. No EAS
-production profile, signing, or TestFlight evidence exists.
+production profile, signing, or TestFlight evidence exists. Windows is the
+owner's primary development environment and iPhone testing uses Expo Go; an
+older MacBook is reserved for later iOS-specific build/signing/TestFlight work.
 
 An owner-created QA Vercel project now serves `https://cinste.vercel.app` from
 the repository; its stable domain returned HTTP 200 on 2026-10-08. The Vercel
@@ -229,18 +240,18 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Owner supplies the iOS bundle ID and Apple Team ID; then implement the
-   approved PKCE/Universal Link correction and validate hosted QA
-   signup/confirmation.
-2. Run hosted behavioral validation for already-applied `0022` as a separate
+1. Run hosted behavioral validation for already-applied `0022` as a separate
    DEV/QA task.
+2. When Apple Developer membership exists, owner supplies the iOS bundle ID
+   and Apple Team ID; then implement the approved PKCE/Universal Link
+   correction and validate hosted QA signup/confirmation.
 3. Add read-only native Giver catalog and outcomes surfaces after the auth
    callback boundary is complete.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** owner supplies the iOS bundle ID and Apple Team ID
-needed for the verified Universal Link. Then implement the approved
-native-owned PKCE and exact HTTPS app-link correction. Preserve the resolver
-and Giver shell; Android, funding, and Partner/Organization functionality are
-out of scope.
+**NEXT BOUNDED TASK:** run hosted DEV/QA behavioral validation for
+already-applied `0022_funding_eligibility.sql`. Do not alter the migration,
+native Giver UI, BFF routes, funding semantics, or Apple/Expo configuration.
+Report hosted evidence separately from local, Expo Go, and future signed-iOS
+acceptance.

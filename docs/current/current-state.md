@@ -108,7 +108,7 @@ product-surface workstream.
 | Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0023` are owner-confirmed applied. On 2026-10-08, 12 non-production hosted assertions passed for `0023`; `0022` hosted behavioral validation remains pending. Fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
-| Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Repository now contains the reviewed workspace resolver, chooser, and non-funding Giver shell; no QA/native-device deployment, EAS production profile, signing, or TestFlight release evidence |
+| Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
 | Scheduler | Claim and Impact maintenance | DEV/QA job is registered but intentionally inactive; real worker/concurrency validation, monitoring, and Production activation are pending |
 | Payments | Funding authority | Mock-only; no real provider, signed webhook, or reconciliation |
 | Observability | Runtime, Auth/database, scheduler, and payment visibility | Production stack and redacted alerting are not configured/evidenced |
@@ -142,13 +142,17 @@ ad-hoc hosted objects to bypass migration order.
 - The scheduler is inactive and lacks production monitoring and activation.
 - Mobile production signing/TestFlight, observability, legal/privacy/support,
   and account/data-deletion delivery are incomplete.
+- The owner has no Apple Developer Program membership. Keep ordinary native
+  development compatible with Windows plus Expo Go on iPhone; do not require
+  the older MacBook until iOS-specific build, signing, TestFlight, or release
+  work genuinely requires it.
 - Native Partner and Organization Operator operations remain absent. The
   workspace resolver/chooser and Giver entry shell are repository-only and have
   no authenticated physical-device acceptance yet.
 - The reviewed native Giver BFF's database limiter is hosted-validated and the
   owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel. The
   native callback has an Astra-reviewed correction but is not ready for
-  external configuration: implement native-owned PKCE challenge/state, exact
+  external configuration: implement native-owned PKCE challenge, exact
   HTTPS callback validation, and verified iOS Universal Link delivery using a
   real bundle/team identity. Android is out of scope for this slice. Do not
   configure or use the callback until that implementation is complete.
@@ -194,10 +198,11 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** owner supplies the iOS bundle ID and Apple Team ID needed for the
-verified Universal Link; then implement the approved native-owned PKCE/app-link
-correction. Android is out of scope. Only then configure the exact
-Vercel/Supabase callback URL and run hosted QA signup/callback validation.
+**NEXT:** run focused hosted DEV/QA behavioral validation for already-applied
+`0022_funding_eligibility.sql`. This is independent of iOS signing and must
+not alter the migration, native Giver UI, BFF routes, or funding semantics.
+The approved iOS confirmation correction remains blocked until Apple Developer
+membership provides a real bundle ID and Team ID.
 
 ## COMPLETE
 - Core backend hardening implemented
