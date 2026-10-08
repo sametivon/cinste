@@ -109,7 +109,9 @@ truthfully invitation-only, and keeps Admin sign-in-only. Role-aware login
 shows one account-creation form for a selected Student or Giver path; existing
 users can intentionally switch to a single sign-in form. Role selection remains
 presentation-only: it cannot set a stored role, assignment, or workspace.
-Typecheck and 21 focused routing/provisioning tests pass locally. This is
+The public auth shell uses a centered, responsive two-column brand-and-form
+composition on desktop and a single column on narrow screens. Typecheck and 21
+focused routing/provisioning tests pass locally. This is
 repository and local automated evidence only; no hosted or device acceptance
 is claimed.
 
