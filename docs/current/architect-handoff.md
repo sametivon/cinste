@@ -11,7 +11,8 @@ Realign the implemented V1 with the locked mobile-first platform strategy, then
 prepare for controlled external beta. The immediate product objective is the
 smallest safe native Giver vertical slice. Astra has reviewed its trust
 boundary; the BFF foundation and `0023` migration are implemented and
-owner-confirmed applied to DEV/QA, pending configuration and hosted validation.
+owner-confirmed applied to DEV/QA. The limiter's hosted validation passed;
+QA host secret/callback configuration remains unverified.
 
 ## Roadmap snapshot
 
@@ -25,19 +26,25 @@ owner-confirmed applied to DEV/QA, pending configuration and hosted validation.
   correction (`0022`), with the latter applied to DEV/QA.
 - Reviewed Node-runtime native Giver BFF foundation in `732b85a`: strict
   signup/funding routes and private database-backed rate limiting (`0023`).
+- Targeted DEV/QA validation of `0023`: 12 hosted assertions passed on
+  2026-10-08 for service-only execution, direct API-role denial, private
+  storage API denial, the configured burst quota, and invalid fingerprint
+  rejection. No Production environment was contacted.
 
 ### In Progress
 
 - The first reviewed native Giver BFF batch is implemented in the repository:
   Node-runtime routes plus private, database-backed rate limiting. Ordered
-  migration `0023` is owner-confirmed applied to DEV/QA; QA secret/callback
-  configuration and hosted validation remain before it can be used.
+  migration `0023` is owner-confirmed applied to DEV/QA and its database
+  behavior is hosted-validated. QA secret/callback configuration remains
+  unverified, so it cannot be used.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
 
-1. Hosted-validate `0023` and the BFF QA secret/callback configuration before
-   any native client calls it.
+1. Obtain non-secret QA-host evidence for the server-only rate-limit key and
+   exact HTTPS Supabase Auth confirmation redirect allowlist before any native
+   client calls the BFF.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice while preserving Student and web Giver behavior.
 3. Run focused hosted DEV/QA behavioral validation for `0022`.
@@ -47,8 +54,8 @@ owner-confirmed applied to DEV/QA, pending configuration and hosted validation.
 
 ### Blocked
 
-- Native Giver BFF use is blocked on QA host secret/callback configuration and
-  hosted validation; native Partner and Organization surfaces are absent, and
+- Native Giver BFF use is blocked on QA host secret/callback configuration;
+  native Partner and Organization surfaces are absent, and
   the mobile router is still Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
@@ -100,11 +107,12 @@ turning a client route or saved workspace choice into authorization.
 
 ## Current repository / deployment state
 
-Reconciled on `main`/`origin/main` at `3241b11`; the only working-tree entry is
-the intentional untracked `docs/brand/` owner-review area. Migrations `0001`
-through `0023` exist and are pushed. DEV/QA application of `0018` through
-`0023` is owner-confirmed; `0022_funding_eligibility.sql` and `0023` have not
-received hosted behavioral validation. Production Supabase and evidenced
+The repository tracks `main`/`origin/main`; the only pre-existing working-tree
+entry is the intentional untracked `docs/brand/` owner-review area. Migrations
+`0001` through `0023` exist and are pushed. DEV/QA application of `0018`
+through `0023` is owner-confirmed; `0023` passed its focused hosted database
+validation on 2026-10-08, while `0022_funding_eligibility.sql` remains
+unvalidated on hosted DEV/QA. Production Supabase and evidenced
 production web/mobile deployment do not exist. Payments are mock-only. The
 maintenance Cron is registered in DEV/QA but intentionally inactive. No EAS
 production profile, signing, or TestFlight evidence exists.
@@ -117,17 +125,18 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Active workstreams
 
-- Native Giver BFF foundation and `0023` are complete and owner-confirmed
-  applied to DEV/QA, awaiting QA configuration and hosted validation.
+- Native Giver BFF foundation and `0023` are complete, pushed, owner-confirmed
+  applied to DEV/QA, and database-validated there; QA configuration evidence
+  is still required before use.
 - The mobile-first audit and native Giver vertical-slice plan remain the
   implementation guide for the unstarted native router and UI work.
 - Separate operational work remains: hosted behavioral validation of `0022`.
 
 ## Blocked / waiting workstreams
 
-- Native Giver BFF hosted acceptance remains blocked until the QA Next.js host
-  has the isolated service and rate-limit secrets plus exact confirmation
-  callback configuration, and focused hosted validation passes. Native
+- Native Giver BFF use remains blocked until the QA Next.js host's isolated
+  service and rate-limit secrets and exact confirmation callback configuration
+  are evidenced. Focused hosted limiter validation has passed. Native
   workspace routing and UI remain separate, unimplemented work.
 - Partner public acquisition/onboarding and Organization public acquisition
   await the owner decisions above.
@@ -186,7 +195,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Hosted-validate `0023` plus QA BFF secret/callback configuration.
+1. Obtain non-secret evidence of the QA BFF secret/callback configuration.
 2. Implement the reviewed native multi-workspace foundation and Giver vertical
    slice in the recorded sequence, preserving existing Student behavior.
 3. Run hosted behavioral validation for already-applied `0022` as a separate
@@ -194,8 +203,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** hosted-validate owner-confirmed DEV/QA migration
-`0023`, with the isolated BFF rate-limit secret and exact HTTPS confirmation
-callback allowlisted. Verify its private-table/function privileges and
-representative quota behavior; do not add mobile UI, deep-link handling, or
+**NEXT BOUNDED TASK:** verify, without exposing values, that the QA Next.js
+host has server-only `NATIVE_BFF_RATE_LIMIT_KEY` and that
+`NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL` exactly matches an HTTPS Supabase
+Auth redirect allowlist entry. Do not add mobile UI, deep-link handling, or
 client funding calls in that task.
