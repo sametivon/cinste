@@ -12,7 +12,8 @@ prepare for controlled external beta. The immediate product objective is the
 smallest safe native Giver vertical slice. Astra has reviewed its trust
 boundary; the BFF foundation and `0023` migration are implemented and
 owner-confirmed applied to DEV/QA. The limiter's hosted validation passed and
-a QA Vercel host is live; the native confirmation callback remains absent.
+a QA Vercel host is live; native Giver signup and the fixed confirmation
+callback are now implemented locally, pending exact hosted configuration.
 
 ## Roadmap snapshot
 
@@ -39,14 +40,16 @@ a QA Vercel host is live; the native confirmation callback remains absent.
   Node-runtime routes plus private, database-backed rate limiting. Ordered
   migration `0023` is owner-confirmed applied to DEV/QA and its database
   behavior is hosted-validated. The owner configured its server-only
-  rate-limit key in QA Vercel; the native confirmation callback remains absent,
-  so it cannot be used.
+  rate-limit key in QA Vercel. The native signup client and fixed HTTPS PKCE
+  callback are now implemented and locally tested, but the BFF cannot be used
+  until the exact Vercel callback variable and Supabase Auth redirect allowlist
+  are owner-confirmed.
 - Separate DEV/QA operational work: hosted behavioral validation of `0022`.
 
 ### Next
 
-1. Implement native Giver signup and the exact confirmation callback, then
-   configure its HTTPS Supabase Auth redirect allowlist before BFF use.
+1. Owner confirms the exact Vercel callback variable and Supabase Auth redirect
+   allowlist, then run hosted QA signup/callback validation.
 2. Implement the remaining read-only Giver catalog and outcomes surfaces.
 3. Run focused hosted DEV/QA behavioral validation for `0022`.
 4. Resolve native Partner and Organization operational-surface gaps in the
@@ -54,9 +57,11 @@ a QA Vercel host is live; the native confirmation callback remains absent.
 
 ### Blocked
 
-- Native Giver BFF use is blocked on the unimplemented native confirmation
-  callback and its exact HTTPS Supabase Auth redirect configuration; native
-  Partner and Organization surfaces are absent, and
+- Native Giver BFF use is blocked on owner confirmation of the exact HTTPS
+  callback configuration: Vercel
+  `NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL=https://cinste.vercel.app/native/giver/confirm`
+  and Supabase Auth Redirect URLs must allow exactly that URL; native Partner
+  and Organization surfaces are absent, and
   the mobile router is still Student-centric.
 - External beta lacks Production infrastructure, real payments, monitored
   scheduler activation, release/signing, observability, legal/support, and
@@ -206,8 +211,8 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Recommended next actions
 
-1. Implement native Giver signup plus the exact confirmation callback and
-   redirect allowlist configuration.
+1. Owner confirms the exact HTTPS callback configuration, then validate hosted
+   QA signup and PKCE confirmation.
 2. Run hosted behavioral validation for already-applied `0022` as a separate
    DEV/QA task.
 3. Add read-only native Giver catalog and outcomes surfaces after the auth
@@ -215,6 +220,7 @@ the `0022` funding RPCs are correctly service-only on the web server path.
 
 ## Immediate next action
 
-**NEXT BOUNDED TASK:** implement native Giver signup plus the exact reviewed
-confirmation callback and redirect allowlist. Preserve the new resolver and
-Giver shell; do not add funding or Partner/Organization functionality.
+**NEXT BOUNDED TASK:** owner confirms the exact HTTPS callback configuration,
+then run hosted QA signup and PKCE confirmation validation. Preserve the new
+resolver and Giver shell; do not add funding or Partner/Organization
+functionality.

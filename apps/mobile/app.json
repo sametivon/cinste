@@ -8,7 +8,8 @@
     "scheme": "cinste",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "associatedDomains": ["applinks:cinste.vercel.app"]
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +18,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [{ "action": "VIEW", "autoVerify": true, "data": [{ "scheme": "https", "host": "cinste.vercel.app", "pathPrefix": "/native/giver/confirm" }], "category": ["BROWSABLE", "DEFAULT"] }]
     },
     "web": {
       "output": "static",

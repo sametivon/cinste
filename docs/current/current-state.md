@@ -51,10 +51,11 @@ Node-runtime signup, checkout, and confirmation routes; verified bearer plus
 stored-role checks; strict schemas; generic responses; and private,
 database-backed rate-limit contract in ordered migration `0023`. The owner
 confirmed `0023` was applied to DEV/QA, and the focused non-production hosted
-runner passed 12 limiter assertions on 2026-10-08. QA BFF secret/callback
-configuration is still not evidenced. No native Giver UI or
-confirmation callback has been added. Both mock funding RPCs remain
-service-only, and migration `0021` Giver provisioning is unchanged.
+runner passed 12 limiter assertions on 2026-10-08. The native Giver signup UI,
+strict BFF client, and fixed HTTPS PKCE confirmation route are now implemented
+in the repository. QA callback configuration is still not evidenced. Both mock
+funding RPCs remain service-only, and migration `0021` Giver provisioning is
+unchanged.
 
 Owner-provided hosted evidence on 2026-10-07 records migrations `0018` through
 `0021` applied in order to development/QA and 57 focused Giver-provisioning
@@ -66,10 +67,15 @@ inspect the remote project.
 
 ## Current active workstream
 
-The native workspace-envelope/Giver-shell batch is complete in the repository:
+The native workspace-envelope/Giver-shell and native Giver onboarding batches
+are complete in the repository:
 the resolver fails closed on missing/failed reads and does not call BFF, funding
-RPCs, or financial tables. Native-code validation is local only; no hosted
-mobile deployment or physical-device acceptance is evidenced.
+RPCs, or financial tables. The Giver signup client posts only the permitted
+email/password/displayName shape to the fixed BFF URL; the callback accepts
+only an authorization code, exchanges it through PKCE, discards link intent,
+and re-runs the resolver. Mobile-code validation is local only; no hosted
+mobile deployment, hosted signup/callback validation, or physical-device
+acceptance is evidenced.
 The first native Giver BFF implementation batch is complete in the repository:
 the shared limiter is database-backed, private, and service-only. Migration
 `0023` is committed and pushed, owner-confirmed applied to DEV/QA, and passed
@@ -126,9 +132,11 @@ ad-hoc hosted objects to bypass migration order.
   workspace resolver/chooser and Giver entry shell are repository-only and have
   no authenticated physical-device acceptance yet.
 - The reviewed native Giver BFF's database limiter is hosted-validated and the
-  owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel, but
-  use remains blocked until an exact HTTPS Supabase Auth confirmation redirect
-  and matching native callback are implemented and configured.
+  owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel. The
+  repository now contains the matching native callback, but use remains
+  blocked until the owner confirms Vercel
+  `NEXT_PUBLIC_NATIVE_GIVER_CONFIRMATION_URL=https://cinste.vercel.app/native/giver/confirm`
+  and the exact same HTTPS URL is allowed in Supabase Auth Redirect URLs.
 - Admin is not yet a comprehensive full-system operational control plane.
 
 ## Known defects
@@ -161,7 +169,7 @@ ad-hoc hosted objects to bypass migration order.
 | Type | Current gaps |
 | --- | --- |
 | Architecture blocker | Reviewed native Giver provisioning/funding edge, production environment/promotion controls, real payment architecture, monitored scheduler activation, telemetry/privacy boundary, deletion/retention design |
-| Implementation blocker | Complete native Giver journey; native Partner redemption/operational context; native Organization daily operations; comprehensive Admin control-plane information architecture; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
+| Implementation blocker | Complete native Giver catalog/outcomes journey; native Partner redemption/operational context; native Organization daily operations; comprehensive Admin control-plane information architecture; production web/mobile/release operations; Partner acquisition path after owner decision; Organization acquisition entry after owner decision; Admin workspace still has literal mixed EN/RO copy rather than complete RO/EN/TR/AR localization |
 | Release acceptance / manual QA | Real public `signUp` null-session path, real confirmation-link callback, post-confirmation browser routing, direct hosted grant-catalog inspection, true simultaneous public-signup contention, physical Partner camera/redemption and assignment revocation, multi-organization switching, verification-loss history, localized error/review states, production-like role matrix, and TestFlight device checks |
 
 The Giver provisioning items in the last row are acceptance gaps, not current
@@ -171,8 +179,8 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** implement native Giver signup and the exact confirmation callback,
-then configure its HTTPS Supabase Auth redirect allowlist before BFF use.
+**NEXT:** owner confirms the exact Vercel callback environment variable and
+Supabase Auth Redirect URL, then perform hosted QA signup/callback validation.
 Keep the new workspace resolver and Giver shell; do not add funding calls or
 Partner/Organization functionality.
 

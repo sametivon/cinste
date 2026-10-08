@@ -8,7 +8,7 @@ import { resolveWorkspaceEnvelope, type MobileWorkspace, type WorkspaceEnvelope 
 import type { AppRole, VerificationStatus } from '@/lib/types';
 
 type StudentState = { full_name: string; university_id: string | null; faculty: string | null; verification_status: VerificationStatus; rejection_reason: string | null } | null;
-type AuthContextValue = { session: Session | null; loading: boolean; role: AppRole | null; student: StudentState; workspaceEnvelope: WorkspaceEnvelope; selectedWorkspace: MobileWorkspace | null; refreshStudent: () => Promise<StudentState>; selectWorkspace: (workspace: MobileWorkspace) => Promise<void>; signOut: () => Promise<void> };
+type AuthContextValue = { session: Session | null; loading: boolean; role: AppRole | null; student: StudentState; workspaceEnvelope: WorkspaceEnvelope; selectedWorkspace: MobileWorkspace | null; refreshStudent: (userId?: string) => Promise<StudentState>; selectWorkspace: (workspace: MobileWorkspace) => Promise<void>; signOut: () => Promise<void> };
 const AuthContext = createContext<AuthContextValue | null>(null);
 const workspaceStorageKey = 'cinste.mobile.workspace';
 
