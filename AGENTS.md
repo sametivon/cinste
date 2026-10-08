@@ -117,9 +117,52 @@ Architect Mode supports three natural request types:
    dependencies, risks, and the smallest required owner decisions. Do not
    implement unless asked.
 3. **Implementation request:** treat it as Owner-directed mode. Reconcile it
-   against decisions and architecture, then implement only the scoped task,
-   validate proportionately, update state and this handoff when material,
-   commit/push, and stop unless another step is explicitly requested.
+   against decisions and architecture, then normally prepare the complete Sol
+   implementation prompt defined below. Implement in Architect Mode only when
+   the Product Owner explicitly requests that exception; then implement only
+   the scoped task, validate proportionately, update state and this handoff
+   when material, commit/push, and stop unless another step is explicitly
+   requested.
+
+### Architect-to-Sol delivery workflow
+
+The Product Owner may discuss product ideas, problems, and desired changes in
+normal language with the Architect. The Architect translates clear product
+intent into implementation-ready technical direction; the Product Owner must
+not translate it into engineering instructions.
+
+When a direction is sufficiently decided and needs neither an owner decision
+nor Astra review, the Architect must produce one complete, copy-paste-ready
+prompt for a fresh Sol implementation session. The prompt states the bounded
+objective, relevant repository evidence and locked decisions, exact scope and
+exclusions, authority/security constraints, affected layers or likely files,
+required validation, state-documentation requirements, Git/push expectations,
+and an explicit stopping point. It must tell Sol not to begin adjacent roadmap
+work.
+
+Implementation normally happens in that separate Sol session, not inside the
+Architect session. The Architect does not implement product features merely
+because a direction is ready; an explicit owner instruction to implement in the
+Architect session is the only exception. The Architect may still update the
+continuity documents when that is the scoped task.
+
+If a task needs manual Supabase SQL execution, the Sol prompt must name the
+exact tracked ordered migration, distinguish repository/push status from
+DEV/QA application and validation, state any required non-secret environment
+configuration, and require Sol to pause after giving the owner the execution
+instruction until the owner confirms the migration was applied. Sol must not
+claim hosted validation or proceed to dependent hosted steps before that
+confirmation.
+
+After the Product Owner pastes a Sol session's final result into Architect
+Mode, the Architect must reconcile it against the actual repository before
+accepting it: inspect Git status/history, changed code and migrations, current
+state, relevant tests, and any available hosted evidence. The Sol report is
+evidence to check, not persistent truth by itself. Update
+`docs/current/current-state.md` for material objective state and replace stale
+parts of `docs/current/architect-handoff.md` as needed. Then either discuss the
+next decision with the Product Owner or produce the next complete Sol prompt;
+do not automatically implement the next feature.
 
 Architect recommendations distinguish objective implementation/deployment
 state from planning or proposed direction. Preserve locked owner decisions
@@ -139,7 +182,12 @@ not a transcript. Replace stale information rather than appending history.
 Update it only when materially necessary: after an owner decision, significant
 architecture conclusion or priority change, major hidden journey gap,
 delegated/reviewed high-risk workstream, major milestone, or before ending a
-long Architect session. Do not update it for trivial discussion. Its top-level
+long Architect session. When the session is long, context-heavy, or nearing
+compaction, proactively refresh the handoff before ending the session; do not
+rely on chat history to carry continuity. Do not update it for trivial
+discussion. It contains only the current objective, active decisions,
+completed/recent work, blockers, pending reviews, open questions, and the
+immediate next action needed by a fresh Architect session. Its top-level
 roadmap snapshot must use **Done**, **In Progress**, **Next**, **Blocked**, and
 **Later** headings, remain compact, and be replaced rather than accumulated.
 Keep sources separate: this file defines behavior; `current-state.md` records
@@ -149,7 +197,15 @@ locks durable owner decisions; and `docs/PRODUCTION_READINESS.md` records
 release readiness.
 
 A fresh Architect session can begin with this exact instruction:
-`Start CINSTE Architect Mode: read AGENTS.md, docs/current/current-state.md, docs/current/architect-handoff.md, and docs/decisions/project.md; reconcile the task against relevant decisions, code, migrations, tests, and recent Git history; present the required concise CINSTE status summary; then answer or act.`
+`Follow AGENTS.md. Continue CINSTE from the current architect handoff.
+Reconcile it with the repository before making recommendations or changes.`
+
+The fresh Architect session must then read `AGENTS.md`,
+`docs/current/current-state.md`, `docs/current/architect-handoff.md`, and
+`docs/decisions/project.md`, and verify the handoff against real repository
+state, recent Git history, relevant code, migrations, tests, and available
+hosted evidence before proceeding. Old Architect chat history is disposable;
+the repository and the Architect handoff are the continuity mechanism.
 
 ## Self-orchestration decision
 When no explicit owner task exists, choose exactly one outcome:
