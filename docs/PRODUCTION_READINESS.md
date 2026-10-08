@@ -45,7 +45,7 @@ Current evidence should be read as follows:
   `docs/current/cross-platform-role-surface-audit.md`, beginning with native
   multi-workspace/Giver capability, then Partner and Organization native
   operations and Admin control-plane evolution.
-- **Astra/security review before implementation:** **Yes** for native Giver
+- **Security review before implementation:** **Yes** for native Giver
   provisioning/funding, real payments, and material Auth/app-link trust
   changes. Existing Partner/Organization RPC-backed UI does not require new
   authority unless a contract gap is found.
@@ -63,7 +63,7 @@ Current evidence should be read as follows:
   idempotent provider-event processing, trusted amount/currency validation,
   pending/failure/retry handling, refund/chargeback policy, reconciliation, and
   support runbook. Remove mock completion from any production route.
-- **Astra/security review before implementation:** **Yes.**
+- **Security review before implementation:** **Yes.**
 
 ### BLOCKER — Production environments and deployment controls are not established
 
@@ -81,7 +81,7 @@ Current evidence should be read as follows:
   private storage, web/mobile public URLs, server-only secrets, domain/TLS, and
   a migration ledger with rollback/backup procedures. Production must never
   inherit QA credentials or point a preview at the production service-role key.
-- **Astra/security review before implementation:** **Yes**, for the production
+- **Security review before implementation:** **Yes**, for the production
   migration/RLS/grant verification and secret boundary review.
 
 ### BLOCKER — Production maintenance scheduler is not deployed or monitored
@@ -103,7 +103,7 @@ Current evidence should be read as follows:
   authorized owner activation. Nine isolated PostgreSQL tests pass; the Cron
   registration test uses a test double, not a live worker. Both operations use
   the shared five-minute cadence to avoid a separate Impact dispatcher/job.
-- **Astra/security review before implementation:** **Yes**, because execution
+- **Security review before implementation:** **Yes**, because execution
   identity, function grants, and maintenance mutation paths are privileged.
 
 ### BLOCKER — native release configuration is incomplete
@@ -122,7 +122,7 @@ Current evidence should be read as follows:
   supply final icon/splash assets, configure and test required privacy usage
   descriptions, complete App Store Connect privacy metadata, and validate a
   TestFlight build on physical iPhones.
-- **Astra/security review before implementation:** No for signing alone; **yes**
+- **Security review before implementation:** No for signing alone; **yes**
   if release configuration changes authentication/deep-link security.
 
 ### BLOCKER — Required real-user operational and legal entry points are absent
@@ -135,7 +135,7 @@ Current evidence should be read as follows:
   an accessible support route, define and implement the supported account/data
   deletion process, complete App Store privacy disclosures, and approve final
   production branding assets before public submission.
-- **Astra/security review before implementation:** No, unless deletion work
+- **Security review before implementation:** No, unless deletion work
   changes authorization or retention boundaries.
 
 ### HIGH — Production observability and incident response are absent
@@ -151,7 +151,7 @@ Current evidence should be read as follows:
   API logs, and scheduler/payment failure alerts. Define an on-call contact,
   severity threshold, retention, and a safe correlation identifier policy that
   never logs bearer redemption credentials or verification documents.
-- **Astra/security review before implementation:** **Yes**, for telemetry data
+- **Security review before implementation:** **Yes**, for telemetry data
   minimization and redaction.
 
 ### HIGH — QA protection relies on process environment, not target allow-listing
@@ -169,7 +169,7 @@ Current evidence should be read as follows:
   move fixture credentials to a non-committed secret source; ensure production
   CI/deployment environments cannot run these commands; and add a release
   check that `/dev/testing` is absent in the production build.
-- **Astra/security review before implementation:** **Yes.**
+- **Security review before implementation:** **Yes.**
 
 ### HIGH — Production database rollout has no recorded verification gate
 
@@ -186,7 +186,7 @@ Current evidence should be read as follows:
   pre/post schema and function-grant checks, authenticated role smoke tests,
   storage-policy checks, and documented rollback/forward-only recovery. Do not
   run seeds or QA fixture scripts in production.
-- **Astra/security review before implementation:** **Yes.**
+- **Security review before implementation:** **Yes.**
 
 ### HIGH — Final acceptance coverage is incomplete
 
@@ -200,7 +200,7 @@ Current evidence should be read as follows:
 - **Required action:** complete the launch-critical matrix below against the
   production-like environment, retain evidence, and repeat only the affected
   cases after production configuration or payment changes.
-- **Astra/security review before implementation:** No; security review the
+- **Security review before implementation:** No; security review the
   underlying changes if any are needed.
 
 ### MEDIUM — Service-role use is narrow but needs production hardening
@@ -217,7 +217,7 @@ Current evidence should be read as follows:
   hardening phase, restrict the secret to server runtime environments, rotate
   it during production provisioning, and perform an import/build inspection to
   confirm it cannot enter a client bundle.
-- **Astra/security review before implementation:** **Yes.**
+- **Security review before implementation:** **Yes.**
 
 ### MEDIUM — Immediate index/performance evidence is limited
 
@@ -229,7 +229,7 @@ Current evidence should be read as follows:
   plans for claim, redemption, Giver outcomes, Admin queues, and organization
   participation reads using representative data; set Supabase/Vercel limits and
   rate protections appropriate to the selected plans.
-- **Astra/security review before implementation:** No, unless a proposed index
+- **Security review before implementation:** No, unless a proposed index
   or limit changes authorization behavior.
 
 ## Production environment architecture
@@ -357,7 +357,7 @@ the scripts accept the Supabase URL and service-role key supplied by the local
 environment. The required non-production project allow-list/confirmation
 mechanism would define a new privileged safety boundary. Per the readiness
 review, it is deliberately **not implemented in this task** and requires an
-Astra review before implementation. Until then, production credentials must
+security review before implementation. Until then, production credentials must
 not be placed in a machine or CI environment that can run these commands.
 
 ### Blocked for later phases
@@ -430,7 +430,7 @@ not be placed in a machine or CI environment that can run these commands.
 
 ## Security-review checkpoints
 
-Request an Astra read-only review before implementing or enabling:
+Request a read-only security review before implementing or enabling:
 
 1. The payment-provider design, checkout/session creation, webhook verifier,
    payment idempotency model, refunds, and reconciliation.

@@ -1,407 +1,87 @@
-# AGENTS.md
-
-# CINSTE Repository Agent Rules
+# CINSTE Repository Rules
 
 ## Source of truth
-Repository docs are persistent project memory. Chat and session context are
-disposable and may be incomplete.
 
-- `AGENTS.md` defines how agents work.
-- `docs/current/current-state.md` defines where the project is now, including
-  repository, hosted-environment, migration, blocker, and next-action state.
-- `docs/current/architect-handoff.md` is the concise, rolling continuity
-  checkpoint for Architect Mode. It records active architectural reasoning;
-  it is not an operational ledger or a historical diary.
-- `docs/decisions/` defines locked owner-approved product and architecture
-  rules. Feature specifications refine those decisions.
+Repository documents are persistent project memory. Chat context is not.
 
-Before changing code, read only the docs relevant to the task:
-- `docs/decisions/project.md`
-- `docs/current/current-state.md`
-- feature-specific specs such as `docs/decisions/impact-spec.md`
+- `AGENTS.md` defines how Codex works in this repository.
+- `docs/current/current-state.md` records current repository, environment,
+  migration, blocker, and next-action state.
+- `docs/decisions/` contains locked product and architecture decisions.
 
-If a directory contains a more specific `AGENTS.md`, follow it in addition to this file.
+Before changing code, read `docs/current/current-state.md`,
+`docs/decisions/project.md`, and only the task-relevant decision, code,
+migration, and test files. Treat archive documents as history, not current
+authority. Follow a more specific `AGENTS.md` in a subdirectory as well.
 
-Do not duplicate domain-specific instructions here.
+## One simple workflow
 
-## Session bootstrap
-At the beginning of a substantial new session, reconcile the minimum relevant
-repository context before selecting or implementing work. Establish:
+1. Reconcile the requested task with the relevant repository state and locked
+   decisions.
+2. Implement one bounded task when its behavior is already decided.
+3. Stop and ask for the smallest missing decision when product behavior is
+   genuinely undefined, external access is required, or a destructive action
+   is not explicitly authorized.
+4. Stop and request a security review before material changes to authorization,
+   RLS/RPC privilege, payment authority, role provisioning, Auth/deep-link
+   trust, sensitive telemetry, deletion, scheduler identity, or Production
+   security controls.
+5. Run proportionate validation. Update `current-state.md` when project state
+   changed materially. Commit, push, and stop.
 
-- current milestone and latest completed work
-- current active workstream and exactly one recommended next action
-- current blockers, known defects, and unresolved owner decisions
-- active security/Astra checkpoints
-- repository state versus hosted development/QA and Production state
-- pending, applied, validated, and active/inactive migrations
+Do not substitute a different roadmap task for a clear owner request. Do not
+continue into adjacent work after the requested task finishes.
 
-Start with this file, `docs/current/current-state.md`, and
-`docs/decisions/project.md`. In Architect Mode also read
-`docs/current/architect-handoff.md`. Read `docs/PRODUCTION_READINESS.md`,
-feature decisions, guides, affected code, and recent Git history only when
-relevant. Do not reread the entire repository blindly. Treat archive docs as
-history, not current authority.
+## Scope and product rules
 
-## Session modes
+- Keep one primary task per batch. Do not redesign unrelated areas, add
+  speculative features, or refactor unrelated code.
+- Preserve locked decisions in `docs/decisions/`. Flag risk, but do not silently
+  replace a decision.
+- For material product work, check the complete journey: discovery,
+  understanding, role intent, signup/login, authorization, onboarding, first
+  value, and return.
+- For design work, use `docs/decisions/brand.md` and
+  `docs/guides/design-system.md` when present. Reuse existing patterns and do
+  not invent a new visual direction.
+- Application roles and server authority are product rules. Client navigation,
+  UI state, and deep links never grant authority.
 
-### Auto mode
-Use when the Product Owner has not specified a task.
+## Security, environments, and migrations
 
-1. Reconcile repository and hosted state from the operational ledger.
-2. Choose the single highest-priority safe task.
-3. Implement it only when existing decisions determine the behavior and no
-   owner or Astra checkpoint blocks it.
-4. Run targeted validation, update current state, commit, push when
-   appropriate, and stop.
+Never expose service-role credentials, QR secrets, or private verification
+documents. Never weaken RLS, hardcode test-account behavior, or trust client
+state for funding, claims, verification, or redemption authority.
 
-### Owner-directed mode
-Use when the Product Owner gives a concrete task. The explicit request replaces
-the automatically recommended task as the active workstream.
+Keep repository, pushed, hosted development/QA, and Production evidence
+separate. Do not equate committed with pushed, pushed with applied, or
+development/QA with Production.
 
-1. Reconcile the request with current repository state and locked decisions.
-2. Do not silently substitute a roadmap or current-state priority.
-3. If compatible and outside a material security boundary, implement only that
-   task, validate it, update current state when material, commit/push, and stop.
-4. If it conflicts with a locked decision or needs genuinely undefined product
-   behavior, stop with `OWNER DECISION REQUIRED` and ask only for the smallest
-   missing decision.
-5. If it crosses a material security or trust boundary, stop with
-   `ASTRA REVIEW REQUIRED`.
+Historical migrations are immutable. Add ordered migrations for changes. Apply
+prerequisites in order and never create ad-hoc hosted objects to bypass that
+order. Migration reports must state repository, push, hosted development/QA,
+validation, Production, and active/inactive runtime state separately.
 
-Do not reinterpret a clear request into a broader redesign or continue to the
-previously recommended task after finishing the owner-directed task.
+## Validation and Git
 
-### Analysis mode
-Use when the Product Owner asks for planning, review, audit, or analysis only.
-Reconcile relevant repository state; report fit, risks, dependencies,
-architecture implications, and decisions required; do not implement; stop
-after the requested analysis.
-
-### Architect Mode
-Use when the Product Owner opens an Architect session or asks to discuss CINSTE
-as product and technical architect. Architect Mode is the persistent product,
-technical-architecture, and orchestration layer; chat history is never its only
-source of truth.
-
-At session start, read this file, `docs/current/current-state.md`,
-`docs/current/architect-handoff.md`, and `docs/decisions/project.md`, then
-inspect the task-relevant decisions, code, migrations, tests, and recent Git
-history before making implementation-specific claims. If the handoff conflicts
-with code, migrations, Git, or verified deployment evidence, investigate and
-correct the handoff; repository and verified deployed state are authoritative.
-
-After that reconciliation and before continuing with the Architect request,
-always present a concise **CINSTE status summary**. It must make the current
-state visible without requiring prior chat history and include:
-
-- current milestone and active workstream
-- recently completed major work
-- open blockers and known defects/gaps
-- pending security/Astra reviews
-- pending migration/deployment validation
-- the next 3-5 priorities, in order
-- one single recommended next action
-
-State the evidence boundary where it matters (for example, repository versus
-owner-confirmed DEV/QA versus Production). Keep the summary factual and brief;
-do not let the requested Architect work or a stale roadmap replace the
-owner-directed request that follows it.
-
-Architect Mode supports three natural request types:
-
-1. **Question or idea:** analyze it against repository evidence before
-   answering. Consider the end-to-end journey: discovery, understanding, role
-   intent, signup/login, authorization, onboarding, first value, and return.
-   Identify hidden, manual, blocked, and dead-end flows where relevant.
-2. **Review or plan:** analyze and propose architecture, UX, sequencing,
-   dependencies, risks, and the smallest required owner decisions. Do not
-   implement unless asked.
-3. **Implementation request:** treat it as Owner-directed mode. Reconcile it
-   against decisions and architecture, then normally prepare the complete Sol
-   implementation prompt defined below. Implement in Architect Mode only when
-   the Product Owner explicitly requests that exception; then implement only
-   the scoped task, validate proportionately, update state and this handoff
-   when material, commit/push, and stop unless another step is explicitly
-   requested.
-
-### Architect-to-Sol delivery workflow
-
-The Product Owner may discuss product ideas, problems, and desired changes in
-normal language with the Architect. The Architect translates clear product
-intent into implementation-ready technical direction; the Product Owner must
-not translate it into engineering instructions.
-
-When a direction is sufficiently decided and needs neither an owner decision
-nor Astra review, the Architect must produce one complete, copy-paste-ready
-prompt for a fresh Sol implementation session. The prompt states the bounded
-objective, relevant repository evidence and locked decisions, exact scope and
-exclusions, authority/security constraints, affected layers or likely files,
-required validation, state-documentation requirements, Git/push expectations,
-and an explicit stopping point. It must tell Sol not to begin adjacent roadmap
-work.
-
-Implementation normally happens in that separate Sol session, not inside the
-Architect session. The Architect does not implement product features merely
-because a direction is ready; an explicit owner instruction to implement in the
-Architect session is the only exception. The Architect may still update the
-continuity documents when that is the scoped task.
-
-If a task needs manual Supabase SQL execution, the Sol prompt must name the
-exact tracked ordered migration, distinguish repository/push status from
-DEV/QA application and validation, state any required non-secret environment
-configuration, and require Sol to pause after giving the owner the execution
-instruction until the owner confirms the migration was applied. Sol must not
-claim hosted validation or proceed to dependent hosted steps before that
-confirmation.
-
-After the Product Owner pastes a Sol session's final result into Architect
-Mode, the Architect must reconcile it against the actual repository before
-accepting it: inspect Git status/history, changed code and migrations, current
-state, relevant tests, and any available hosted evidence. The Sol report is
-evidence to check, not persistent truth by itself. Update
-`docs/current/current-state.md` for material objective state and replace stale
-parts of `docs/current/architect-handoff.md` as needed. Then either discuss the
-next decision with the Product Owner or produce the next complete Sol prompt;
-do not automatically implement the next feature.
-
-Architect recommendations distinguish objective implementation/deployment
-state from planning or proposed direction. Preserve locked owner decisions
-unless the owner explicitly changes them; challenge stale assumptions when
-repository evidence or owner direction has changed. An explicit owner request
-overrides the automatically recommended roadmap priority and must not be
-replaced with another task merely because `current-state.md` recommends it.
-
-Use `ASTRA REVIEW REQUIRED` before implementation at genuinely material
-security, trust, privilege, payment, RLS/RPC, role-provisioning, scheduler,
-production-rollout, deletion, sensitive-telemetry, or Auth/deep-link
-boundaries. Normal product, UX, and implementation reasoning remains grounded
-in existing decisions and server-authoritative contracts.
-
-Maintain `docs/current/architect-handoff.md` as a concise current checkpoint,
-not a transcript. Replace stale information rather than appending history.
-Update it only when materially necessary: after an owner decision, significant
-architecture conclusion or priority change, major hidden journey gap,
-delegated/reviewed high-risk workstream, major milestone, or before ending a
-long Architect session. When the session is long, context-heavy, or nearing
-compaction, proactively refresh the handoff before ending the session; do not
-rely on chat history to carry continuity. Do not update it for trivial
-discussion. It contains only the current objective, active decisions,
-completed/recent work, blockers, pending reviews, open questions, and the
-immediate next action needed by a fresh Architect session. Its top-level
-roadmap snapshot must use **Done**, **In Progress**, **Next**, **Blocked**, and
-**Later** headings, remain compact, and be replaced rather than accumulated.
-Keep sources separate: this file defines behavior; `current-state.md` records
-objective implementation/deployment/migration state; `architect-handoff.md`
-records active continuity and the compact Architect roadmap; `docs/decisions/`
-locks durable owner decisions; and `docs/PRODUCTION_READINESS.md` records
-release readiness.
-
-A fresh Architect session can begin with this exact instruction:
-`Follow AGENTS.md. Continue CINSTE from the current architect handoff.
-Reconcile it with the repository before making recommendations or changes.`
-
-The fresh Architect session must then read `AGENTS.md`,
-`docs/current/current-state.md`, `docs/current/architect-handoff.md`, and
-`docs/decisions/project.md`, and verify the handoff against real repository
-state, recent Git history, relevant code, migrations, tests, and available
-hosted evidence before proceeding. Old Architect chat history is disposable;
-the repository and the Architect handoff are the continuity mechanism.
-
-## Self-orchestration decision
-When no explicit owner task exists, choose exactly one outcome:
-
-- `IMPLEMENT`: the next action is determined by existing decisions, needs no
-  owner decision, and crosses no material security-review boundary. Implement
-  one scoped task, validate, update current state, commit/push, and stop.
-- `OWNER DECISION REQUIRED`: product or business behavior is genuinely
-  undefined, multiple materially different valid choices exist, or proceeding
-  would invent product semantics. Ask only the minimum decision and do not
-  implement the blocked part.
-- `ASTRA REVIEW REQUIRED`: material security, trust, or privilege architecture
-  is involved. Examples include RLS/RPC privilege changes, SECURITY DEFINER
-  boundaries, role provisioning, real payments, privileged scheduler identity
-  or activation, production security rollout, deletion/erasure, sensitive
-  telemetry, and material Auth/deep-link trust changes.
-
-Normal UI, localization, and frontend corrections do not require Astra merely
-because they touch an authenticated surface.
-
-## Default working mode
-Default to a single primary agent.
-
-Do not create subagents unless the task has a concrete reason to justify them.
-
-Use a specialist reviewer only when risk is materially reduced, for example:
-- DB schema or RLS changes
-- authorization or multi-role access
-- payment trust boundaries
-- non-trivial migrations
-- security-sensitive backend logic
-- major cross-layer architecture changes
-
-Normally do not use subagents for:
-- copy or translation changes
-- isolated UI work
-- small bug fixes
-- straightforward CRUD
-- documentation
-- simple test updates
-
-Do not create multiple agents merely to obtain agreement.
-
-## Scope discipline
-Implement only the requested task.
-
-Keep one primary task per session or batch. Once it is complete, stop; do not
-start the next roadmap item. Do not mix unrelated workstreams or perform
-speculative cleanup.
-
-Do not:
-- redesign unrelated areas
-- reopen approved product decisions without a concrete reason
-- refactor unrelated code
-- create extra features
-- weaken RLS or server-side authorization to solve a client problem
-
-If you notice an unrelated issue, report it instead of fixing it.
-
-## Product decisions
-`docs/decisions/project.md` and feature specs contain owner-approved decisions.
-
-You may flag a documented decision as risky, but do not silently replace it.
-
-Ask for clarification only when:
-- two materially different product behaviors are possible
-- proceeding would contradict an approved product decision
-- destructive or irreversible data action is required
-- security/privacy behavior is genuinely ambiguous
-- required external credentials or owner-only actions are missing
-
-Do not stop between ordinary implementation steps to ask "should I continue?"
-
-Codex may fix defects, implement already-decided behavior, choose technical
-sequencing, close clear regressions, and select a scoped task from current
-state. Codex may not redefine the role model, reciprocity ratio, security
-policy, acquisition authority, payment/business semantics, product
-positioning, or major brand decisions.
-
-## End-to-end product thinking
-For material product milestones, evaluate the complete path rather than pages
-in isolation:
-
-Discovery -> understanding -> role intent -> signup/login -> authorization ->
-onboarding -> first value -> return path.
-
-Use this check to expose missing flows before external beta without expanding a
-scoped task into an unapproved redesign.
-
-## Design work
-For UI/UX or branding tasks:
-
-- Treat `docs/decisions/brand.md` as the current brand source of truth.
-- When `docs/guides/design-system.md` exists, treat it as the implementation-level design source of truth.
-- Do not invent a new visual direction; preserve established product, business, security, authorization, and privacy behavior.
-- Inspect the current surface before redesigning it and prefer shared patterns over one-off styling.
-- Report material undefined design decisions instead of inventing them.
-
-## Context usage
-Use context on demand.
-
-Do not read the entire repository for every small task.
-
-Inspect only:
-- relevant docs
-- affected files
-- nearby implementation patterns
-- authoritative backend code where needed
-
-Keep prompts and task scope small.
-
-## Validation
 Use the smallest validation set that gives confidence for the affected layer.
+Do not claim device, hosted, or Production evidence that was not obtained.
 
-Examples:
+Push validated owner work to `origin/main` unless it is explicitly temporary,
+experimental, or owner-review-only. Never force-push, rewrite shared history,
+commit secrets or `.env` files, or stage intentionally local owner-review
+assets. If a push is rejected, fetch and inspect before reconciling.
 
-Mobile code:
-- relevant typecheck/tests
-- Expo-specific validation only if Expo/native config/dependencies changed
+Keep the working tree clean after a completed batch, except for explicitly
+identified local owner-review assets such as `docs/brand/`.
 
-Web code:
-- relevant typecheck/tests
-- production build when routing/server/build behavior changed
+## Agent tools
 
-DB/RLS/RPC:
-- migration/static review
-- targeted integration tests
-- broader backend regression only when authoritative behavior changed
-
-Documentation-only:
-- no application test suite unless relevant
-
-Do not rerun every suite after every minor change.
-
-## Environment and migration discipline
-Repository state and deployed state are separate. Never equate:
-
-- committed with pushed
-- pushed with applied
-- applied with validated
-- development/QA with Production
-- Cron registered with Cron active
-- local PostgreSQL tests with hosted Auth/Postgres validation
-
-Before validating a migration, confirm all tracked prerequisites were applied
-in order. Historical migrations are immutable; add a new ordered migration for
-changes. Never create ad-hoc hosted objects to bypass migration order.
-
-Every migration task report and current-state update must state whether the
-migration exists/committed in the repository, is pushed, is applied and
-validated on hosted development/QA, is applied to Production, and is active or
-inactive when applicable. Never assume Production exists.
-
-## Security invariants
-Never:
-- expose service-role credentials
-- expose QR secrets
-- expose private verification documents
-- weaken RLS
-- hardcode test-account behavior into production logic
-- trust client state for funding, claims, verification or redemption authority
-
-## Git / remote workflow
-The local repository remains the implementation source of truth. GitHub `origin`
-is CINSTE's shared collaboration remote, and the normal target branch is
-`main`.
-
-After a scoped task is complete, validated, and committed cleanly, push the
-resulting commit(s) to `origin/main` unless the work is explicitly experimental,
-owner-review-only, temporary, or intentionally local/untracked. Validated owner
-work may push directly to `main` until multiple active collaborators make
-feature branches and pull requests the preferred path.
-
-Never force-push or rewrite shared history. Never push secrets, credentials,
-`.env` files, temporary local artifacts, or comparison/review assets without
-explicit owner approval; no hardcoded credentials belong in repository
-documentation or commits.
-
-If a push is rejected because remote history changed, fetch and inspect first,
-then reconcile safely without overwriting remote work. Keep the working tree
-clean after completed scoped tasks, except for intentionally local owner-review
-assets.
-
-## Working style
-Prefer small implementation batches.
-
-Each batch should have:
-- one clear concern
-- clear affected layer(s)
-- minimal validation
-- a stopping point
-
-After materially changing project state, update `docs/current/current-state.md`.
-
-Do not repeat confirmations when repository decisions already answer the
-question. Preserve a clean working tree except for explicitly identified local
-owner-review assets.
-
-Stop after completing the scoped task.
+- Use Ponytail Full for the smallest complete implementation. It does not
+  permit skipping required security, accessibility, validation, or device
+  acceptance.
+- Use ASD-STE100 Strict for agent-facing prompts, migration commands, test
+  instructions, and operational status text. Do not use it for product,
+  brand, onboarding, or localized UI copy.
+- These tools do not override this file, locked decisions, or security review
+  requirements.

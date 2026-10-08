@@ -31,8 +31,8 @@ The owner-approved mobile-first platform strategy is now recorded in
 reconciled against actual web, native, and backend capability in
 `docs/current/cross-platform-role-surface-audit.md`. The concrete native Giver
 vertical-slice auth, workspace, provisioning, funding, and reuse plan is now
-recorded in `docs/current/native-giver-vertical-slice-plan.md`. Astra has
-reviewed that boundary and requires the existing Next.js deployment's dedicated
+recorded in `docs/current/native-giver-vertical-slice-plan.md`. Its security
+contract requires the existing Next.js deployment's dedicated
 Node-runtime route handlers, verified bearer identity, stored-role recheck,
 strict schemas, exact PKCE confirmation callback, rate controls, redacted
 logs, and isolated service credentials. The review is documented; no product
@@ -75,8 +75,8 @@ strict BFF client, and an Expo-side fixed-code callback scaffold are now
 implemented in the repository. Reconciliation found that this is not a
 complete hosted confirmation flow: the Vercel host has no matching
 callback/association delivery and the server-initiated signup does not
-establish a mobile-held PKCE verifier for the later code exchange. Astra has
-now approved the correction: native retains the verifier, sends only its S256
+establish a mobile-held PKCE verifier for the later code exchange. The approved
+correction requires native to retain the verifier, send only its S256
 challenge to the BFF, and redeems the returned code over HTTPS
 before setting its session. QA callback configuration remains blocked pending
 implementation and a real iOS signing identity. Android is out of scope for
@@ -199,7 +199,7 @@ ad-hoc hosted objects to bypass migration order.
   no authenticated physical-device acceptance yet.
 - The reviewed native Giver BFF's database limiter is hosted-validated and the
   owner configured its server-only `NATIVE_BFF_RATE_LIMIT_KEY` in Vercel. The
-  native callback has an Astra-reviewed correction but is not ready for
+  native callback has a defined security correction but is not ready for
   external configuration: implement native-owned PKCE challenge, exact
   HTTPS callback validation, and verified iOS Universal Link delivery using a
   real bundle/team identity. Android is out of scope for this slice. Do not
@@ -223,13 +223,13 @@ ad-hoc hosted objects to bypass migration order.
 - Approve final production brand assets, canonical domain, and required
   legal/privacy/support policies before release.
 
-## Security / Astra checkpoints
+## Security checkpoints
 
 - Review real payments, privileged scheduler activation/identity, Production
   migration/RLS/grant verification, QA target allow-listing, sensitive
   telemetry/redaction, and any deletion or material Auth/deep-link change
   before implementation or activation. The native Giver BFF/app-link boundary
-  has received Astra requirements; preserve them during implementation.
+  has binding security requirements; preserve them during implementation.
 
 ## Remaining acceptance gaps
 
@@ -454,7 +454,7 @@ states and multi-organization switching.
 ## BATCH 5 ACCEPTANCE GAPS
 Complete the listed manual/physical Batch 5 QA, including multi-organization
 switching, verification-loss history, localized error states, and review
-requests. Do not expand Impact beyond Batch 5 without a new owner-directed
+requests. Do not expand Impact beyond Batch 5 without a new owner-approved
 scope. The operational ledger above, not this historical batch section, owns
 the repository-wide next action.
 
@@ -716,7 +716,7 @@ simultaneous public-signup contention.
 
 ## V1 FUNDING ELIGIBILITY (2026-10-07)
 
-The Astra-reviewed cross-role funding correction is implemented as ordered
+The security-reviewed cross-role funding correction is implemented as ordered
 migration `0022_funding_eligibility.sql`. The web actions require an
 authenticated account whose current stored `profiles.role` is literal `giver`
 before calling the service client. The database independently applies the same

@@ -11,7 +11,7 @@ kod-kapsami:
 
 **Audit date:** 2026-10-07
 
-**Mode:** Owner-directed architecture and state analysis. No product feature was
+**Mode:** Architecture and state analysis. No product feature was
 implemented.
 
 ## Decision context
@@ -249,7 +249,7 @@ intended.
   incomplete audit-event presentation constrain daily operations.
 - There is no support/case-management workflow, account/data-deletion control,
   production promotion control, or monitored incident surface. Several require
-  owner decisions and Astra review, not just UI.
+  owner decisions and security review, not just UI.
 
 ### Journey audit
 
@@ -276,7 +276,7 @@ control plane; do not add native Admin merely for parity.
    operations. Client route guards and presentation are not permission checks.
 3. **A trusted mobile funding edge is missing.** Service-only Giver
    provisioning and mock funding cannot move into the app bundle. The native
-   journey needs an Astra-reviewed BFF/edge or secure browser handoff contract;
+   journey needs a security-reviewed BFF/edge or secure browser handoff contract;
    real payments need their separately approved architecture.
 4. **Deep links are trust boundaries.** App handoff, confirmation links,
    Partner scan inputs, and return routes must be allowlisted, non-authoritative,
@@ -311,7 +311,7 @@ control plane; do not add native Admin merely for parity.
 
 ### 0. Security and contract design gates
 
-- Obtain Astra review for native Giver provisioning/funding, real payments,
+- Obtain security review for native Giver provisioning/funding, real payments,
   material Auth/app-link changes, notification telemetry, deletion, and any new
   privileged operational endpoints.
 - Keep Partner/Organization native work on existing authenticated RPC/RLS
@@ -335,7 +335,7 @@ control plane; do not add native Admin merely for parity.
 - Reuse `list_my_giving_outcomes()` unchanged unless a separately reviewed
   contract gap is demonstrated.
 - Keep web Giver live during transition. Real-payment architecture remains a
-  release blocker and a separate owner/Astra checkpoint.
+  release blocker and a separate owner/security checkpoint.
 
 ### 3. Native Partner operational slice
 
@@ -373,7 +373,7 @@ control plane; do not add native Admin merely for parity.
 ## Single recommended next implementation workstream
 
 **Native Giver end-to-end vertical slice, beginning with the shared native
-multi-workspace foundation and an Astra-reviewed provisioning/funding
+multi-workspace foundation and a security-reviewed provisioning/funding
 contract.**
 
 It closes the largest contradiction between the locked mobile-first strategy

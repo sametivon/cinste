@@ -6,7 +6,7 @@ kod-kapsami: []
 # Native Giver Vertical Slice Architecture Plan
 
 **Date:** 2026-10-07  
-**Mode:** Astra-reviewed implementation contract. No application, database,
+**Mode:** Implementation contract. No application, database,
 RPC, RLS, or credential behavior has changed yet.
 
 ## Purpose and constraints
@@ -162,7 +162,7 @@ service errors, or raw email.
 The mock success/failure controls must be visibly marked as the existing
 non-production simulation. A real provider, payment intent, signed webhook,
 reconciliation, refunds, and production payment operations are not part of
-this slice and need their own owner decision and Astra review.
+this slice and need their own owner decision and security review.
 
 ## Required native surfaces
 
@@ -192,7 +192,7 @@ this slice and need their own owner decision and Astra review.
 
 ## Smallest complete implementation sequence
 
-1. **Astra review completed with binding changes:** use the existing Next.js
+1. **Binding security requirements:** use the existing Next.js
    Node-runtime BFF, server-side secret isolation, exact route schemas,
    server-side bearer verification, profile recheck, no permissive CORS,
    rate/abuse controls, redacted logs, and exact PKCE confirmation callback.
@@ -219,7 +219,7 @@ this slice and need their own owner decision and Astra review.
 
 ## Required acceptance and deployment checkpoint
 
-The Astra review is complete: the existing Next.js deployment is the approved
+The security review is complete: the existing Next.js deployment is the approved
 Node-runtime BFF host, subject to the binding contract above. Before hosted
 DEV/QA acceptance, confirm the isolated server-side service credential and the
 exact app-link configuration. Required tests include direct client RPC denial;
