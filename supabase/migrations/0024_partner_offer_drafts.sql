@@ -22,7 +22,7 @@ alter table public.partner_offer_drafts enable row level security;
 create policy partner_offer_drafts_read on public.partner_offer_drafts for select
   using (public.is_admin() or public.is_partner_for(partner_id));
 create policy partner_offer_drafts_create on public.partner_offer_drafts for insert to authenticated
-  with check (created_by = auth.uid() and public.is_partner_for(partner_id) and status = 'draft' and approved_offer_id is null);
+  with check (created_by = auth.uid() and public.is_partner_for(partner_id) and status in ('draft', 'submitted') and approved_offer_id is null);
 create policy partner_offer_drafts_update on public.partner_offer_drafts for update to authenticated
   using (public.is_partner_for(partner_id) and status in ('draft', 'rejected'))
   with check (created_by = auth.uid() and public.is_partner_for(partner_id) and status in ('draft', 'submitted') and approved_offer_id is null);
