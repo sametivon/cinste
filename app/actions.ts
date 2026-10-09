@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { adminDb } from "@/lib/supabase/admin";
-import { parseAuthIntent, postAuthDestination, safeAuthReturnTo } from "@/lib/auth-routing";
+import { parseAuthIntent, postAuthDestination, safeAuthReturnTo, webAuthConfirmationUrl } from "@/lib/auth-routing";
 import { activeOrganizationWorkspaces } from "@/lib/organization-workspace";
 import type { AppRole } from "@/lib/types";
 import { getWebLocale } from "@/lib/i18n/server";
@@ -51,7 +51,7 @@ export async function login(form: FormData) {
 export async function logout() { const db = await createClient(); await db.auth.signOut(); redirect("/"); }
 export async function signup(form: FormData) {
   const input = credentials.parse(Object.fromEntries(form)); const context = authContext(form); const db = await createClient();
-  const { data, error } = await db.auth.signUp({ email: input.email, password: input.password, options: { data: { display_name: input.displayName } } });
+  const { data, error } = await db.auth.signUp({ email: input.email, password: input.password, options: { emailRedirectTo: webAuthConfirmationUrl('/student'), data: { display_name: input.displayName } } });
   if (error) redirect(loginError(error.message, context));
   if (!data.session) redirect('/login?status=confirm-email&intent=student&returnTo=%2Fstudent');
   // The database trigger is deliberately the only profile-provisioning path.
@@ -88,6 +88,7 @@ export async function signupGiver(form: FormData) {
       email: input.email,
       password: input.password,
       options: {
+        emailRedirectTo: webAuthConfirmationUrl('/giver'),
         data: {
           display_name: input.displayName,
           cinste_giver_provisioning_token: grantToken,

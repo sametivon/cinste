@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { accountDestination, availableWorkspaces, logoDestination, parseAuthIntent, postAuthDestination, publicRoleDestinations, safeAuthReturnTo } from "@/lib/auth-routing";
+import { accountDestination, availableWorkspaces, logoDestination, parseAuthIntent, postAuthDestination, publicRoleDestinations, safeAuthReturnTo, webAuthConfirmationUrl } from "@/lib/auth-routing";
 
 describe("authenticated account routing", () => {
+  it("builds fixed web confirmation callbacks", () => {
+    expect(webAuthConfirmationUrl('/student')).toBe('http://localhost:3000/auth/callback?next=%2Fstudent');
+    expect(webAuthConfirmationUrl('/giver')).toBe('http://localhost:3000/auth/callback?next=%2Fgiver');
+  });
   it("routes every CINSTE role to its protected workspace", () => {
     expect(accountDestination("student")).toBe("/student");
     expect(accountDestination("giver")).toBe("/giver");

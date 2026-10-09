@@ -23,6 +23,11 @@ export function safeAuthReturnTo(value: unknown): string | undefined {
   if (typeof value !== 'string' || value.includes('%') || value.includes('\\') || value.includes('#') || value.includes('?')) return undefined;
   return (safeAuthReturnPaths as readonly string[]).includes(value) ? value : undefined;
 }
+export function webAuthConfirmationUrl(next: '/student' | '/giver') {
+  const url = new URL('/auth/callback', process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000');
+  url.searchParams.set('next', next);
+  return url.toString();
+}
 export function accountDestination(role: AppRole | null | undefined) { if (role === 'admin') return '/admin'; if (role === 'partner') return '/partner'; if (role === 'giver') return '/giver'; return '/student'; }
 const profileWorkspace = (role: AppRole | null | undefined): Workspace => role === 'admin' || role === 'partner' || role === 'giver' ? role : 'student';
 const href: Record<Workspace, string> = { admin: '/admin', partner: '/partner', giver: '/giver', organization: '/organization', student: '/student' };

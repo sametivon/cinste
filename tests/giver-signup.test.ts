@@ -125,7 +125,7 @@ describe('dedicated Giver signup action', () => {
     expect(db.auth.signUp).toHaveBeenCalledWith({
       email: 'new.giver@example.com',
       password: 'correct-horse',
-      options: { data: { display_name: 'New Giver', cinste_giver_provisioning_token: grantToken } },
+      options: { emailRedirectTo: 'http://localhost:3000/auth/callback?next=%2Fgiver', data: { display_name: 'New Giver', cinste_giver_provisioning_token: grantToken } },
     });
     expect(db.auth.signUp.mock.calls[0][0].options.data).not.toHaveProperty('role');
     expect(privileged.rpc).toHaveBeenNthCalledWith(2, 'finalize_giver_provisioning_grant', { p_token: grantToken });
