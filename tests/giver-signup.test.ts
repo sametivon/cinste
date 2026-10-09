@@ -76,6 +76,16 @@ describe('dedicated Giver signup action', () => {
     await expect(signup(input)).rejects.toThrow('REDIRECT:/student');
   });
 
+  it('shows Student confirmation guidance when signup returns no session', async () => {
+    mocks.createClient.mockResolvedValue(client({ session: false }));
+    const input = new FormData();
+    input.set('email', 'student@example.com');
+    input.set('password', 'correct-horse');
+    input.set('displayName', 'Student');
+
+    await expect(signup(input)).rejects.toThrow('REDIRECT:/login?status=confirm-email&intent=student&returnTo=%2Fstudent');
+  });
+
   it('keeps an authenticated existing account on its stored-role destination without issuing a grant', async () => {
     const db = client({ authenticated: true, role: 'student' });
     const privileged = service();

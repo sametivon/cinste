@@ -115,6 +115,13 @@ focused routing/provisioning tests pass locally. This is
 repository and local automated evidence only; no hosted or device acceptance
 is claimed.
 
+Web Student signup now distinguishes an immediate Auth session from a
+confirmation-required result. Immediate sessions continue to the Student app
+handoff; null-session results return to localized Student confirmation guidance
+before app access. Giver confirmation messaging remains role-specific. No role
+or assignment authority changed. Typecheck and 22 focused auth/routing tests
+pass locally.
+
 The public hierarchy refinement keeps the existing CINSTE palette and auth
 layout while removing redundant brand eyebrows from Login, Onboarding, Account,
 the landing CTA, and Partner offer drafts. Login now uses a role-aware visual
