@@ -66,6 +66,13 @@ Keep roles simple and separate:
 - Organization Operator
 - Admin
 
+An account has one stored profile role. Organization Operator is an additive
+workspace granted by an active `organization_users` assignment, not a second
+stored profile role. An assigned Organization workspace may coexist with any
+profile role, including Student, Giver, Partner, or Admin. Public role intent
+does not create, select, or mutate any role or assignment; Admin/CINSTE
+provisioning remains the only assignment authority.
+
 Do not introduce cross-role funding behavior in V1.
 
 ## Existing core architecture

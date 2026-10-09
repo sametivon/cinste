@@ -15,6 +15,8 @@ describe("authenticated account routing", () => {
   it("adds the organization workspace without mutating the profile role", () => {
     expect(availableWorkspaces("giver", true).map((workspace) => workspace.href)).toEqual(["/giver", "/organization"]);
     expect(availableWorkspaces("student", true).map((workspace) => workspace.href)).toEqual(["/organization", "/student"]);
+    expect(availableWorkspaces("partner", true).map((workspace) => workspace.href)).toEqual(["/partner", "/organization"]);
+    expect(availableWorkspaces("admin", true).map((workspace) => workspace.href)).toEqual(["/admin", "/organization"]);
   });
 
   it("keeps one direct destination for accounts without an active organization assignment", () => {

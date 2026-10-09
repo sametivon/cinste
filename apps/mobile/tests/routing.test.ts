@@ -37,6 +37,8 @@ describe('authoritative mobile account gate', () => {
 
   it('derives only independently readable workspaces and fails closed on stale reads', () => {
     expect(resolveWorkspaceEnvelope({ profileRole: 'giver', partnerAssignment: false, organizationAssignment: true, readsAvailable: true })).toEqual({ status: 'resolved', workspaces: ['giver', 'organization'] });
+    expect(resolveWorkspaceEnvelope({ profileRole: 'partner', partnerAssignment: true, organizationAssignment: true, readsAvailable: true })).toEqual({ status: 'resolved', workspaces: ['partner', 'organization'] });
+    expect(resolveWorkspaceEnvelope({ profileRole: 'admin', partnerAssignment: false, organizationAssignment: true, readsAvailable: true })).toEqual({ status: 'resolved', workspaces: ['organization'] });
     expect(resolveWorkspaceEnvelope({ profileRole: 'partner', partnerAssignment: false, organizationAssignment: false, readsAvailable: true })).toEqual({ status: 'resolved', workspaces: [] });
     expect(resolveWorkspaceEnvelope({ profileRole: 'student', partnerAssignment: false, organizationAssignment: true, readsAvailable: false })).toEqual({ status: 'unavailable', workspaces: [] });
   });

@@ -532,7 +532,10 @@ Post-login web destination resolution now considers both the existing profile
 role and active Organization Operator assignment. A single available workspace
 opens directly; an account with multiple legitimate surfaces receives a small
 workspace choice. Organization access remains assignment- and active-
-organization-based; no profile role, RLS, or auth behavior was changed.
+organization-based; no profile role, RLS, or auth behavior was changed. The
+role policy is explicit: an active Organization assignment is additive for
+Student, Giver, Partner, and Admin profile roles. Public role intent cannot
+create or mutate that assignment.
 
 ## ORGANIZATION OPERATOR V1 UX
 The Organization Operator workspace has a presentation-only V1 completion
