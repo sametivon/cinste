@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 
-import { Button, Card, Loading, Pill, colors } from '@/components/ui';
+import { Button, Card, EmptyState, Loading, Pill, colors } from '@/components/ui';
 import { OfferVisual } from '@/components/offer-visual';
 import { useAuth } from '@/context/auth';
 import { formatDate, localizedAvailabilityAndFree, localizedCategory, localizedClaimError, localizedOffer, useAppLocale } from '@/i18n';
@@ -13,10 +13,10 @@ import type { CampaignCard } from '@/lib/types';
 
 export default function OfferDetail() {
   const { campaignId } = useLocalSearchParams<{ campaignId: string }>(); const { refreshStudent } = useAuth(); const { t, locale, isRTL } = useAppLocale();
-  const [campaign, setCampaign] = useState<CampaignCard>(); const [busy, setBusy] = useState(false);
-  const load = useCallback(async () => { const { data, error } = await supabase.from('campaigns').select('id,name,quantity_available,ends_at,event_starts_at,offers!inner(id,localization_key,name,description,fulfillment_type,redemption_instructions,booking_url,partners(name,address),categories(name,slug))').eq('id', campaignId).single(); if (error) { setCampaign(undefined); Alert.alert(t('offer.notFound'), t('error.generic')); } else setCampaign(data as unknown as CampaignCard); }, [campaignId, t]);
+  const [campaign, setCampaign] = useState<CampaignCard>(); const [busy, setBusy] = useState(false); const [hasError, setHasError] = useState(false);
+  const load = useCallback(async () => { setHasError(false); const { data, error } = await supabase.from('campaigns').select('id,name,quantity_available,ends_at,event_starts_at,offers!inner(id,localization_key,name,description,fulfillment_type,redemption_instructions,booking_url,partners(name,address),categories(name,slug))').eq('id', campaignId).single(); if (error) { setCampaign(undefined); setHasError(true); } else setCampaign(data as unknown as CampaignCard); }, [campaignId]);
   useFocusEffect(useCallback(() => { void load(); }, [load]));
-  if (!campaign) return <Loading label={t('common.loading')} />;
+  if (!campaign) { if (hasError) return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}><EmptyState title={t('offer.notFound')} copy={t('error.generic')} /><Button label={t('common.retry')} variant="quiet" onPress={() => void load()} /></ScrollView>; return <Loading label={t('common.loading')} />; }
   const offer = localizedOffer(campaign.offers, t);
   const claim = async () => { const refreshedStudent = await refreshStudent(); if (refreshedStudent?.verification_status !== 'verified') { router.push('/verification'); return; } setBusy(true); try { const { data, error } = await supabase.rpc('claim_campaign', { p_campaign_id: campaign.id }); if (error) return Alert.alert(t('offer.claimErrorTitle'), localizedClaimError(error.message, t)); const result = data?.[0]; if (!result?.claim_id) return Alert.alert(t('offer.claimErrorTitle'), localizedClaimError(undefined, t)); router.replace({ pathname: '/(student)/claim/[claimId]', params: { claimId: result.claim_id } }); } catch { Alert.alert(t('offer.claimErrorTitle'), localizedClaimError(undefined, t)); } finally { setBusy(false); } };
   return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}>

@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
-import { Alert, Linking, ScrollView, StyleSheet, Text } from 'react-native';
+import { Linking, ScrollView, StyleSheet, Text } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import QRCode from 'react-native-qrcode-svg';
 
-import { Button, Card, Loading, Pill, colors } from '@/components/ui';
+import { Button, Card, EmptyState, Loading, Pill, colors } from '@/components/ui';
 import { formatDate, localizedOffer, useAppLocale } from '@/i18n';
 import { offerFromClaimRelation } from '@/lib/claim-display';
 import { claimStatusLabel, fulfillmentLabel } from '@/lib/presentation';
@@ -13,10 +13,10 @@ import { color, space, type } from '@/design/tokens';
 
 type ClaimView = { id: string; status: ClaimStatus; expires_at: string | null; campaigns: { offers: { localization_key: string | null; name: string; description: string; fulfillment_type: FulfillmentType; redemption_instructions: string | null; booking_url: string | null; partners: { name: string; address: string | null } | null; categories: { name: string } | null } | null } | null };
 export default function ClaimScreen() {
-  const { claimId } = useLocalSearchParams<{ claimId: string }>(); const { t, locale, isRTL } = useAppLocale(); const [claim, setClaim] = useState<ClaimView>(); const [token, setToken] = useState<string>(); const [showCode, setShowCode] = useState(false);
-  const load = useCallback(async () => { const { data, error } = await supabase.from('claims').select('id,status,expires_at,campaigns(offers(localization_key,name,description,fulfillment_type,redemption_instructions,booking_url,partners(name,address),categories(name)))').eq('id', claimId).single(); if (error) { setClaim(undefined); setToken(undefined); return Alert.alert(t('claim.notFound'), t('error.generic')); } setClaim(data as unknown as ClaimView); if (data.status !== 'active') { setToken(undefined); setShowCode(false); return; } const { data: secret } = await supabase.from('claim_secrets').select('redemption_token').eq('claim_id', claimId).single(); setToken(secret?.redemption_token); }, [claimId, t]);
+  const { claimId } = useLocalSearchParams<{ claimId: string }>(); const { t, locale, isRTL } = useAppLocale(); const [claim, setClaim] = useState<ClaimView>(); const [token, setToken] = useState<string>(); const [showCode, setShowCode] = useState(false); const [hasError, setHasError] = useState(false);
+  const load = useCallback(async () => { setHasError(false); const { data, error } = await supabase.from('claims').select('id,status,expires_at,campaigns(offers(localization_key,name,description,fulfillment_type,redemption_instructions,booking_url,partners(name,address),categories(name)))').eq('id', claimId).single(); if (error) { setClaim(undefined); setToken(undefined); setHasError(true); return; } setClaim(data as unknown as ClaimView); if (data.status !== 'active') { setToken(undefined); setShowCode(false); return; } const { data: secret } = await supabase.from('claim_secrets').select('redemption_token').eq('claim_id', claimId).single(); setToken(secret?.redemption_token); }, [claimId]);
   useFocusEffect(useCallback(() => { void load(); }, [load]));
-  if (!claim) return <Loading label={t('common.loading')} />;
+  if (!claim) { if (hasError) return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}><EmptyState title={t('claim.notFound')} copy={t('error.generic')} /><Button label={t('common.retry')} variant="quiet" onPress={() => void load()} /></ScrollView>; return <Loading label={t('common.loading')} />; }
   const linkedOffer = offerFromClaimRelation(claim.campaigns); const offer = linkedOffer ? localizedOffer(linkedOffer, t) : null; const isActive = claim.status === 'active'; const statusTone = claim.status === 'active' || claim.status === 'redeemed' ? 'success' : claim.status === 'expired' ? 'warning' : 'destructive';
   return <ScrollView contentContainerStyle={[styles.page, isRTL && styles.rtl]}>
     <Pill color={statusTone} rtl={isRTL}>{claimStatusLabel(claim.status, t)}</Pill><Text style={[styles.title, isRTL && styles.textRtl]}>{offer?.name ?? t('claim.notFound')}</Text>{offer?.partners?.name && <Text style={[styles.partner, isRTL && styles.textRtl]}>{offer.partners.name}{offer.partners.address ? ` · ${offer.partners.address}` : ''}</Text>}
