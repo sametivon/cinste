@@ -10,7 +10,7 @@ import { color, space, type } from '@/design/tokens';
 const languageNames: Record<SupportedLocale, string> = { ro: 'Română', en: 'English', tr: 'Türkçe', ar: 'العربية' };
 
 export default function Profile() {
-  const { session, student, loading, signOut } = useAuth();
+  const { session, student, loading, workspaceEnvelope, signOut } = useAuth();
   const { locale, setLocale, t, isRTL } = useAppLocale();
   if (loading) return <Loading label={t('common.loading')} />;
 
@@ -36,6 +36,7 @@ export default function Profile() {
       <Text style={[styles.copy, isRTL && styles.textRtl]}>{t('profile.howItWorksCopy')}</Text>
     </Card>
     <Button label={t('orientation.title')} variant="quiet" onPress={() => router.push('/orientation?revisit=1' as any)} />
+    {workspaceEnvelope.workspaces.length > 1 && <Button label={t('workspace.title')} variant="quiet" onPress={() => router.push('/workspace-chooser?switch=1' as any)} />}
     <Button label={t('profile.logout')} variant="quiet" onPress={logout} />
   </ScrollView>;
 }
