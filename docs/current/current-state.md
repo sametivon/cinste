@@ -387,15 +387,15 @@ Organization-scoped operational pages, Admin organization and Impact review,
 server-authoritative completion/contribution foundations, disputes, audited
 corrections, and privacy-preserving Giver outcome patterns.
 
-The current implementation does not yet match the approved target in several
-areas: opportunities still lack the structured activity/risk and
-participant-disclosure fields; attendance is
-not separate from completion; the approved 12-hour cancellation and rolling
-90-day no-show restrictions are not implemented; participant reads are not yet
-the approved display-name/eligibility projection; incident reporting is
-absent; and aggregate Giver Impact outcomes are absent. The existing accepted
-3:1 reciprocity implementation must not be treated as the final configurable
-policy model.
+The current implementation now matches the approved target for moderation,
+separate attendance, assignment-scoped participant projection, incidents,
+12-hour cancellation/no-show policy, configurable reciprocity, and structured
+opportunity fields in the repository. Migrations `0030` through `0032` still
+require owner application and hosted validation. Remaining target gaps include
+the fixed 18+ eligibility mechanism (the repository has no age-proof field),
+aggregate Giver Impact outcomes, and final hosted rollout evidence. The
+existing accepted 3:1 implementation is now represented as a configurable
+pilot policy with historical cycle snapshots.
 
 The first implementation slice is now present in and applied to DEV/QA through
 migration `0025_impact_opportunity_moderation.sql`. New opportunities can be
