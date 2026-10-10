@@ -394,10 +394,10 @@ The current implementation now matches the approved target for moderation,
 separate attendance, assignment-scoped participant projection, incidents,
 12-hour cancellation/no-show policy, configurable reciprocity, and structured
 opportunity fields and Student structured reads in the repository. Migrations
-`0030` through `0034` are owner-confirmed applied and hosted-validated in
-DEV/QA. Remaining target gaps include
-the fixed 18+ eligibility mechanism (the repository has no age-proof field),
-and final hosted rollout evidence. The
+`0030` through `0035` are owner-confirmed applied and hosted-validated in
+DEV/QA. Remaining target gaps include the controlled participant
+contact-disclosure path, the fixed 18+ eligibility mechanism (the repository
+has no age-proof field), and final hosted rollout evidence. The
 existing accepted 3:1 implementation is now represented as a configurable
 pilot policy with historical cycle snapshots.
 
@@ -503,6 +503,13 @@ and the Giver web surface renders the aggregate summary. The owner-confirmed
 DEV/QA application and 7 focused hosted assertions passed on 2026-10-10,
 including anonymous denial, the five-Student threshold, aggregate value
 changes, and identifier-free response shape.
+
+The current Organization participant projection intentionally returns no Student
+email or phone, even when an opportunity requests an approved contact field.
+The Student-facing requirement disclosure exists, but the controlled
+opportunity-specific disclosure, post-activity reduction, and a source for
+Student phone are not implemented. This remains a security-sensitive follow-up;
+the default privacy boundary is preserved.
 
 The Student mobile Impact detail now provides the controlled incident report
 form backed by `report_impact_incident`, and Admin Impact now loads open and
