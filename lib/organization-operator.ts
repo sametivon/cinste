@@ -7,7 +7,7 @@ export type OperatorOpportunity = {
   due_at: string | null;
 };
 
-export type OperatorParticipation = { id: string; opportunity_id: string; student_id: string; status: string; joined_at: string | null };
+export type OperatorParticipation = { id: string; opportunity_id: string; student_id: string; status: string; attendance_status?: string; joined_at: string | null };
 
 export function participationAction(participation: OperatorParticipation, opportunity: OperatorOpportunity, now = new Date()) {
   if (participation.status === 'overdue' || participation.status === 'disputed') return 'admin_review' as const;
