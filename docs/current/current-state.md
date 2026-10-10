@@ -422,7 +422,10 @@ participant identifier, verification eligibility state, and operational
 participation fields. It does not claim 18+ verification because the current
 repository has no age-proof field. Local PGlite coverage passes 12/12, and the
 hosted Batch 3 runner includes the projection assertions. DEV/QA application
-and hosted validation remain pending owner SQL Editor application.
+and hosted validation remain pending owner SQL Editor application. The
+Organization portal is wired to consume this projection and show the
+minimized participant display name and eligibility state; local typecheck and
+focused Organization operator tests pass.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
