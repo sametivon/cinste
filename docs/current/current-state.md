@@ -37,6 +37,9 @@ No public legal copy, real payment, invoice, refund, or deletion behavior was
 implemented. See `docs/current/legal-compliance-implementation-plan.md` for the
 approved sequence and `docs/current/legal-data-payment-responsibility-matrix.md`
 for the completed internal Milestone 1A matrix and next bounded milestone.
+The professional confirmation packet for accountant, Romanian legal counsel,
+and payment-provider review is now also prepared at
+`docs/current/legal-professional-confirmation-packet.md`.
 
 The owner-approved mobile-first platform strategy is now recorded in
 `docs/decisions/project.md`, aligned in `docs/decisions/impact-v1-operating-model.md`, and
@@ -320,6 +323,9 @@ ad-hoc hosted objects to bypass migration order.
 - Review the internal legal/data/payment responsibility matrix with the
   accountant, Romanian legal counsel, and selected payment provider before
   drafting public legal copy or implementing real payment behavior.
+- Provide the professional confirmation packet to those reviewers and record
+  answers, assumptions, required controls, and launch blockers before advancing
+  the legal/compliance sequence.
 
 ## Security checkpoints
 

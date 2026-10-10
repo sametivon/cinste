@@ -260,11 +260,15 @@ It maps current role journeys, data classes, notices, consent, retention,
 responsibility boundaries, the funded → redeemed → payout-eligible state
 contract, and refund root-cause questions without implementing runtime behavior.
 
-The next bounded milestone is **Milestone 1B — professional confirmation
-packet**: prepare the external question register and payment-state matrix for
-accountant, Romanian legal counsel, and payment-provider review. Public legal
-copy, real payments, invoice logic, deletion, and refund execution remain
-blocked until the relevant answers and security reviews are complete.
+**Milestone 1B — professional confirmation packet (complete).** The packet is
+`docs/current/legal-professional-confirmation-packet.md`. It packages the
+confirmed owner inputs, repository boundaries, accountant/CAEN questions,
+Romanian legal and consumer questions, privacy/DSA questions, payment-provider
+questions, required review outputs, and release gates.
+
+The next step requires external review of that packet. Public legal copy, real
+payments, invoice logic, deletion, and refund execution remain blocked until
+the relevant answers and security reviews are complete.
 
 ## Safe implementation boundary
 
