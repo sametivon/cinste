@@ -212,7 +212,7 @@ not establish Production readiness.
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0033` are owner-confirmed applied after the latest owner action, but corrective migration `0034` is pending. Batch 2 passed 19 assertions and Batch 5 passed 8 assertions after `0031`–`0033`; Batch 3 exposed a rejoin-guard regression and must be rerun after `0034`. |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0034` are owner-confirmed applied. Batch 2 passed 19 assertions, Batch 3 passed 41 assertions after the `0034` rejoin-guard correction, and Batch 5 passed 8 assertions on 2026-10-10. |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
@@ -241,11 +241,11 @@ not imply Production status.
 | `0027_impact_organization_participant_projection.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Additive opportunity-scoped Organization participant projection; full Student profile and verification documents remain private; local PGlite scheduler suite passes 12 assertions |
 | `0028_impact_incidents.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Simple Student/Organization incident reporting and Admin review queue contract; local PGlite scheduler suite passes 13 assertions |
 | `0029_impact_participant_display_name_case.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Additive correction to normalize the privacy-scoped participant display-name initial after the first hosted projection validation found lowercase initials |
-| `0030_impact_cancellation_no_show_policy.sql` | Yes | Yes | No | No | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
-| `0031_impact_configurable_reciprocity_policy.sql` | Yes | Yes | No | No | No | Adds Admin-configurable reciprocity ratio with per-cycle and redemption snapshots; historical contribution/settlement rows remain immutable; local PGlite scheduler suite passes 15 assertions |
-| `0032_impact_opportunity_structured_fields.sql` | Yes | Yes | No | No | No | Adds structured activity details, requirements, organization-provided support, coordinator/contact, accessibility information, and controlled participant contact fields; local PGlite scheduler suite passes 15 assertions |
-| `0033_impact_student_structured_opportunity_read.sql` | Yes | Yes | No | No | No | Extends Student discovery and own-participation projections with the approved operational details and contact-data requirements; mobile typecheck and 54 tests pass |
-| `0034_impact_rejoin_contribution_guard.sql` | Yes | No | No | No | No | Restores the existing one-contribution-per-opportunity guard omitted by the `0030` join-RPC replacement; local scheduler suite passes 15 assertions; hosted Batch 3 rerun pending |
+| `0030_impact_cancellation_no_show_policy.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by the 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
+| `0031_impact_configurable_reciprocity_policy.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by the 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Adds Admin-configurable reciprocity ratio with per-cycle and redemption snapshots; historical contribution/settlement rows remain immutable; local PGlite scheduler suite passes 15 assertions |
+| `0032_impact_opportunity_structured_fields.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by the 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Adds structured activity details, requirements, organization-provided support, coordinator/contact, accessibility information, and controlled participant contact fields; local PGlite scheduler suite passes 15 assertions |
+| `0033_impact_student_structured_opportunity_read.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: mobile structured-read implementation is covered by local typecheck and 54 tests; hosted Batch 3 passed 41 assertions after application | No | Extends Student discovery and own-participation projections with the approved operational details and contact-data requirements |
+| `0034_impact_rejoin_contribution_guard.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: Batch 3 passed 41 focused assertions on 2026-10-10, including rejection of rejoining after an earned contribution | No | Ordered correction restoring the existing one-contribution-per-opportunity guard omitted by the `0030` join-RPC replacement; local scheduler suite passes 15 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -393,8 +393,8 @@ The current implementation now matches the approved target for moderation,
 separate attendance, assignment-scoped participant projection, incidents,
 12-hour cancellation/no-show policy, configurable reciprocity, and structured
 opportunity fields and Student structured reads in the repository. Migrations
-`0030` through `0033` still
-require owner application and hosted validation. Remaining target gaps include
+`0030` through `0034` are owner-confirmed applied and hosted-validated in
+DEV/QA. Remaining target gaps include
 the fixed 18+ eligibility mechanism (the repository has no age-proof field),
 aggregate Giver Impact outcomes, and final hosted rollout evidence. The
 existing accepted 3:1 implementation is now represented as a configurable
@@ -449,24 +449,25 @@ projection initial casing found during the first hosted `0027`/`0028`
 validation attempt. It was applied after `0028`; the corrected projection is
 covered by the 41 focused hosted Batch 3 assertions passed on 2026-10-10.
 
-The next approved Impact policy slice is present in repository migration
+The approved Impact policy slice is present in repository migration
 `0030_impact_cancellation_no_show_policy.sql`. It changes the scheduled normal
 cancellation boundary to 12 hours and enforces the approved rolling 90-day
 second-no-show/48-hour and third-no-show/7-day joining restrictions inside the
 server-authoritative Student join RPC. Organization-caused cancellation rows
-remain separate and do not count. Local PGlite coverage passes 14/14; DEV/QA
-application and hosted validation remain pending owner SQL Editor application.
+remain separate and do not count. Local PGlite coverage passes 14/14; the
+migration is owner-confirmed applied and covered by the final hosted Batch 3
+validation.
 
-The following approved reciprocity-policy slice is present in repository
+The approved reciprocity-policy slice is present in repository
 migration `0031_impact_configurable_reciprocity_policy.sql`. The pilot default
 remains three funded experiences per Impact contribution, but Admin can change
 the ratio through an authorized policy RPC. Each active cycle and redemption
 stores the policy ratio/version used for it, so later changes do not rewrite
 historical contributions or settlement history. Local PGlite coverage passes
-15/15; DEV/QA application and hosted validation remain pending owner SQL
-Editor application.
+15/15; the migration is owner-confirmed applied and covered by the final hosted
+Batch 3 validation.
 
-The next approved Impact opportunity-model slice is present in repository
+The approved Impact opportunity-model slice is present in repository
 migration `0032_impact_opportunity_structured_fields.sql`. It adds the
 structured operational fields required by the locked V1 model and keeps
 participant contact disclosure limited to the approved email/phone field set.
@@ -474,15 +475,22 @@ New opportunities require a description of what students will do; the
 existing server-authoritative Organization completion flow remains unchanged.
 The Organization draft form and all local fixtures use the new fields. Local
 PGlite coverage passes 15/15 and web typecheck plus integration-script syntax
-checks pass. DEV/QA application and hosted validation remain pending owner SQL
-Editor application, after `0030` and `0031` in order.
+checks pass. The migration is owner-confirmed applied and covered by the final
+hosted Batch 3 validation.
 
 Migration `0033_impact_student_structured_opportunity_read.sql` extends the
 Student discovery and own-participation projections with the approved activity,
 requirements, organization-provided support, coordinator, accessibility, and
 contact-data requirement fields. Student mobile detail renders these fields
-before join. Mobile typecheck and the full mobile suite pass 54/54; DEV/QA
-application and hosted validation remain pending after `0030` through `0032`.
+before join. Mobile typecheck and the full mobile suite pass 54/54; the
+migration is owner-confirmed applied and the final hosted Batch 3 validation
+passed after `0030` through `0032`.
+
+Migration `0034_impact_rejoin_contribution_guard.sql` is an ordered corrective
+migration. It restores the existing one-contribution-per-opportunity guard
+that was omitted when `0030` replaced the Student join RPC. Local scheduler
+coverage passes 15/15, and the owner-confirmed DEV/QA application is covered
+by the final hosted Batch 3 pass of 41 assertions on 2026-10-10.
 
 The Student mobile Impact detail now provides the controlled incident report
 form backed by `report_impact_incident`, and Admin Impact now loads open and
