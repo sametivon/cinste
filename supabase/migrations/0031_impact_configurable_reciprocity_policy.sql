@@ -15,6 +15,24 @@ alter table public.impact_reciprocity_policy
 alter table public.impact_reciprocity_state
   add column if not exists required_experiences integer not null default 3,
   add column if not exists policy_version text not null default 'impact-reciprocity-v1';
+
+-- Normalize legacy rows before adding the configurable-policy invariant. Older
+-- rows can contain a due count/status with a stale due_at value.
+update public.impact_reciprocity_state
+   set required_experiences = 3,
+       policy_version = coalesce(policy_version, 'impact-reciprocity-v1'),
+       community_redemption_count = case
+         when status = 'give_back_due' or community_redemption_count >= 3 then 3
+         else least(community_redemption_count, 2)
+       end,
+       status = case
+         when status = 'give_back_due' or community_redemption_count >= 3 then 'give_back_due'::public.impact_reciprocity_status
+         else 'open'::public.impact_reciprocity_status
+       end,
+       due_at = case
+         when status = 'give_back_due' or community_redemption_count >= 3 then coalesce(due_at, updated_at, clock_timestamp())
+         else null
+       end;
 alter table public.impact_reciprocity_state
   drop constraint if exists impact_reciprocity_state_community_redemption_count_check,
   drop constraint if exists impact_reciprocity_state_check;

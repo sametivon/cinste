@@ -60,6 +60,7 @@ before(async () => {
   await db.exec(await migration('0030_impact_cancellation_no_show_policy.sql'));
   await db.exec(await migration('0031_impact_configurable_reciprocity_policy.sql'));
   await db.exec(await migration('0032_impact_opportunity_structured_fields.sql'));
+  await db.exec(await migration('0033_impact_student_structured_opportunity_read.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -292,6 +293,7 @@ test('Impact opportunities require submission and Admin low-risk approval before
   await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
   await query('select public.admin_review_impact_opportunity($1,\'approved\',\'allowed_low_risk\',\'Reviewed for pilot\')', [opportunityId]);
   assert.deepEqual(await query('select status,review_status,risk_state from public.impact_opportunities where id=$1', [opportunityId]), [{ status: 'published', review_status: 'approved', risk_state: 'allowed_low_risk' }]);
+  assert.deepEqual(await query('select activity_details,requirements,organization_provides,coordinator_name,participant_contact_fields::text from public.list_impact_opportunities(null,null) where id=$1', [opportunityId]), [{ activity_details: 'Students complete structured QA support.', requirements: null, organization_provides: 'A named coordinator and workspace.', coordinator_name: 'QA Coordinator', participant_contact_fields: '{}' }]);
   await db.exec('reset role');
 });
 

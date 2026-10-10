@@ -5,7 +5,7 @@ import { canDisputeImpactParticipation, impactOpportunityFromParticipation, impa
 const unavailableTitle = 'Opportunity details are unavailable';
 const unavailableOrganization = 'Your participation is still recorded.';
 const ownParticipationRead = {
-  participation_id: 'participation-own', participation_status: 'joined', opportunity_id: 'opportunity-own', organization_id: 'organization-own', organization_name: 'Helping Hands', title: 'Food distribution', description: 'Support a local distribution.', category: 'community', mode: 'flexible_remote' as const, city: 'București', starts_at: null, ends_at: null, due_at: '2026-10-12T10:00:00Z', expected_eligible_minutes: 60, capacity: 5, remaining_capacity: 4,
+  participation_id: 'participation-own', participation_status: 'joined', opportunity_id: 'opportunity-own', organization_id: 'organization-own', organization_name: 'Helping Hands', title: 'Food distribution', description: 'Support a local distribution.', activity_details: 'Sort food parcels.', requirements: null, organization_provides: 'A coordinator and workspace.', coordinator_name: 'Ana', coordinator_contact: 'ana@example.invalid', accessibility_information: null, participant_contact_fields: [], category: 'community', mode: 'flexible_remote' as const, city: 'București', starts_at: null, ends_at: null, due_at: '2026-10-12T10:00:00Z', expected_eligible_minutes: 60, capacity: 5, remaining_capacity: 4,
 };
 
 describe('Impact participation presentation', () => {
