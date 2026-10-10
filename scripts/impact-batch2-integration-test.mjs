@@ -42,7 +42,7 @@ async function createOpportunity(db, organizationId, values = {}) {
     p_due_at: dueAt, p_expected_eligible_minutes: 60, p_capacity: values.capacity ?? 10,
   }, 'organization creates opportunity');
 }
-async function publish(db, id) { return rpcMust(db, 'organization_publish_impact_opportunity', { p_opportunity_id: id }, 'organization publishes opportunity'); }
+async function publish(db, id) { await rpcMust(db, 'organization_submit_impact_opportunity', { p_opportunity_id: id }, 'organization submits opportunity'); return rpcMust(adminUser, 'admin_review_impact_opportunity', { p_opportunity_id: id, p_decision: 'approved', p_risk_state: 'allowed_low_risk', p_reason: 'Batch 2 QA approval' }, 'Admin approves opportunity'); }
 async function join(db, id) { return db.rpc('student_join_impact_opportunity', { p_opportunity_id: id }); }
 
 let adminUser;

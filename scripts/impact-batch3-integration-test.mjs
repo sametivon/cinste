@@ -42,7 +42,7 @@ async function createOpportunity(db, organizationId, values = {}) {
     p_city: 'Bucharest', p_starts_at: startsAt, p_ends_at: endsAt, p_due_at: dueAt, p_expected_eligible_minutes: values.minutes ?? 60, p_capacity: values.capacity ?? 10,
   }, 'create opportunity');
 }
-async function publish(db, id) { return rpc(db, 'organization_publish_impact_opportunity', { p_opportunity_id: id }, 'publish opportunity'); }
+async function publish(db, id) { await rpc(db, 'organization_submit_impact_opportunity', { p_opportunity_id: id }, 'submit opportunity'); return rpc(admin, 'admin_review_impact_opportunity', { p_opportunity_id: id, p_decision: 'approved', p_risk_state: 'allowed_low_risk', p_reason: 'Batch 3 QA approval' }, 'Admin approves opportunity'); }
 async function join(db, id) { return rpc(db, 'student_join_impact_opportunity', { p_opportunity_id: id }, 'join opportunity'); }
 async function futureSchedule() {
   const start = new Date(Date.now() + 7_200_000);

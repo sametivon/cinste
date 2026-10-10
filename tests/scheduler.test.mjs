@@ -53,6 +53,7 @@ before(async () => {
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
   await db.exec(await migration('0018_impact_maintenance_system_attribution.sql'));
   await db.exec(await migration('0019_database_maintenance_runner.sql'));
+  await db.exec(await migration('0025_impact_opportunity_moderation.sql'));
 });
 beforeEach(async () => { await db.exec('begin'); });
 afterEach(async () => { await db.exec('rollback'); });
@@ -267,4 +268,21 @@ test('Cron registration is inactive, local, five-minute and idempotent (registra
     command: "SET statement_timeout = '240s'; SELECT * FROM cinste_private.run_maintenance();",
     username: 'postgres', active: false,
   }]);
+});
+
+test('Impact opportunities require submission and Admin low-risk approval before publication', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Moderation test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  await db.exec('set local role authenticated');
+  const opportunityId = await scalar(`select public.organization_create_impact_opportunity($1,'Moderation test','Structured low-risk work','community','flexible_remote','Bucharest',null,null,now()+interval '1 day',60,5)`, [organization]);
+  await query('select public.organization_submit_impact_opportunity($1)', [opportunityId]);
+  await reject('select public.organization_publish_impact_opportunity($1)', [opportunityId], 'P0001');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await query('select public.admin_review_impact_opportunity($1,\'approved\',\'allowed_low_risk\',\'Reviewed for pilot\')', [opportunityId]);
+  assert.deepEqual(await query('select status,review_status,risk_state from public.impact_opportunities where id=$1', [opportunityId]), [{ status: 'published', review_status: 'approved', risk_state: 'allowed_low_risk' }]);
+  await db.exec('reset role');
 });

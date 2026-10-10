@@ -27,7 +27,7 @@ operations, legal/support entry points, and final release acceptance.
 ## Last completed work
 
 The owner-approved mobile-first platform strategy is now recorded in
-`docs/decisions/project.md`, aligned in `docs/decisions/impact-spec.md`, and
+`docs/decisions/project.md`, aligned in `docs/decisions/impact-v1-operating-model.md`, and
 reconciled against actual web, native, and backend capability in
 `docs/current/cross-platform-role-surface-audit.md`. The concrete native Giver
 vertical-slice auth, workspace, provisioning, funding, and reuse plan is now
@@ -236,6 +236,7 @@ not imply Production status.
 | `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | Yes, DEV/QA only: owner ran 61 hosted non-production assertions on 2026-10-08 | No | Service-only Giver eligibility, ownership, pricing/activity rechecks, direct API-role denial, and idempotent state behavior validated; no Production environment exists |
 | `0023_native_bff_rate_limits.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 12 hosted assertions passed on 2026-10-08 (service execution; anon/authenticated denial; private API storage denial; configured 5-per-minute quota; invalid non-fingerprint rejection) | No | Active private HMAC-fingerprint limiter. The QA Next.js host's server-only `NATIVE_BFF_RATE_LIMIT_KEY` and exact HTTPS Supabase Auth redirect allowlist remain unverified; do not use the BFF |
 | `0024_partner_offer_drafts.sql` | Yes | Yes | No | No | No | Partner-scoped descriptive drafts and Admin-only atomic offer approval are repository-only; no campaign, inventory, price, or payment authority is delegated |
+| `0025_impact_opportunity_moderation.sql` | Yes | Yes | No | No | No | New Impact opportunity submission, low-risk classification, and Admin approval before publication are repository-only; existing published rows remain legacy-compatible |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -380,8 +381,8 @@ server-authoritative completion/contribution foundations, disputes, audited
 corrections, and privacy-preserving Giver outcome patterns.
 
 The current implementation does not yet match the approved target in several
-areas: Organization operators can publish directly; opportunities lack the
-structured moderation/risk and participant-disclosure fields; attendance is
+areas: opportunities still lack the structured activity/risk and
+participant-disclosure fields; attendance is
 not separate from completion; the approved 12-hour cancellation and rolling
 90-day no-show restrictions are not implemented; participant reads are not yet
 the approved display-name/eligibility projection; incident reporting is
@@ -389,8 +390,19 @@ absent; and aggregate Giver Impact outcomes are absent. The existing accepted
 3:1 reciprocity implementation must not be treated as the final configurable
 policy model.
 
-This reconciliation is documentation-only. No schema, migration, RLS, RPC,
-API, mobile, web, Admin, or hosted-environment behavior changed.
+The first implementation slice is now present in repository migration
+`0025_impact_opportunity_moderation.sql`. New opportunities can be submitted
+for review, direct Organization publication is rejected, and Admin approval is
+required before publication. The migration adds a simple allowed-low-risk or
+restricted-not-publishable state and preserves existing published rows as
+legacy compatibility records. Local web actions and Admin/Organization
+surfaces use the new boundary; hosted application and validation remain
+pending.
+
+This reconciliation included the first approved implementation slice. No
+attendance, participant-projection, incident, no-show, reciprocity-policy, or
+Giver-aggregate behavior changed, and migration `0025` has not been applied to
+hosted environments.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
