@@ -65,6 +65,7 @@ before(async () => {
   await db.exec(await migration('0034_impact_rejoin_contribution_guard.sql'));
   await db.exec(await migration('0035_impact_giver_aggregate_outcomes.sql'));
   await db.exec(await migration('0036_impact_admin_18_plus_eligibility.sql'));
+  await db.exec(await migration('0037_impact_email_contact_consent.sql'));
   impactEligibilityReady = true;
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
@@ -389,6 +390,7 @@ test('Organization participant projection is assignment-scoped and privacy-limit
     opportunity_id: opportunityId,
     participant_id: attendee,
     participant_display_name: 'Ana P.',
+    participant_email: null,
     eligibility_status: 'verified_18_plus',
     participation_status: 'joined',
     attendance_status: 'pending',
@@ -432,6 +434,33 @@ test('Impact joining requires Admin-controlled 18+ eligibility and projection ex
   assert.equal(await scalar("select count(*)::int from public.impact_audit_events where target_type='student_profile' and target_id=$1", [attendee]), 2);
   await db.exec('reset role');
   assert.ok(participationId);
+});
+
+test('Impact email contact is explicit, scoped to the opportunity, and expires', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  const attendee = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Contact test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  const opportunityId = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at,participant_contact_fields)
+    values ($1,'Contact test','Structured work','community','flexible_remote',now()+interval '1 day',60,5,'published',now(),'{email}')`, [organization]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await db.exec('set local role authenticated');
+  const participationId = await scalar('select public.student_join_impact_opportunity($1)', [opportunityId]);
+  const consent = (await query('select participant_email_consent_at,participant_email_access_expires_at from public.impact_participations where id=$1', [participationId]))[0];
+  assert.ok(consent.participant_email_consent_at);
+  assert.ok(consent.participant_email_access_expires_at);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  const active = (await query('select participant_email from public.list_organization_impact_participants($1::uuid[])', [[opportunityId]]))[0];
+  assert.equal(active.participant_email, `${attendee}@scheduler.test.invalid`);
+  await db.exec('reset role');
+  await query('update public.impact_participations set participant_email_access_expires_at=now()-interval \'1 second\' where id=$1', [participationId]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  await db.exec('set local role authenticated');
+  assert.equal((await query('select participant_email from public.list_organization_impact_participants($1::uuid[])', [[opportunityId]]))[0].participant_email, null);
+  await db.exec('reset role');
 });
 
 test('Impact incidents are reportable by participants or assigned operators and reviewable by Admin', async () => {
