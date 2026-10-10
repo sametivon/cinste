@@ -61,6 +61,7 @@ before(async () => {
   await db.exec(await migration('0031_impact_configurable_reciprocity_policy.sql'));
   await db.exec(await migration('0032_impact_opportunity_structured_fields.sql'));
   await db.exec(await migration('0033_impact_student_structured_opportunity_read.sql'));
+  await db.exec(await migration('0034_impact_rejoin_contribution_guard.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -321,6 +322,8 @@ test('Impact attendance is organization-authoritative and separate from completi
   assert.equal(completed.status, 'completed');
   assert.equal(completed.attendance_status, 'attended');
   assert.ok(completed.completed_at);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await reject('select public.student_join_impact_opportunity($1)', [opportunityId], 'P0001');
   await db.exec('reset role');
   assert.equal(await scalar("select count(*)::int from public.impact_audit_events where target_id=$1 and action='attended'", [participationId]), 1);
 });
