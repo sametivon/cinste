@@ -62,6 +62,7 @@ before(async () => {
   await db.exec(await migration('0032_impact_opportunity_structured_fields.sql'));
   await db.exec(await migration('0033_impact_student_structured_opportunity_read.sql'));
   await db.exec(await migration('0034_impact_rejoin_contribution_guard.sql'));
+  await db.exec(await migration('0035_impact_giver_aggregate_outcomes.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -230,6 +231,37 @@ test('future participations and existing policies/Core expiration definition sta
   assert.equal(await scalar('select status from public.impact_participations where id=$1', [future]), 'joined');
   assert.equal(await scalar("select pg_get_functiondef('public.expire_stale_claims()'::regprocedure)"), originalCore);
   assert.deepEqual(await query('select * from pg_policies order by schemaname, tablename, policyname'), originalPolicies);
+});
+
+test('Giver Impact outcomes are authenticated, aggregate-only, and suppressed below five Students', async () => {
+  const giver = await student();
+  await db.exec('set local role anon');
+  await reject('select * from public.list_community_impact_outcomes()', [], '42501');
+  await db.exec('reset role');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [giver]);
+  await db.exec('set local role authenticated');
+  assert.deepEqual(await query('select * from public.list_community_impact_outcomes()'), [{ outcome_state: 'privacy_suppressed', completed_impact_activities: null, total_impact_hours: null, participating_students: null }]);
+  await db.exec('reset role');
+
+  const organization = await insertId("insert into public.organizations(name,status) values ('Giver aggregate test','active')");
+  const adminUser = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  for (let index = 0; index < 5; index += 1) {
+    const participant = await student();
+    const opportunity = await insertId(`insert into public.impact_opportunities
+      (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at)
+      values ($1,$2,'Structured work','community','flexible_remote',now()+interval '1 day',30,5,'published',now())`, [organization, `Giver aggregate ${index}`]);
+    const participation = await insertId(`insert into public.impact_participations(student_id,opportunity_id)
+      values ($1,$2)`, [participant, opportunity]);
+    await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+    await db.exec('set local role authenticated');
+    await query("select public.admin_verify_impact_participation($1,'Giver aggregate test')", [participation]);
+    await db.exec('reset role');
+  }
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [giver]);
+  await db.exec('set local role authenticated');
+  assert.deepEqual(await query('select * from public.list_community_impact_outcomes()'), [{ outcome_state: 'available', completed_impact_activities: 5, total_impact_hours: 2.5, participating_students: 5 }]);
+  await db.exec('reset role');
 });
 
 test('due_at and the scheduled 72-hour boundary remain inclusive', async () => {
