@@ -295,6 +295,9 @@ ad-hoc hosted objects to bypass migration order.
 - Select real-payment business/provider semantics before that workstream.
 - Approve final production brand assets, canonical domain, and required
   legal/privacy/support policies before release.
+- Confirm the legal entity, PFA/SRL and CAEN Rev.3 scope, contracting model,
+  payment/refund responsibility, and canonical support identity before public
+  legal-surface implementation. See `docs/current/legal-compliance-implementation-plan.md`.
 
 ## Security checkpoints
 
