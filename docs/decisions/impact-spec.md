@@ -5,6 +5,13 @@ tarih: 2026-10-02
 ---
 # docs/decisions/impact-spec.md
 
+> Historical decision record. Superseded for the current Impact V1 target by
+> [`impact-v1-operating-model.md`](impact-v1-operating-model.md) dated
+> 2026-10-10. In particular, the fixed 3:1 reciprocity rule, direct
+> Organization publication, and the earlier opportunity/moderation model are
+> no longer current. This file is retained for decision traceability; do not
+> use conflicting sections as implementation authority.
+
 # CINSTE Impact — Product Spec V1
 
 ## Vision

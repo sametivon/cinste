@@ -352,7 +352,46 @@ Do not start unrelated Core redesign while adding Impact.
 
 ## IMPACT STATUS
 Product direction approved.
-Approved V1 product rules are recorded in `docs/decisions/impact-spec.md`.
+The current approved target model is recorded in
+`docs/decisions/impact-v1-operating-model.md`. The earlier
+`docs/decisions/impact-spec.md` remains as historical traceability and is
+superseded where it conflicts with the current model.
+
+## IMPACT V1 MODEL RECONCILIATION (2026-10-10)
+
+Owner-approved target decisions now supersede the fixed 3:1 reciprocity rule
+and direct Organization publication. Reciprocity is a configurable product
+policy; 3 funded experiences to 1 Impact contribution may be the pilot
+default, but policy changes must preserve historical contributions and must not
+use debt or repayment language.
+
+The target V1 model is Bucharest-first, 18+ students, manually controlled, and
+low-risk only. Only manually verified, Admin-approved active Organizations
+with active organization assignments may submit opportunities. Organizations
+must not publish directly. Every opportunity requires CINSTE review before
+publication, with allowed/restricted risk classification and structured
+activity, location, coordinator, requirements, accessibility, and contact-data
+disclosure information.
+
+The current repository already provides the core organization assignment and
+status authority, Student mobile discovery/detail/join/cancel/history,
+Organization-scoped operational pages, Admin organization and Impact review,
+server-authoritative completion/contribution foundations, disputes, audited
+corrections, and privacy-preserving Giver outcome patterns.
+
+The current implementation does not yet match the approved target in several
+areas: Organization operators can publish directly; opportunities lack the
+structured moderation/risk and participant-disclosure fields; attendance is
+not separate from completion; the approved 12-hour cancellation and rolling
+90-day no-show restrictions are not implemented; participant reads are not yet
+the approved display-name/eligibility projection; incident reporting is
+absent; and aggregate Giver Impact outcomes are absent. The existing accepted
+3:1 reciprocity implementation must not be treated as the final configurable
+policy model.
+
+This reconciliation is documentation-only. No schema, migration, RLS, RPC,
+API, mobile, web, Admin, or hosted-environment behavior changed.
+
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
 Added the additive organization and Impact backend schema, enums, constraints,
