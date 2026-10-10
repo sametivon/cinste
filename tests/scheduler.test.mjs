@@ -18,6 +18,7 @@ let originalCore;
 let originalPolicies;
 let historicalActor;
 let historicalAudit;
+let impactEligibilityReady = false;
 
 before(async () => {
   // Minimal Supabase platform schemas, not application schema substitutes.
@@ -63,6 +64,8 @@ before(async () => {
   await db.exec(await migration('0033_impact_student_structured_opportunity_read.sql'));
   await db.exec(await migration('0034_impact_rejoin_contribution_guard.sql'));
   await db.exec(await migration('0035_impact_giver_aggregate_outcomes.sql'));
+  await db.exec(await migration('0036_impact_admin_18_plus_eligibility.sql'));
+  impactEligibilityReady = true;
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -74,6 +77,7 @@ async function student() {
   await query('insert into auth.users(id,email) values ($1,$2)', [id, `${id}@scheduler.test.invalid`]);
   await query(`insert into public.student_profiles(user_id, full_name, verification_status)
     values ($1,'Scheduler test','verified')`, [id]);
+  if (impactEligibilityReady) await query('update public.student_profiles set impact_18_plus_verified=true where user_id=$1', [id]);
   return id;
 }
 
@@ -385,7 +389,7 @@ test('Organization participant projection is assignment-scoped and privacy-limit
     opportunity_id: opportunityId,
     participant_id: attendee,
     participant_display_name: 'Ana P.',
-    eligibility_status: 'verified_student',
+    eligibility_status: 'verified_18_plus',
     participation_status: 'joined',
     attendance_status: 'pending',
     joined_at: rows[0].joined_at,
@@ -394,6 +398,40 @@ test('Organization participant projection is assignment-scoped and privacy-limit
     disputed_at: null,
   }]);
   await db.exec('reset role');
+});
+
+test('Impact joining requires Admin-controlled 18+ eligibility and projection exposes only the minimized flag', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  const attendee = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  await query('update public.student_profiles set impact_18_plus_verified=false, impact_18_plus_verified_at=null, impact_18_plus_verified_by=null where user_id=$1', [attendee]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Eligibility test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  const opportunityId = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'Eligibility test','Structured work','community','flexible_remote',now()+interval '1 day',60,5,'published',now())`, [organization]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await db.exec('set local role authenticated');
+  await reject('select public.student_join_impact_opportunity($1)', [opportunityId], 'P0001');
+  await db.exec('reset role');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await db.exec('set local role authenticated');
+  await query("select public.admin_set_student_impact_eligibility($1,true,'Reviewed age evidence')", [attendee]);
+  assert.deepEqual(await query('select impact_18_plus_verified,impact_18_plus_verified_by from public.student_profiles where user_id=$1', [attendee]), [{ impact_18_plus_verified: true, impact_18_plus_verified_by: adminUser }]);
+  await db.exec('reset role');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await db.exec('set local role authenticated');
+  const participationId = await scalar('select public.student_join_impact_opportunity($1)', [opportunityId]);
+  await db.exec('reset role');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  await db.exec('set local role authenticated');
+  assert.equal((await query('select eligibility_status from public.list_organization_impact_participants($1::uuid[])', [[opportunityId]]))[0].eligibility_status, 'verified_18_plus');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await query("select public.admin_set_student_impact_eligibility($1,false,'Eligibility review withdrawn')", [attendee]);
+  assert.equal(await scalar("select count(*)::int from public.impact_audit_events where target_type='student_profile' and target_id=$1", [attendee]), 2);
+  await db.exec('reset role');
+  assert.ok(participationId);
 });
 
 test('Impact incidents are reportable by participants or assigned operators and reviewable by Admin', async () => {

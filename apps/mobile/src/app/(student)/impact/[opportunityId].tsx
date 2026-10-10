@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Button, Card, EmptyState, Loading, Pill, colors } from '@/components/ui';
+import { useAuth } from '@/context/auth';
 import { formatDate, useAppLocale } from '@/i18n';
 import { impactOpportunityFromParticipation } from '@/lib/impact-participation';
 import { getImpactOpportunities, getMyImpactParticipations, type ImpactOpportunity } from '@/lib/queries';
@@ -13,10 +14,12 @@ type IncidentSeverity = 'low' | 'medium' | 'serious';
 const incidentCategories: IncidentCategory[] = ['safety_concern', 'harassment', 'inappropriate_behavior', 'injury', 'organization_issue', 'student_issue', 'other'];
 const incidentSeverities: IncidentSeverity[] = ['low', 'medium', 'serious'];
 const detailLabels = { ro: { activity: 'Ce vei face', requirements: 'Cerințe', provides: 'Ce oferă organizația', coordinator: 'Coordonator', accessibility: 'Accesibilitate', contact: 'Date cerute înainte de înscriere', email: 'e-mail', phone: 'telefon' }, en: { activity: 'What you will do', requirements: 'Requirements', provides: 'What the organization provides', coordinator: 'Coordinator', accessibility: 'Accessibility', contact: 'Contact data requested before joining', email: 'email', phone: 'phone' }, tr: { activity: 'Ne yapacaksın', requirements: 'Gereksinimler', provides: 'Kuruluşun sağladıkları', coordinator: 'Koordinatör', accessibility: 'Erişilebilirlik', contact: 'Katılmadan önce istenen iletişim bilgileri', email: 'e-posta', phone: 'telefon' }, ar: { activity: 'ما ستفعله', requirements: 'المتطلبات', provides: 'ما توفره المنظمة', coordinator: 'المنسق', accessibility: 'إمكانية الوصول', contact: 'بيانات الاتصال المطلوبة قبل الانضمام', email: 'البريد الإلكتروني', phone: 'الهاتف' } } as const;
+const eligibilityCopy = { ro: 'Impact este disponibil pentru studenții cu eligibilitate 18+ verificată de CINSTE.', en: 'Impact is available to Students with CINSTE-admin-verified 18+ eligibility.', tr: 'Impact, CINSTE tarafından 18+ uygunluğu doğrulanmış Öğrenciler içindir.', ar: 'يتاح Impact للطلاب الذين تحققت CINSTE من أهليتهم بعمر 18 عاماً أو أكثر.' } as const;
 
 export default function ImpactOpportunityDetail() {
   const { opportunityId, participationId } = useLocalSearchParams<{ opportunityId: string; participationId?: string }>();
   const { t, locale, isRTL } = useAppLocale();
+  const { student } = useAuth();
   const [item, setItem] = useState<ImpactOpportunity | null>(null);
   const [participation, setParticipation] = useState<{ id: string; status: string } | null>(participationId ? { id: participationId, status: 'joined' } : null);
   const [phase, setPhase] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -55,7 +58,7 @@ export default function ImpactOpportunityDetail() {
       {participation.status === 'joined' && <Pressable disabled={working} onPress={cancel} style={styles.secondary}><Text style={styles.secondaryText}>{working ? t('common.loading') : t('impact.cancel')}</Text></Pressable>}
       {!reporting && <Pressable onPress={() => setReporting(true)} style={styles.secondary}><Text style={styles.secondaryText}>{t('impact.reportIssue')}</Text></Pressable>}
       {reporting && <View style={styles.reportBox}><Text style={[styles.reportTitle, isRTL && styles.textRtl]}>{t('impact.reportTitle')}</Text><Text style={[styles.meta, isRTL && styles.textRtl]}>{t('impact.reportCategory')}</Text><View style={styles.options}>{incidentCategories.map((value) => <Pressable key={value} onPress={() => setCategory(value)} style={[styles.option, category === value && styles.optionSelected]}><Text style={styles.optionText}>{value.replaceAll('_', ' ')}</Text></Pressable>)}</View><Text style={[styles.meta, isRTL && styles.textRtl]}>{t('impact.reportSeverity')}</Text><View style={styles.options}>{incidentSeverities.map((value) => <Pressable key={value} onPress={() => setSeverity(value)} style={[styles.option, severity === value && styles.optionSelected]}><Text style={styles.optionText}>{value}</Text></Pressable>)}</View><TextInput value={description} onChangeText={setDescription} multiline maxLength={4000} placeholder={t('impact.reportDescription')} style={[styles.input, isRTL && styles.textRtl]} textAlign={isRTL ? 'right' : 'left'} /><Pressable disabled={working || description.trim().length < 3} onPress={() => void report()} style={styles.button}><Text style={styles.buttonText}>{working ? t('common.loading') : t('impact.reportSubmit')}</Text></Pressable><Pressable onPress={() => setReporting(false)}><Text style={styles.back}>{t('common.cancel')}</Text></Pressable></View>}
-    </Card> : <Pressable disabled={working || item.remaining_capacity === 0} onPress={join} style={styles.button}><Text style={styles.buttonText}>{working ? t('common.loading') : t('impact.join')}</Text></Pressable>}
+    </Card> : <>{!student?.impact_18_plus_verified && <Text style={[styles.meta, isRTL && styles.textRtl]}>{eligibilityCopy[locale]}</Text>}<Pressable disabled={working || item.remaining_capacity === 0 || !student?.impact_18_plus_verified} onPress={join} style={styles.button}><Text style={styles.buttonText}>{working ? t('common.loading') : t('impact.join')}</Text></Pressable></>}
     <Pressable onPress={() => router.back()}><Text style={styles.back}>{t('common.back')}</Text></Pressable>
   </ScrollView>;
 }

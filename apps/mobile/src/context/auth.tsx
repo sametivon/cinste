@@ -8,7 +8,7 @@ import { resolveWorkspaceEnvelope, type MobileWorkspace, type WorkspaceEnvelope 
 import { completeMobileOrientation, hasCompletedMobileOrientation } from '@/lib/orientation';
 import type { AppRole, VerificationStatus } from '@/lib/types';
 
-type StudentState = { full_name: string; university_id: string | null; faculty: string | null; verification_status: VerificationStatus; rejection_reason: string | null } | null;
+type StudentState = { full_name: string; university_id: string | null; faculty: string | null; verification_status: VerificationStatus; impact_18_plus_verified: boolean; rejection_reason: string | null } | null;
 type AuthContextValue = { session: Session | null; loading: boolean; role: AppRole | null; student: StudentState; workspaceEnvelope: WorkspaceEnvelope; selectedWorkspace: MobileWorkspace | null; orientationComplete: boolean; refreshStudent: (userId?: string) => Promise<StudentState>; completeOrientation: () => Promise<void>; selectWorkspace: (workspace: MobileWorkspace) => Promise<void>; signOut: () => Promise<void> };
 const AuthContext = createContext<AuthContextValue | null>(null);
 const workspaceStorageKey = 'cinste.mobile.workspace';
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const saved = await SecureStore.getItemAsync(workspaceStorageKey); const savedWorkspace = saved as MobileWorkspace | null;
     setSelectedWorkspace(savedWorkspace && envelope.workspaces.includes(savedWorkspace) ? savedWorkspace : null);
     if (nextRole !== 'student') { setStudent(null); return null; }
-    const { data, error: studentError } = await supabase.from('student_profiles').select('full_name,university_id,faculty,verification_status').eq('user_id', id).maybeSingle();
+    const { data, error: studentError } = await supabase.from('student_profiles').select('full_name,university_id,faculty,verification_status,impact_18_plus_verified').eq('user_id', id).maybeSingle();
     if (studentError || !data) { setStudent(null); return null; }
     let rejection_reason: string | null = null;
     if (data.verification_status === 'rejected') { const { data: rejection } = await supabase.from('student_verifications').select('rejection_reason').eq('student_id', id).eq('status', 'rejected').order('reviewed_at', { ascending: false }).limit(1).maybeSingle(); rejection_reason = rejection?.rejection_reason ?? null; }
