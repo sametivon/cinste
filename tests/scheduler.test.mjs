@@ -55,6 +55,7 @@ before(async () => {
   await db.exec(await migration('0019_database_maintenance_runner.sql'));
   await db.exec(await migration('0025_impact_opportunity_moderation.sql'));
   await db.exec(await migration('0026_impact_attendance_provenance.sql'));
+  await db.exec(await migration('0027_impact_organization_participant_projection.sql'));
 });
 beforeEach(async () => { await db.exec('begin'); });
 afterEach(async () => { await db.exec('rollback'); });
@@ -314,4 +315,40 @@ test('Impact attendance is organization-authoritative and separate from completi
   assert.ok(completed.completed_at);
   await db.exec('reset role');
   assert.equal(await scalar("select count(*)::int from public.impact_audit_events where target_id=$1 and action='attended'", [participationId]), 1);
+});
+
+test('Organization participant projection is assignment-scoped and privacy-limited', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  const attendee = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  await query("update public.student_profiles set full_name='Ana Popescu' where user_id=$1", [attendee]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Projection test','active')");
+  const foreignOrganization = await insertId("insert into public.organizations(name,status) values ('Foreign projection test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  const opportunityId = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'Projection test','Structured work','community','flexible_remote',now()+interval '1 day',60,5,'published',now())`, [organization]);
+  const foreignOpportunityId = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'Foreign projection test','Structured work','community','flexible_remote',now()+interval '1 day',60,5,'published',now())`, [foreignOrganization]);
+  const participationId = await insertId('insert into public.impact_participations(student_id,opportunity_id) values ($1,$2)', [attendee, opportunityId]);
+  await insertId('insert into public.impact_participations(student_id,opportunity_id) values ($1,$2)', [attendee, foreignOpportunityId]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  await db.exec('set local role authenticated');
+  const rows = await query('select * from public.list_organization_impact_participants($1::uuid[])', [[opportunityId, foreignOpportunityId]]);
+  assert.deepEqual(rows, [{
+    participation_id: participationId,
+    opportunity_id: opportunityId,
+    participant_id: attendee,
+    participant_display_name: 'Ana P.',
+    eligibility_status: 'verified_student',
+    participation_status: 'joined',
+    attendance_status: 'pending',
+    joined_at: rows[0].joined_at,
+    resolved_at: null,
+    completed_at: null,
+    disputed_at: null,
+  }]);
+  await db.exec('reset role');
 });

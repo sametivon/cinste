@@ -81,6 +81,10 @@ try {
   const opportunity = await createOpportunity(operator.db, organizationA, { minutes: 75 });
   await publish(operator.db, opportunity);
   const participation = await join(student.db, opportunity);
+  const participantProjection = await rpc(operator.db, 'list_organization_impact_participants', { p_opportunity_ids: [opportunity] }, 'read participant projection');
+  eq(participantProjection.length, 1, 'operator sees assigned opportunity participant');
+  eq(participantProjection[0].participant_id, student.id, 'participant identifier is server scoped');
+  eq(participantProjection[0].participant_display_name, 'Impact S.', 'participant display name is minimized');
 
   const anonymous = createClient(url, publishable, { auth: { autoRefreshToken: false, persistSession: false } });
   await expectFailure(anonymous.rpc('organization_verify_impact_participation', { p_participation_id: participation }), null, 'anonymous verification');
