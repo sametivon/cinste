@@ -35,7 +35,8 @@ remaining CAEN, accounting, VAT, legal-classification, payment-provider,
 consumer-rights, domain, and support-contact decisions remain explicit gates.
 No public legal copy, real payment, invoice, refund, or deletion behavior was
 implemented. See `docs/current/legal-compliance-implementation-plan.md` for the
-approved sequence and next bounded milestone.
+approved sequence and `docs/current/legal-data-payment-responsibility-matrix.md`
+for the completed internal Milestone 1A matrix and next bounded milestone.
 
 The owner-approved mobile-first platform strategy is now recorded in
 `docs/decisions/project.md`, aligned in `docs/decisions/impact-v1-operating-model.md`, and
@@ -316,6 +317,9 @@ ad-hoc hosted objects to bypass migration order.
   current primary CAEN `6210`, current non-VAT status, intended contracting
   map, and whole-platform 18+ direction are now owner-confirmed planning
   inputs. See `docs/current/legal-compliance-implementation-plan.md`.
+- Review the internal legal/data/payment responsibility matrix with the
+  accountant, Romanian legal counsel, and selected payment provider before
+  drafting public legal copy or implementing real payment behavior.
 
 ## Security checkpoints
 

@@ -252,15 +252,19 @@ facts. They are not a substitute for official evidence or professional advice.
 
 ## Next bounded milestone
 
-**Milestone 1A — Internal legal/data and payment responsibility specification.**
+**Milestone 1A — Internal legal/data and payment responsibility specification
+(complete).**
 
-Produce one internal, non-public matrix that maps each current Student, Giver,
-Partner, Organization, Admin, Impact, signup, checkout, analytics, and privacy
-flow to: data collected, party responsible, required notice/consent, retention
-question, operational owner, and unresolved professional decision. Include the
-funded → redeemed → payout-eligible state contract and refund root-cause matrix,
-but do not implement it. This is the smallest useful step while the external
-blockers remain open.
+The completed matrix is `docs/current/legal-data-payment-responsibility-matrix.md`.
+It maps current role journeys, data classes, notices, consent, retention,
+responsibility boundaries, the funded → redeemed → payout-eligible state
+contract, and refund root-cause questions without implementing runtime behavior.
+
+The next bounded milestone is **Milestone 1B — professional confirmation
+packet**: prepare the external question register and payment-state matrix for
+accountant, Romanian legal counsel, and payment-provider review. Public legal
+copy, real payments, invoice logic, deletion, and refund execution remain
+blocked until the relevant answers and security reviews are complete.
 
 ## Safe implementation boundary
 
