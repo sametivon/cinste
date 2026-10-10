@@ -57,6 +57,7 @@ before(async () => {
   await db.exec(await migration('0027_impact_organization_participant_projection.sql'));
   await db.exec(await migration('0028_impact_incidents.sql'));
   await db.exec(await migration('0029_impact_participant_display_name_case.sql'));
+  await db.exec(await migration('0030_impact_cancellation_no_show_policy.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -374,4 +375,39 @@ test('Impact incidents are reportable by participants or assigned operators and 
   await query("select public.admin_review_impact_incident($1,'resolved','Reviewed by Admin')", [incidentId]);
   assert.deepEqual(await query('select status,reviewed_by from public.impact_incidents where id=$1', [incidentId]), [{ status: 'resolved', reviewed_by: adminUser }]);
   await db.exec('reset role');
+});
+
+test('Impact cancellation uses 12 hours and repeated no-shows restrict joining', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  const attendee = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Policy test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  const cancellationOpportunity = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,starts_at,ends_at,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'Cancellation policy test','Structured work','community','scheduled',now()+interval '8 hours',now()+interval '9 hours',now()+interval '1 day',60,5,'published',now())`, [organization]);
+  const cancellationParticipation = await insertId('insert into public.impact_participations(student_id,opportunity_id) values ($1,$2)', [attendee, cancellationOpportunity]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await db.exec('set local role authenticated');
+  assert.equal(await scalar('select public.student_cancel_impact_participation($1)', [cancellationParticipation]), 'late_cancelled');
+  await db.exec('reset role');
+  const noShowOpportunity = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,starts_at,ends_at,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'No-show policy test','Structured work','community','scheduled',now()-interval '2 hours',now()-interval '1 hour',now()+interval '1 day',60,5,'published',now())`, [organization]);
+  for (let i = 0; i < 2; i++) {
+    const participationId = await insertId('insert into public.impact_participations(student_id,opportunity_id) values ($1,$2)', [attendee, noShowOpportunity]);
+    await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+    await db.exec('set local role authenticated');
+    await query("select public.organization_resolve_impact_participation($1,'no_show','Policy test no-show')", [participationId]);
+    await db.exec('reset role');
+  }
+  const futureOpportunity = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'Future policy test','Structured work','community','flexible_remote',now()+interval '1 day',60,5,'published',now())`, [organization]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await db.exec('set local role authenticated');
+  await reject('select public.student_join_impact_opportunity($1)', [futureOpportunity], 'P0001');
+  await db.exec('reset role');
+  assert.equal(await scalar("select count(*)::int from public.impact_participations where student_id=$1 and status='no_show'", [attendee]), 2);
 });

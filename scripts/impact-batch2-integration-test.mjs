@@ -119,15 +119,15 @@ try {
   await must(join(overlapStudent.db, overlapA), 'overlap first join');
   check((await join(overlapStudent.db, overlapB)).error?.message.includes('SCHEDULE_OVERLAP'), 'scheduled overlap is rejected');
 
-  const normalCancel = await createOpportunity(operatorA.db, organizationA, { mode: 'scheduled', startsAt: new Date(Date.now() + 28_800_000).toISOString(), endsAt: new Date(Date.now() + 32_400_000).toISOString(), dueAt: new Date(Date.now() + 32_400_000).toISOString() });
+  const normalCancel = await createOpportunity(operatorA.db, organizationA, { mode: 'scheduled', startsAt: new Date(Date.now() + 46_800_000).toISOString(), endsAt: new Date(Date.now() + 50_400_000).toISOString(), dueAt: new Date(Date.now() + 50_400_000).toISOString() });
   await publish(operatorA.db, normalCancel);
   const normalParticipation = await rpcMust(studentA.db, 'student_join_impact_opportunity', { p_opportunity_id: normalCancel }, 'student joins normal cancellation opportunity');
-  eq(await rpcMust(studentA.db, 'student_cancel_impact_participation', { p_participation_id: normalParticipation }, 'student normal cancellation'), 'cancelled', 'scheduled cancellation at least four hours before start is normal');
+  eq(await rpcMust(studentA.db, 'student_cancel_impact_participation', { p_participation_id: normalParticipation }, 'student normal cancellation'), 'cancelled', 'scheduled cancellation at least 12 hours before start is normal');
 
-  const lateCancel = await createOpportunity(operatorA.db, organizationA, { mode: 'scheduled', startsAt: new Date(Date.now() + 7_200_000).toISOString(), endsAt: new Date(Date.now() + 10_800_000).toISOString(), dueAt: new Date(Date.now() + 10_800_000).toISOString() });
+  const lateCancel = await createOpportunity(operatorA.db, organizationA, { mode: 'scheduled', startsAt: new Date(Date.now() + 28_800_000).toISOString(), endsAt: new Date(Date.now() + 32_400_000).toISOString(), dueAt: new Date(Date.now() + 32_400_000).toISOString() });
   await publish(operatorA.db, lateCancel);
   const lateParticipation = await rpcMust(studentB.db, 'student_join_impact_opportunity', { p_opportunity_id: lateCancel }, 'student joins late cancellation opportunity');
-  eq(await rpcMust(studentB.db, 'student_cancel_impact_participation', { p_participation_id: lateParticipation }, 'student late cancellation'), 'late_cancelled', 'scheduled cancellation inside four hours is late cancellation');
+  eq(await rpcMust(studentB.db, 'student_cancel_impact_participation', { p_participation_id: lateParticipation }, 'student late cancellation'), 'late_cancelled', 'scheduled cancellation inside 12 hours is late cancellation');
 
   const flexibleCancel = await createOpportunity(operatorA.db, organizationA);
   await publish(operatorA.db, flexibleCancel);

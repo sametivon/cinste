@@ -212,7 +212,7 @@ not establish Production readiness.
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0029` are owner-confirmed applied. On 2026-10-10, Impact Batches 1-3 and 5 passed focused hosted assertions after the ordered Impact migrations. Fixtures and focused hosted validation are allowed |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0029` are owner-confirmed applied. Migration `0030` is repository/push complete and pending owner SQL Editor application. On 2026-10-10, Impact Batches 1-3 and 5 passed focused hosted assertions after the ordered Impact migrations. Fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
@@ -241,6 +241,7 @@ not imply Production status.
 | `0027_impact_organization_participant_projection.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Additive opportunity-scoped Organization participant projection; full Student profile and verification documents remain private; local PGlite scheduler suite passes 12 assertions |
 | `0028_impact_incidents.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Simple Student/Organization incident reporting and Admin review queue contract; local PGlite scheduler suite passes 13 assertions |
 | `0029_impact_participant_display_name_case.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Additive correction to normalize the privacy-scoped participant display-name initial after the first hosted projection validation found lowercase initials |
+| `0030_impact_cancellation_no_show_policy.sql` | Yes | Pending this push | No | No | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -442,6 +443,14 @@ Migration `0029_impact_participant_display_name_case.sql` corrects the
 projection initial casing found during the first hosted `0027`/`0028`
 validation attempt. It was applied after `0028`; the corrected projection is
 covered by the 41 focused hosted Batch 3 assertions passed on 2026-10-10.
+
+The next approved Impact policy slice is present in repository migration
+`0030_impact_cancellation_no_show_policy.sql`. It changes the scheduled normal
+cancellation boundary to 12 hours and enforces the approved rolling 90-day
+second-no-show/48-hour and third-no-show/7-day joining restrictions inside the
+server-authoritative Student join RPC. Organization-caused cancellation rows
+remain separate and do not count. Local PGlite coverage passes 14/14; DEV/QA
+application and hosted validation remain pending owner SQL Editor application.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
