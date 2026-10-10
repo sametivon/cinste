@@ -39,7 +39,7 @@ async function createOpportunity(db, organizationId, values = {}) {
   const dueAt = values.dueAt ?? new Date(Date.now() + 86_400_000).toISOString();
   return rpc(db, 'organization_create_impact_opportunity', {
     p_organization_id: organizationId, p_title: `${run} opportunity`, p_description: 'Batch 3 QA opportunity', p_category: 'community', p_mode: mode,
-    p_city: 'Bucharest', p_starts_at: startsAt, p_ends_at: endsAt, p_due_at: dueAt, p_expected_eligible_minutes: values.minutes ?? 60, p_capacity: values.capacity ?? 10,
+    p_city: 'Bucharest', p_starts_at: startsAt, p_ends_at: endsAt, p_due_at: dueAt, p_expected_eligible_minutes: values.minutes ?? 60, p_capacity: values.capacity ?? 10, p_activity_details: 'Students complete structured QA support.', p_requirements: null, p_organization_provides: 'A named coordinator and workspace.', p_coordinator_name: 'QA Coordinator', p_coordinator_contact: 'qa@example.invalid', p_accessibility_information: null, p_participant_contact_fields: [],
   }, 'create opportunity');
 }
 async function publish(db, id) { await rpc(db, 'organization_submit_impact_opportunity', { p_opportunity_id: id }, 'submit opportunity'); return rpc(admin, 'admin_review_impact_opportunity', { p_opportunity_id: id, p_decision: 'approved', p_risk_state: 'allowed_low_risk', p_reason: 'Batch 3 QA approval' }, 'Admin approves opportunity'); }

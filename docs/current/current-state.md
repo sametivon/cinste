@@ -212,7 +212,7 @@ not establish Production readiness.
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0029` are owner-confirmed applied. Migrations `0030` and `0031` are repository/push complete and pending owner SQL Editor application. On 2026-10-10, Impact Batches 1-3 and 5 passed focused hosted assertions after the ordered Impact migrations. Fixtures and focused hosted validation are allowed |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0029` are owner-confirmed applied. Migrations `0030`, `0031`, and `0032` are repository/push complete and pending owner SQL Editor application. On 2026-10-10, Impact Batches 1-3 and 5 passed focused hosted assertions after the ordered Impact migrations. Fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
@@ -243,6 +243,7 @@ not imply Production status.
 | `0029_impact_participant_display_name_case.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Additive correction to normalize the privacy-scoped participant display-name initial after the first hosted projection validation found lowercase initials |
 | `0030_impact_cancellation_no_show_policy.sql` | Yes | Yes | No | No | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
 | `0031_impact_configurable_reciprocity_policy.sql` | Yes | Yes | No | No | No | Adds Admin-configurable reciprocity ratio with per-cycle and redemption snapshots; historical contribution/settlement rows remain immutable; local PGlite scheduler suite passes 15 assertions |
+| `0032_impact_opportunity_structured_fields.sql` | Yes | Yes | No | No | No | Adds structured activity details, requirements, organization-provided support, coordinator/contact, accessibility information, and controlled participant contact fields; local PGlite scheduler suite passes 15 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -461,6 +462,17 @@ stores the policy ratio/version used for it, so later changes do not rewrite
 historical contributions or settlement history. Local PGlite coverage passes
 15/15; DEV/QA application and hosted validation remain pending owner SQL
 Editor application.
+
+The next approved Impact opportunity-model slice is present in repository
+migration `0032_impact_opportunity_structured_fields.sql`. It adds the
+structured operational fields required by the locked V1 model and keeps
+participant contact disclosure limited to the approved email/phone field set.
+New opportunities require a description of what students will do; the
+existing server-authoritative Organization completion flow remains unchanged.
+The Organization draft form and all local fixtures use the new fields. Local
+PGlite coverage passes 15/15 and web typecheck plus integration-script syntax
+checks pass. DEV/QA application and hosted validation remain pending owner SQL
+Editor application, after `0030` and `0031` in order.
 
 The Student mobile Impact detail now provides the controlled incident report
 form backed by `report_impact_incident`, and Admin Impact now loads open and

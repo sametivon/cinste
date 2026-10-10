@@ -40,6 +40,7 @@ async function createOpportunity(db, organizationId, values = {}) {
     p_title: `${run} opportunity`, p_description: 'Batch 2 QA opportunity', p_category: values.category ?? 'community',
     p_mode: mode, p_city: values.city ?? 'București', p_starts_at: startsAt, p_ends_at: endsAt,
     p_due_at: dueAt, p_expected_eligible_minutes: 60, p_capacity: values.capacity ?? 10,
+    p_activity_details: values.activityDetails ?? 'Students complete structured QA support.', p_requirements: values.requirements ?? null, p_organization_provides: values.organizationProvides ?? 'A named coordinator and workspace.', p_coordinator_name: values.coordinatorName ?? 'QA Coordinator', p_coordinator_contact: values.coordinatorContact ?? 'qa@example.invalid', p_accessibility_information: values.accessibilityInformation ?? 'Ask the coordinator about access needs.', p_participant_contact_fields: values.participantContactFields ?? [],
   }, 'organization creates opportunity');
 }
 async function publish(db, id) { await rpcMust(db, 'organization_submit_impact_opportunity', { p_opportunity_id: id }, 'organization submits opportunity'); return rpcMust(adminUser, 'admin_review_impact_opportunity', { p_opportunity_id: id, p_decision: 'approved', p_risk_state: 'allowed_low_risk', p_reason: 'Batch 2 QA approval' }, 'Admin approves opportunity'); }
@@ -78,6 +79,7 @@ try {
   const draftA = await createOpportunity(operatorA.db, organizationA);
   await rpcMust(operatorA.db, 'organization_update_impact_opportunity', {
     p_opportunity_id: draftA, p_title: `${run} edited`, p_description: 'Edited QA opportunity', p_category: 'education', p_mode: 'flexible_remote', p_city: 'București', p_starts_at: null, p_ends_at: null, p_due_at: new Date(Date.now() + 86_400_000).toISOString(), p_expected_eligible_minutes: 90, p_capacity: 5,
+    p_activity_details: 'Students complete structured QA support.', p_requirements: null, p_organization_provides: 'A named coordinator and workspace.', p_coordinator_name: 'QA Coordinator', p_coordinator_contact: 'qa@example.invalid', p_accessibility_information: null, p_participant_contact_fields: [],
   }, 'organization updates draft opportunity');
   await publish(operatorA.db, draftA);
   const publishedDiscovery = await rpcMust(studentA.db, 'list_impact_opportunities', { p_category: null, p_city: null }, 'student discovers published opportunities');

@@ -59,6 +59,7 @@ before(async () => {
   await db.exec(await migration('0029_impact_participant_display_name_case.sql'));
   await db.exec(await migration('0030_impact_cancellation_no_show_policy.sql'));
   await db.exec(await migration('0031_impact_configurable_reciprocity_policy.sql'));
+  await db.exec(await migration('0032_impact_opportunity_structured_fields.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -284,7 +285,8 @@ test('Impact opportunities require submission and Admin low-risk approval before
   await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
   await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
   await db.exec('set local role authenticated');
-  const opportunityId = await scalar(`select public.organization_create_impact_opportunity($1,'Moderation test','Structured low-risk work','community','flexible_remote','Bucharest',null,null,now()+interval '1 day',60,5)`, [organization]);
+  const opportunityId = await scalar(`select public.organization_create_impact_opportunity($1,'Moderation test','Structured low-risk work','community','flexible_remote','Bucharest',null,null,now()+interval '1 day',60,5,'Students complete structured QA support.',null,'A named coordinator and workspace.','QA Coordinator','qa@example.invalid',null,'{}'::public.impact_participant_contact_field[])`, [organization]);
+  assert.deepEqual(await query('select activity_details,organization_provides,coordinator_name,coordinator_contact,participant_contact_fields::text from public.impact_opportunities where id=$1', [opportunityId]), [{ activity_details: 'Students complete structured QA support.', organization_provides: 'A named coordinator and workspace.', coordinator_name: 'QA Coordinator', coordinator_contact: 'qa@example.invalid', participant_contact_fields: '{}' }]);
   await query('select public.organization_submit_impact_opportunity($1)', [opportunityId]);
   await reject('select public.organization_publish_impact_opportunity($1)', [opportunityId], 'P0001');
   await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
@@ -302,7 +304,7 @@ test('Impact attendance is organization-authoritative and separate from completi
   await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
   await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
   await db.exec('set local role authenticated');
-  const opportunityId = await scalar(`select public.organization_create_impact_opportunity($1,'Attendance test','Structured low-risk work','community','flexible_remote','Bucharest',null,null,now()+interval '1 day',60,5)`, [organization]);
+  const opportunityId = await scalar(`select public.organization_create_impact_opportunity($1,'Attendance test','Structured low-risk work','community','flexible_remote','Bucharest',null,null,now()+interval '1 day',60,5,'Students complete structured QA support.',null,'A named coordinator and workspace.','QA Coordinator','qa@example.invalid',null,'{}'::public.impact_participant_contact_field[])`, [organization]);
   await query('select public.organization_submit_impact_opportunity($1)', [opportunityId]);
   await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
   await query('select public.admin_review_impact_opportunity($1,\'approved\',\'allowed_low_risk\',\'Reviewed for attendance test\')', [opportunityId]);
