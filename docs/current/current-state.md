@@ -467,8 +467,8 @@ form backed by `report_impact_incident`, and Admin Impact now loads open and
 reviewing incidents into an operational review queue backed by
 `admin_review_impact_incident`. Mobile typecheck and the full mobile suite
 pass 54/54; web typecheck and the focused localization suite pass. The
-Organization RPC already supports assigned-operator reporting, but the
-Organization portal report form remains unimplemented.
+Organization portal now also exposes an assignment-scoped incident form
+through the same RPC; focused Organization operator tests pass 3/3.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
