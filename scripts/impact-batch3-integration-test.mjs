@@ -126,7 +126,7 @@ try {
   const preDueOpportunity = await createOpportunity(operator.db, organizationA); await publish(operator.db, preDueOpportunity);
   const preDueParticipation = await join(preDueStudent.db, preDueOpportunity);
   const preDueContribution = await rpc(operator.db, 'organization_verify_impact_participation', { p_participation_id: preDueParticipation }, 'verify before due');
-  await must(service.from('impact_reciprocity_state').upsert({ student_id: preDueStudent.id, cycle_number: 4, community_redemption_count: 3, status: 'give_back_due', cycle_started_at: new Date(Date.now() + 60_000).toISOString() }, { onConflict: 'student_id' }), 'set later due cycle');
+  await must(service.from('impact_reciprocity_state').upsert({ student_id: preDueStudent.id, cycle_number: 4, community_redemption_count: 3, status: 'give_back_due', cycle_started_at: new Date(Date.now() + 60_000).toISOString(), due_at: new Date(Date.now() + 60_000).toISOString() }, { onConflict: 'student_id' }), 'set later due cycle');
   eq((await must(service.from('impact_reciprocity_settlements').select('id').eq('contribution_id', preDueContribution), 'pre-due settlement')).length, 0, 'pre-due contribution does not bank');
 
   const lossOpportunity = await createOpportunity(operator.db, organizationA); await publish(operator.db, lossOpportunity);

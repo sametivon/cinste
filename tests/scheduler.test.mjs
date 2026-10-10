@@ -58,6 +58,7 @@ before(async () => {
   await db.exec(await migration('0028_impact_incidents.sql'));
   await db.exec(await migration('0029_impact_participant_display_name_case.sql'));
   await db.exec(await migration('0030_impact_cancellation_no_show_policy.sql'));
+  await db.exec(await migration('0031_impact_configurable_reciprocity_policy.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
@@ -410,4 +411,22 @@ test('Impact cancellation uses 12 hours and repeated no-shows restrict joining',
   await reject('select public.student_join_impact_opportunity($1)', [futureOpportunity], 'P0001');
   await db.exec('reset role');
   assert.equal(await scalar("select count(*)::int from public.impact_participations where student_id=$1 and status='no_show'", [attendee]), 2);
+});
+
+test('Reciprocity ratio changes are Admin-controlled and cycle snapshots remain stable', async () => {
+  const adminUser = await student();
+  const learner = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await db.exec('set local role authenticated');
+  await query('select public.admin_activate_impact_reciprocity_policy()');
+  await query("select public.admin_update_impact_reciprocity_policy(5,'Pilot policy change')");
+  await db.exec('reset role');
+  await query('insert into public.impact_reciprocity_state(student_id) values ($1)', [learner]);
+  assert.deepEqual(await query('select required_experiences,policy_version from public.impact_reciprocity_state where student_id=$1', [learner]), [{ required_experiences: 5, policy_version: 'impact-reciprocity-v2' }]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await db.exec('set local role authenticated');
+  await query("select public.admin_update_impact_reciprocity_policy(2,'Next cycle policy change')");
+  await db.exec('reset role');
+  assert.deepEqual(await query('select required_experiences,policy_version from public.impact_reciprocity_state where student_id=$1', [learner]), [{ required_experiences: 5, policy_version: 'impact-reciprocity-v2' }]);
 });
