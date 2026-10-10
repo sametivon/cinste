@@ -120,6 +120,8 @@ workstream. The next task is a controlled QA fixture and cross-role acceptance
 pass across the available Student, Giver, Partner, Organization, and Admin
 surfaces. It must record available versus missing surfaces instead of treating
 repository tests or mock funding as pilot acceptance.
+The execution artifact is `docs/current/pilot-acceptance-gate.md`; no fresh
+manual run is claimed yet.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is
@@ -363,10 +365,10 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT: Pilot acceptance gate — create the fixed QA fixture set and execute one
-manual cross-role journey pass.** Use controlled Student, Giver, Partner,
-Organization, and Admin accounts plus representative Core and low-risk Impact
-records. Verify discovery, signup/login, onboarding, authorization, first
+**NEXT: execute the Pilot acceptance gate in
+`docs/current/pilot-acceptance-gate.md`.** Use controlled Student, Giver,
+Partner, Organization, and Admin accounts plus representative Core and low-risk
+Impact records. Verify discovery, signup/login, onboarding, authorization, first
 value, return paths, operational handoffs, empty/error states, mobile/web
 layout, and role privacy boundaries. Record each surface as passed, failed,
 missing, or blocked by an external dependency. This single pass will identify
