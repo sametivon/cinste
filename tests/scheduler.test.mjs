@@ -56,6 +56,7 @@ before(async () => {
   await db.exec(await migration('0026_impact_attendance_provenance.sql'));
   await db.exec(await migration('0027_impact_organization_participant_projection.sql'));
   await db.exec(await migration('0028_impact_incidents.sql'));
+  await db.exec(await migration('0029_impact_participant_display_name_case.sql'));
   originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });

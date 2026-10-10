@@ -240,6 +240,7 @@ not imply Production status.
 | `0026_impact_attendance_provenance.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: Impact Batch 3 passed 36 focused hosted assertions on 2026-10-10, including separate attendance-before-completion behavior | No | Additive Organization-authoritative attendance state and audited attendance provenance; local PGlite scheduler suite also passes 11 assertions |
 | `0027_impact_organization_participant_projection.sql` | Yes | Pending this push | No | No | No | Additive opportunity-scoped Organization participant projection; full Student profile and verification documents remain private; local PGlite scheduler suite passes 12 assertions |
 | `0028_impact_incidents.sql` | Yes | Pending this push | No | No | No | Simple Student/Organization incident reporting and Admin review queue contract; local PGlite scheduler suite passes 13 assertions |
+| `0029_impact_participant_display_name_case.sql` | Yes | Pending this push | No | No | No | Additive correction to normalize the privacy-scoped participant display-name initial; required after hosted validation found lowercase initials |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -435,6 +436,10 @@ or assigned-Organization reporting, Admin review, and audit records. Local
 PGlite coverage passes 13/13, and the hosted Batch 3 runner includes incident
 reporting and review assertions. DEV/QA application and hosted validation
 remain pending owner SQL Editor application.
+
+Migration `0029_impact_participant_display_name_case.sql` corrects the
+projection initial casing found during the first hosted `0027`/`0028`
+validation attempt. It must be applied after `0028`.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
