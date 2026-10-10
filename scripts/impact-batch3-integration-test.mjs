@@ -85,6 +85,11 @@ try {
   eq(participantProjection.length, 1, 'operator sees assigned opportunity participant');
   eq(participantProjection[0].participant_id, student.id, 'participant identifier is server scoped');
   eq(participantProjection[0].participant_display_name, 'Impact S.', 'participant display name is minimized');
+  const incidentId = await rpc(student.db, 'report_impact_incident', { p_participation_id: participation, p_category: 'safety_concern', p_severity: 'serious', p_description: 'Batch 3 safety report' }, 'report Impact incident');
+  await rpc(admin, 'admin_review_impact_incident', { p_incident_id: incidentId, p_status: 'resolved', p_resolution_note: 'Batch 3 Admin review' }, 'Admin reviews Impact incident');
+  const incidentState = await must(service.from('impact_incidents').select('status,category,severity').eq('id', incidentId).single(), 'read incident state');
+  eq(incidentState.status, 'resolved', 'Admin resolves Impact incident');
+  eq(incidentState.category, 'safety_concern', 'incident category is preserved');
 
   const anonymous = createClient(url, publishable, { auth: { autoRefreshToken: false, persistSession: false } });
   await expectFailure(anonymous.rpc('organization_verify_impact_participation', { p_participation_id: participation }), null, 'anonymous verification');

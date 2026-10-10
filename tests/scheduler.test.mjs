@@ -50,12 +50,13 @@ before(async () => {
     (actor_id,target_type,target_id,action) values ($1,'participation',$2,'joined')`,
   [historicalActor, randomUUID()]);
   originalCore = await scalar("select pg_get_functiondef('public.expire_stale_claims()'::regprocedure)");
-  originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
   await db.exec(await migration('0018_impact_maintenance_system_attribution.sql'));
   await db.exec(await migration('0019_database_maintenance_runner.sql'));
   await db.exec(await migration('0025_impact_opportunity_moderation.sql'));
   await db.exec(await migration('0026_impact_attendance_provenance.sql'));
   await db.exec(await migration('0027_impact_organization_participant_projection.sql'));
+  await db.exec(await migration('0028_impact_incidents.sql'));
+  originalPolicies = await query('select * from pg_policies order by schemaname, tablename, policyname');
 });
 beforeEach(async () => { await db.exec('begin'); });
 afterEach(async () => { await db.exec('rollback'); });
@@ -350,5 +351,26 @@ test('Organization participant projection is assignment-scoped and privacy-limit
     completed_at: null,
     disputed_at: null,
   }]);
+  await db.exec('reset role');
+});
+
+test('Impact incidents are reportable by participants or assigned operators and reviewable by Admin', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  const attendee = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Incident test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  const opportunityId = await insertId(`insert into public.impact_opportunities
+    (organization_id,title,description,category,mode,due_at,expected_eligible_minutes,capacity,status,published_at)
+    values ($1,'Incident test','Structured work','community','flexible_remote',now()+interval '1 day',60,5,'published',now())`, [organization]);
+  const participationId = await insertId('insert into public.impact_participations(student_id,opportunity_id) values ($1,$2)', [attendee, opportunityId]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [attendee]);
+  await db.exec('set local role authenticated');
+  const incidentId = await scalar("select public.report_impact_incident($1,'safety_concern','serious','Test safety concern')", [participationId]);
+  assert.equal(await scalar('select status from public.impact_incidents where id=$1', [incidentId]), 'open');
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await query("select public.admin_review_impact_incident($1,'resolved','Reviewed by Admin')", [incidentId]);
+  assert.deepEqual(await query('select status,reviewed_by from public.impact_incidents where id=$1', [incidentId]), [{ status: 'resolved', reviewed_by: adminUser }]);
   await db.exec('reset role');
 });

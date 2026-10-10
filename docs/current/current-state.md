@@ -239,6 +239,7 @@ not imply Production status.
 | `0025_impact_opportunity_moderation.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: schema probe and direct-publication rejection passed; Impact Batches 1-3 passed 65 assertions and Batch 5 passed 8 assertions on 2026-10-10. Batch 4 was not applicable because its one-time cutover is already active | No | New Impact opportunity submission, low-risk classification, and Admin approval before publication are hosted in DEV/QA; existing published rows remain legacy-compatible |
 | `0026_impact_attendance_provenance.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: Impact Batch 3 passed 36 focused hosted assertions on 2026-10-10, including separate attendance-before-completion behavior | No | Additive Organization-authoritative attendance state and audited attendance provenance; local PGlite scheduler suite also passes 11 assertions |
 | `0027_impact_organization_participant_projection.sql` | Yes | Pending this push | No | No | No | Additive opportunity-scoped Organization participant projection; full Student profile and verification documents remain private; local PGlite scheduler suite passes 12 assertions |
+| `0028_impact_incidents.sql` | Yes | Pending this push | No | No | No | Simple Student/Organization incident reporting and Admin review queue contract; local PGlite scheduler suite passes 13 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -426,6 +427,14 @@ and hosted validation remain pending owner SQL Editor application. The
 Organization portal is wired to consume this projection and show the
 minimized participant display name and eligibility state; local typecheck and
 focused Organization operator tests pass.
+
+The next approved Impact safety slice is present in repository migration
+`0028_impact_incidents.sql`. It adds low/medium/serious incident severity,
+open/reviewing/resolved/dismissed status, controlled categories, participant
+or assigned-Organization reporting, Admin review, and audit records. Local
+PGlite coverage passes 13/13, and the hosted Batch 3 runner includes incident
+reporting and review assertions. DEV/QA application and hosted validation
+remain pending owner SQL Editor application.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
