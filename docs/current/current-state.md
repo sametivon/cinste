@@ -398,8 +398,9 @@ separate attendance, assignment-scoped participant projection, incidents,
 opportunity fields, Student structured reads, and the repository-side Admin
 18+ eligibility slice. Migrations `0030` through `0035` are owner-confirmed
 applied and hosted-validated in DEV/QA; `0036` is also owner-applied and
-passed 3 focused hosted assertions. `0037` remains pending hosted application
-and validation. Remaining target gaps are final hosted rollout evidence. The
+passed 3 focused hosted assertions. `0037` is owner-applied and passed 6
+focused hosted assertions. Remaining target gaps are final hosted rollout
+evidence. The
 existing accepted 3:1 implementation is now represented as a
 configurable pilot policy with historical cycle snapshots.
 
@@ -509,13 +510,12 @@ DEV/QA application and 7 focused hosted assertions passed on 2026-10-10,
 including anonymous denial, the five-Student threshold, aggregate value
 changes, and identifier-free response shape.
 
-The current Organization participant projection intentionally returns no Student
-email or phone, even when an opportunity requests a contact field. The
-Student-facing requirement disclosure and the controlled, email-only,
-opportunity-specific disclosure and post-activity reduction are implemented in
-repository migration `0037`; local 18/18 scheduler coverage and 6 focused
-hosted assertions passed on 2026-10-10. Phone is explicitly deferred. The
-default privacy boundary is preserved.
+The current Organization participant projection returns only an explicitly
+consented Student email during the opportunity activity window. The
+Student-facing requirement disclosure and post-activity reduction are
+implemented in repository migration `0037`; local 18/18 scheduler coverage
+and 6 focused hosted assertions passed on 2026-10-10. Phone is explicitly
+deferred. The default privacy boundary is preserved.
 
 The Student mobile Impact detail now provides the controlled incident report
 form backed by `report_impact_incident`, and Admin Impact now loads open and
