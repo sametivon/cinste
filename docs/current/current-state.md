@@ -26,6 +26,17 @@ operations, legal/support entry points, and final release acceptance.
 
 ## Last completed work
 
+The legal/compliance workstream was reconciled against owner-provided pilot
+inputs on 2026-10-10. The pilot uses the identified Romanian PFA, is currently
+non-VAT-registered, intends a platform/facilitator model with Partner-fulfilled
+experiences, keeps Impact financially separate, and applies an 18+ policy
+across V1. These are planning inputs, not final legal or tax conclusions. The
+remaining CAEN, accounting, VAT, legal-classification, payment-provider,
+consumer-rights, domain, and support-contact decisions remain explicit gates.
+No public legal copy, real payment, invoice, refund, or deletion behavior was
+implemented. See `docs/current/legal-compliance-implementation-plan.md` for the
+approved sequence and next bounded milestone.
+
 The owner-approved mobile-first platform strategy is now recorded in
 `docs/decisions/project.md`, aligned in `docs/decisions/impact-v1-operating-model.md`, and
 reconciled against actual web, native, and backend capability in
@@ -260,6 +271,9 @@ ad-hoc hosted objects to bypass migration order.
   controlled promotion evidence, backup/recovery proof, or production secrets.
 - Funding is mock-only; a real payment provider and trusted webhook lifecycle
   do not exist.
+- The pilot PFA identity and current non-VAT status are owner-provided planning
+  facts, recorded in `docs/current/legal-compliance-implementation-plan.md`.
+  They are not yet a confirmed public legal/invoicing implementation.
 - The scheduler is inactive and lacks production monitoring and activation.
 - Mobile production signing/TestFlight, observability, legal/privacy/support,
   and account/data-deletion delivery are incomplete.
@@ -295,9 +309,13 @@ ad-hoc hosted objects to bypass migration order.
 - Select real-payment business/provider semantics before that workstream.
 - Approve final production brand assets, canonical domain, and required
   legal/privacy/support policies before release.
-- Confirm the legal entity, PFA/SRL and CAEN Rev.3 scope, contracting model,
-  payment/refund responsibility, and canonical support identity before public
-  legal-surface implementation. See `docs/current/legal-compliance-implementation-plan.md`.
+- Confirm the remaining CAEN Rev.3 scope, invoicing/accounting and VAT
+  treatment, CINSTE legal classification, payment-provider structure, payout
+  and refund responsibilities, consumer wording, canonical domain, and public
+  support email before public legal-surface implementation. The pilot entity,
+  current primary CAEN `6210`, current non-VAT status, intended contracting
+  map, and whole-platform 18+ direction are now owner-confirmed planning
+  inputs. See `docs/current/legal-compliance-implementation-plan.md`.
 
 ## Security checkpoints
 
