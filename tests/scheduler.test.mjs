@@ -54,6 +54,7 @@ before(async () => {
   await db.exec(await migration('0018_impact_maintenance_system_attribution.sql'));
   await db.exec(await migration('0019_database_maintenance_runner.sql'));
   await db.exec(await migration('0025_impact_opportunity_moderation.sql'));
+  await db.exec(await migration('0026_impact_attendance_provenance.sql'));
 });
 beforeEach(async () => { await db.exec('begin'); });
 afterEach(async () => { await db.exec('rollback'); });
@@ -285,4 +286,32 @@ test('Impact opportunities require submission and Admin low-risk approval before
   await query('select public.admin_review_impact_opportunity($1,\'approved\',\'allowed_low_risk\',\'Reviewed for pilot\')', [opportunityId]);
   assert.deepEqual(await query('select status,review_status,risk_state from public.impact_opportunities where id=$1', [opportunityId]), [{ status: 'published', review_status: 'approved', risk_state: 'allowed_low_risk' }]);
   await db.exec('reset role');
+});
+
+test('Impact attendance is organization-authoritative and separate from completion', async () => {
+  const adminUser = await student();
+  const operator = await student();
+  const attendee = await student();
+  await query("update public.profiles set role='admin' where id=$1", [adminUser]);
+  const organization = await insertId("insert into public.organizations(name,status) values ('Attendance test','active')");
+  await query('insert into public.organization_users(organization_id,user_id,assigned_by) values ($1,$2,$3)', [organization, operator, adminUser]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  await db.exec('set local role authenticated');
+  const opportunityId = await scalar(`select public.organization_create_impact_opportunity($1,'Attendance test','Structured low-risk work','community','flexible_remote','Bucharest',null,null,now()+interval '1 day',60,5)`, [organization]);
+  await query('select public.organization_submit_impact_opportunity($1)', [opportunityId]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [adminUser]);
+  await query('select public.admin_review_impact_opportunity($1,\'approved\',\'allowed_low_risk\',\'Reviewed for attendance test\')', [opportunityId]);
+  await db.exec('reset role');
+  const participationId = await scalar('insert into public.impact_participations(student_id,opportunity_id) values ($1,$2) returning id', [attendee, opportunityId]);
+  await query("select set_config('request.jwt.claim.sub',$1,true)", [operator]);
+  await db.exec('set local role authenticated');
+  await query('select public.organization_mark_impact_attendance($1,\'attended\',null)', [participationId]);
+  assert.deepEqual(await query('select status,attendance_status,completed_at from public.impact_participations where id=$1', [participationId]), [{ status: 'joined', attendance_status: 'attended', completed_at: null }]);
+  await query('select public.organization_verify_impact_participation($1)', [participationId]);
+  const completed = (await query('select status,attendance_status,completed_at from public.impact_participations where id=$1', [participationId]))[0];
+  assert.equal(completed.status, 'completed');
+  assert.equal(completed.attendance_status, 'attended');
+  assert.ok(completed.completed_at);
+  await db.exec('reset role');
+  assert.equal(await scalar("select count(*)::int from public.impact_audit_events where target_id=$1 and action='attended'", [participationId]), 1);
 });

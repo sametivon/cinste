@@ -94,6 +94,11 @@ try {
 
   const completedOpportunity = await createOpportunity(operator.db, organizationA, { minutes: 75 }); await publish(operator.db, completedOpportunity);
   const completedParticipation = await join(student.db, completedOpportunity);
+  await rpc(operator.db, 'organization_mark_impact_attendance', { p_participation_id: completedParticipation, p_attendance: 'attended', p_reason: null }, 'record attended state');
+  const attendanceState = await must(service.from('impact_participations').select('status,attendance_status,completed_at').eq('id', completedParticipation).single(), 'read attendance state');
+  eq(attendanceState.status, 'joined', 'attendance does not complete participation');
+  eq(attendanceState.attendance_status, 'attended', 'organization records attended state');
+  check(attendanceState.completed_at === null, 'attendance remains separate from completion');
   const first = await rpc(operator.db, 'organization_verify_impact_participation', { p_participation_id: completedParticipation }, 'trusted verification');
   const second = await rpc(operator.db, 'organization_resolve_impact_participation', { p_participation_id: completedParticipation, p_outcome: 'completed', p_reason: null }, 'idempotent completion');
   const contribution = await must(student.db.from('impact_contributions').select('*').eq('id', first).single(), 'read contribution');

@@ -135,14 +135,14 @@ network: SVG path flow, staggered nodes, subtle pointer depth, and a reduced
 motion fallback. Auth behavior and role authority are unchanged. Typecheck and
 the focused auth/provisioning tests pass locally.
 
-Partner offer drafts are implemented in repository migration `0024`, pending
-application to development/QA. The security review keeps partner-authored
+Partner offer drafts are implemented in repository migration `0024`, applied
+to development/QA by owner confirmation. The security review keeps partner-authored
 descriptive drafts separate from canonical offers and campaigns. An assigned
 Partner may submit a draft for its own Partner only; Admin alone reviews it,
 sets the commercial terms, and atomically creates the live offer. Partners
 cannot set price or inventory, publish a campaign, or alter claim/payment
-authority. Typecheck and focused local tests pass; no migration, hosted, or
-Production evidence exists.
+authority. Typecheck and focused local tests pass; separate Partner behavioral
+validation is not recorded in this batch, and no Production evidence exists.
 
 The web acquisition correction is implemented in the repository. Standard web
 login now sends prospective users to a localized role-intent chooser before
@@ -237,6 +237,7 @@ not imply Production status.
 | `0023_native_bff_rate_limits.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 12 hosted assertions passed on 2026-10-08 (service execution; anon/authenticated denial; private API storage denial; configured 5-per-minute quota; invalid non-fingerprint rejection) | No | Active private HMAC-fingerprint limiter. The QA Next.js host's server-only `NATIVE_BFF_RATE_LIMIT_KEY` and exact HTTPS Supabase Auth redirect allowlist remain unverified; do not use the BFF |
 | `0024_partner_offer_drafts.sql` | Yes | Yes | Yes, owner-confirmed | Not separately validated in this batch | No | Partner-scoped descriptive drafts and Admin-only atomic offer approval; no campaign, inventory, price, or payment authority is delegated |
 | `0025_impact_opportunity_moderation.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: schema probe and direct-publication rejection passed; Impact Batches 1-3 passed 65 assertions and Batch 5 passed 8 assertions on 2026-10-10. Batch 4 was not applicable because its one-time cutover is already active | No | New Impact opportunity submission, low-risk classification, and Admin approval before publication are hosted in DEV/QA; existing published rows remain legacy-compatible |
+| `0026_impact_attendance_provenance.sql` | Yes | Pending this push | No | No | No | Additive Organization-authoritative attendance state and audited attendance provenance; local PGlite scheduler suite passes 11 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -404,6 +405,14 @@ This reconciliation included the first approved implementation slice. No
 attendance, participant-projection, incident, no-show, reciprocity-policy, or
 Giver-aggregate behavior changed. Migration `0025` is applied and validated in
 DEV/QA only; no Production environment exists.
+
+The next approved Impact slice is present in repository migration
+`0026_impact_attendance_provenance.sql`. It separates organization-authoritative
+attendance (`pending`, `attended`, `no_show`, `excused`) from completion while
+keeping the existing audited contribution verification path. Local PGlite
+coverage passes 11/11, and the hosted Batch 3 runner includes the new
+attendance-before-completion assertions. DEV/QA application and hosted
+validation remain pending owner SQL Editor application.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
