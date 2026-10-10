@@ -242,7 +242,7 @@ not imply Production status.
 | `0028_impact_incidents.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Simple Student/Organization incident reporting and Admin review queue contract; local PGlite scheduler suite passes 13 assertions |
 | `0029_impact_participant_display_name_case.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Additive correction to normalize the privacy-scoped participant display-name initial after the first hosted projection validation found lowercase initials |
 | `0030_impact_cancellation_no_show_policy.sql` | Yes | Yes | No | No | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
-| `0031_impact_configurable_reciprocity_policy.sql` | Yes | Pending this push | No | No | No | Adds Admin-configurable reciprocity ratio with per-cycle and redemption snapshots; historical contribution/settlement rows remain immutable; local PGlite scheduler suite passes 15 assertions |
+| `0031_impact_configurable_reciprocity_policy.sql` | Yes | Yes | No | No | No | Adds Admin-configurable reciprocity ratio with per-cycle and redemption snapshots; historical contribution/settlement rows remain immutable; local PGlite scheduler suite passes 15 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -461,6 +461,14 @@ stores the policy ratio/version used for it, so later changes do not rewrite
 historical contributions or settlement history. Local PGlite coverage passes
 15/15; DEV/QA application and hosted validation remain pending owner SQL
 Editor application.
+
+The Student mobile Impact detail now provides the controlled incident report
+form backed by `report_impact_incident`, and Admin Impact now loads open and
+reviewing incidents into an operational review queue backed by
+`admin_review_impact_incident`. Mobile typecheck and the full mobile suite
+pass 54/54; web typecheck and the focused localization suite pass. The
+Organization RPC already supports assigned-operator reporting, but the
+Organization portal report form remains unimplemented.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
