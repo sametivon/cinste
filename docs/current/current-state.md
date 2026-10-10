@@ -241,7 +241,7 @@ not imply Production status.
 | `0027_impact_organization_participant_projection.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Additive opportunity-scoped Organization participant projection; full Student profile and verification documents remain private; local PGlite scheduler suite passes 12 assertions |
 | `0028_impact_incidents.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by 41 focused hosted Batch 3 assertions on 2026-10-10 | No | Simple Student/Organization incident reporting and Admin review queue contract; local PGlite scheduler suite passes 13 assertions |
 | `0029_impact_participant_display_name_case.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Additive correction to normalize the privacy-scoped participant display-name initial after the first hosted projection validation found lowercase initials |
-| `0030_impact_cancellation_no_show_policy.sql` | Yes | Pending this push | No | No | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
+| `0030_impact_cancellation_no_show_policy.sql` | Yes | Yes | No | No | No | Additive 12-hour scheduled cancellation boundary and rolling 90-day no-show joining restrictions; organization-caused cancellations remain non-penalizing; local PGlite scheduler suite passes 14 assertions |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
