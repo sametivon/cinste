@@ -246,7 +246,7 @@ not imply Production status.
 | `0032_impact_opportunity_structured_fields.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: covered by the 41 focused hosted Batch 3 assertions passed on 2026-10-10 | No | Adds structured activity details, requirements, organization-provided support, coordinator/contact, accessibility information, and controlled participant contact fields; local PGlite scheduler suite passes 15 assertions |
 | `0033_impact_student_structured_opportunity_read.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: mobile structured-read implementation is covered by local typecheck and 54 tests; hosted Batch 3 passed 41 assertions after application | No | Extends Student discovery and own-participation projections with the approved operational details and contact-data requirements |
 | `0034_impact_rejoin_contribution_guard.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: Batch 3 passed 41 focused assertions on 2026-10-10, including rejection of rejoining after an earned contribution | No | Ordered correction restoring the existing one-contribution-per-opportunity guard omitted by the `0030` join-RPC replacement; local scheduler suite passes 15 assertions |
-| `0035_impact_giver_aggregate_outcomes.sql` | Yes | Yes | No | No | No | Adds an authenticated, aggregate-only Giver Impact outcome projection with a five-Student privacy threshold; no Giver/Student or funded-campaign attribution is exposed; local scheduler suite passes 16 assertions |
+| `0035_impact_giver_aggregate_outcomes.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 7 focused hosted assertions passed on 2026-10-10; local scheduler suite passes 16 assertions | No | Adds an authenticated, aggregate-only Giver Impact outcome projection with a five-Student privacy threshold; no Giver/Student or funded-campaign attribution is exposed |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -397,8 +397,7 @@ opportunity fields and Student structured reads in the repository. Migrations
 `0030` through `0034` are owner-confirmed applied and hosted-validated in
 DEV/QA. Remaining target gaps include
 the fixed 18+ eligibility mechanism (the repository has no age-proof field),
-hosted validation for the new Giver aggregate projection, and final hosted
-rollout evidence. The
+and final hosted rollout evidence. The
 existing accepted 3:1 implementation is now represented as a configurable
 pilot policy with historical cycle snapshots.
 
@@ -500,8 +499,10 @@ count, total verified Impact hours, and distinct participating Student count
 when at least five Students are represented; otherwise it returns a
 privacy-suppressed state. It never returns a Student, Giver, campaign,
 opportunity, or attribution identifier. Local scheduler coverage passes 16/16
-and the Giver web surface renders the aggregate summary. DEV/QA application
-and hosted validation remain pending owner SQL Editor application.
+and the Giver web surface renders the aggregate summary. The owner-confirmed
+DEV/QA application and 7 focused hosted assertions passed on 2026-10-10,
+including anonymous denial, the five-Student threshold, aggregate value
+changes, and identifier-free response shape.
 
 The Student mobile Impact detail now provides the controlled incident report
 form backed by `report_impact_incident`, and Admin Impact now loads open and
