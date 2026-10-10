@@ -24,6 +24,11 @@ web foundation rather than the complete system control plane. External beta
 also remains blocked by production infrastructure, real payments, production
 operations, legal/support entry points, and final release acceptance.
 
+The legal/compliance workstream is paused at the external accountant, Romanian
+legal, and payment-provider confirmation blocker by owner instruction. No work
+in this pilot-readiness stream may start real payments, final legal copy,
+invoicing, CAEN-dependent commercial behavior, or Production release work.
+
 ## Last completed work
 
 The legal/compliance workstream was reconciled against owner-provided pilot
@@ -109,6 +114,12 @@ owner-run DEV/QA evidence only; it neither reran the migration nor establishes
 Production evidence.
 
 ## Current active workstream
+
+Pilot-readiness inspection and manual acceptance planning is now the active
+workstream. The next task is a controlled QA fixture and cross-role acceptance
+pass across the available Student, Giver, Partner, Organization, and Admin
+surfaces. It must record available versus missing surfaces instead of treating
+repository tests or mock funding as pilot acceptance.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is
@@ -326,6 +337,8 @@ ad-hoc hosted objects to bypass migration order.
 - Provide the professional confirmation packet to those reviewers and record
   answers, assumptions, required controls, and launch blockers before advancing
   the legal/compliance sequence.
+- Legal/compliance work is paused at that external-review blocker until the
+  owner returns with accountant and Romanian legal review.
 
 ## Security checkpoints
 
@@ -350,13 +363,20 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT:** reload Expo Go from the current Metro bundle and run manual acceptance
-for the guided launch, Student/Giver routing, durable guidance, Giver catalog,
-My Giving privacy states, navigation, and absence of funding controls. The fixed
-unauthenticated callback remains outside the guarded workspace; the native-owned
-PKCE and verified iOS Universal Link correction remains blocked until Apple
-Developer membership provides a real bundle ID and Team ID. No signed-iOS,
-TestFlight, or Production evidence is claimed.
+**NEXT: Pilot acceptance gate — create the fixed QA fixture set and execute one
+manual cross-role journey pass.** Use controlled Student, Giver, Partner,
+Organization, and Admin accounts plus representative Core and low-risk Impact
+records. Verify discovery, signup/login, onboarding, authorization, first
+value, return paths, operational handoffs, empty/error states, mobile/web
+layout, and role privacy boundaries. Record each surface as passed, failed,
+missing, or blocked by an external dependency. This single pass will identify
+which UI cleanup, onboarding, pilot onboarding, Impact templates, and missing
+role surfaces actually need implementation next.
+
+The pass must explicitly mark native Partner/Organization operations, native
+Giver funding/PKCE, real payments, legal surfaces, and Production checks as
+unavailable or out of scope; it must not convert mock or repository evidence
+into pilot acceptance.
 
 ## COMPLETE
 - Core backend hardening implemented
