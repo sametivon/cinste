@@ -52,7 +52,10 @@ try {
   check(active.length === 1 && active[0].participant_email === attendee.email, 'assigned Organization sees email during the activity window');
   const foreign = await must(foreignOperator.db.rpc('list_organization_impact_participants', { p_opportunity_ids: [opportunityId] }), 'read foreign participant');
   check(foreign.length === 0, 'foreign Organization cannot read the participant');
-  await must(service.from('impact_participations').update({ participant_email_access_expires_at: new Date(Date.now() - 1000).toISOString() }).eq('id', participationId), 'expire email access');
+  const forcedExpiry = new Date(0).toISOString();
+  await must(service.from('impact_participations').update({ participant_email_access_expires_at: forcedExpiry }).eq('id', participationId), 'expire email access');
+  const storedExpiry = await must(service.from('impact_participations').select('participant_email_access_expires_at').eq('id', participationId).single(), 'read expired email access');
+  check(new Date(storedExpiry.participant_email_access_expires_at).getTime() <= Date.now(), 'email expiry is stored in the past');
   const expired = await must(operator.db.rpc('list_organization_impact_participants', { p_opportunity_ids: [opportunityId] }), 'read expired participant');
   check(expired.length === 1 && expired[0].participant_email === null, 'email is hidden after the activity window');
   console.log(`PASS: ${assertions} hosted Impact email-contact assertions (${run})`);

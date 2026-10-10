@@ -212,7 +212,7 @@ not establish Production readiness.
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0036` are owner-confirmed applied. Batch 2 passed 19 assertions, Batch 3 passed 41 assertions after the `0034` rejoin-guard correction, Batch 5 passed 8 assertions, Giver aggregate validation passed 7 assertions, and the 18+ validation passed 3 assertions on 2026-10-10. Repository migration `0037` is not yet hosted-applied. |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0037` are owner-confirmed applied. Batch 2 passed 19 assertions, Batch 3 passed 41 assertions after the `0034` rejoin-guard correction, Batch 5 passed 8 assertions, Giver aggregate validation passed 7 assertions, 18+ validation passed 3 assertions, and email-contact validation passed 6 assertions on 2026-10-10. |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
@@ -248,7 +248,7 @@ not imply Production status.
 | `0034_impact_rejoin_contribution_guard.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: Batch 3 passed 41 focused assertions on 2026-10-10, including rejection of rejoining after an earned contribution | No | Ordered correction restoring the existing one-contribution-per-opportunity guard omitted by the `0030` join-RPC replacement; local scheduler suite passes 15 assertions |
 | `0035_impact_giver_aggregate_outcomes.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 7 focused hosted assertions passed on 2026-10-10; local scheduler suite passes 16 assertions | No | Adds an authenticated, aggregate-only Giver Impact outcome projection with a five-Student privacy threshold; no Giver/Student or funded-campaign attribution is exposed |
 | `0036_impact_admin_18_plus_eligibility.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 3 focused hosted assertions passed on 2026-10-10; local scheduler suite passes 18 assertions | No | Adds the Admin-controlled `impact_18_plus_verified` flag, requires it for Student Impact joining, and exposes only a minimized `verified_18_plus` Organization eligibility label |
-| `0037_impact_email_contact_consent.sql` | Yes | Yes | Not yet applied | Not yet hosted-validated; local scheduler suite passes 18 assertions | No | Adds explicit per-opportunity email consent with activity-window expiry, rejects new phone requests, and keeps Organization email access assignment-scoped |
+| `0037_impact_email_contact_consent.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 6 focused hosted assertions passed on 2026-10-10; local scheduler suite passes 18 assertions | No | Adds explicit per-opportunity email consent with activity-window expiry, rejects new phone requests, and keeps Organization email access assignment-scoped |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -513,10 +513,9 @@ The current Organization participant projection intentionally returns no Student
 email or phone, even when an opportunity requests a contact field. The
 Student-facing requirement disclosure and the controlled, email-only,
 opportunity-specific disclosure and post-activity reduction are implemented in
-repository migration `0037`; it is locally validated but not yet hosted-applied.
-Phone is explicitly deferred. Until `0037` is applied, the hosted
-Organization projection remains email-blind; the default privacy boundary is
-preserved.
+repository migration `0037`; local 18/18 scheduler coverage and 6 focused
+hosted assertions passed on 2026-10-10. Phone is explicitly deferred. The
+default privacy boundary is preserved.
 
 The Student mobile Impact detail now provides the controlled incident report
 form backed by `report_impact_incident`, and Admin Impact now loads open and
