@@ -31,6 +31,14 @@ export const organizationCopies: Record<WebLocale, Copy> = {
 export type OrganizationCopy = Copy;
 export function organizationCopy(locale: WebLocale): OrganizationCopy { return organizationCopies[locale]; }
 
+export const organizationIncidentCopies: Record<WebLocale, { report: string; category: string; severity: string; description: string; submit: string; safety: string; harassment: string; behavior: string; injury: string; organization: string; student: string; other: string; low: string; medium: string; serious: string }> = {
+  ro: { report: 'Raportează incident', category: 'Categorie', severity: 'Gravitate', description: 'Descriere', submit: 'Trimite raportul', safety: 'Problemă de siguranță', harassment: 'Hărțuire', behavior: 'Comportament nepotrivit', injury: 'Accidentare', organization: 'Problemă organizație', student: 'Problemă student', other: 'Altele', low: 'Scăzută', medium: 'Medie', serious: 'Serioasă' },
+  en: { report: 'Report incident', category: 'Category', severity: 'Severity', description: 'Description', submit: 'Submit report', safety: 'Safety concern', harassment: 'Harassment', behavior: 'Inappropriate behavior', injury: 'Injury', organization: 'Organization issue', student: 'Student issue', other: 'Other', low: 'Low', medium: 'Medium', serious: 'Serious' },
+  tr: { report: 'Olay bildir', category: 'Kategori', severity: 'Önem derecesi', description: 'Açıklama', submit: 'Bildirimi gönder', safety: 'Güvenlik endişesi', harassment: 'Taciz', behavior: 'Uygunsuz davranış', injury: 'Yaralanma', organization: 'Kuruluş sorunu', student: 'Öğrenci sorunu', other: 'Diğer', low: 'Düşük', medium: 'Orta', serious: 'Ciddi' },
+  ar: { report: 'الإبلاغ عن حادثة', category: 'الفئة', severity: 'الخطورة', description: 'الوصف', submit: 'إرسال البلاغ', safety: 'مخاوف تتعلق بالسلامة', harassment: 'تحرش', behavior: 'سلوك غير مناسب', injury: 'إصابة', organization: 'مشكلة في المنظمة', student: 'مشكلة تخص الطالب', other: 'أخرى', low: 'منخفضة', medium: 'متوسطة', serious: 'خطيرة' },
+};
+export function organizationIncidentCopy(locale: WebLocale) { return organizationIncidentCopies[locale]; }
+
 export const organizationCategories: Record<WebLocale, Record<string, string>> = {
   ro: { community: 'Comunitate', education: 'Educație', environment: 'Mediu', animals: 'Animale', events: 'Evenimente', skills: 'Abilități', other: 'Altele' },
   en: { community: 'Community', education: 'Education', environment: 'Environment', animals: 'Animals', events: 'Events', skills: 'Skills', other: 'Other' },
