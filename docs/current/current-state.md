@@ -212,7 +212,7 @@ not establish Production readiness.
 | Environment / service | Purpose | Current state |
 | --- | --- | --- |
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
-| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0023` are owner-confirmed applied. On 2026-10-08, 12 hosted assertions passed for `0023` and the owner-run `0022` runner passed 61 hosted non-production assertions. Fixtures and focused hosted validation are allowed |
+| Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0025` are owner-confirmed applied. On 2026-10-10, Impact Batches 1-3 and 5 passed focused hosted assertions after the ordered `0024`/`0025` application. Fixtures and focused hosted validation are allowed |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
 | Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
@@ -235,8 +235,8 @@ not imply Production status.
 | `0021_giver_signup_provisioning.sql` | Yes | Yes | Yes, owner-confirmed | Yes: 57 hosted assertions owner-confirmed | No | Secure provisioning active in DEV/QA; email confirmation enabled |
 | `0022_funding_eligibility.sql` | Yes | Yes | Yes, owner-confirmed; manually applied through SQL Editor | Yes, DEV/QA only: owner ran 61 hosted non-production assertions on 2026-10-08 | No | Service-only Giver eligibility, ownership, pricing/activity rechecks, direct API-role denial, and idempotent state behavior validated; no Production environment exists |
 | `0023_native_bff_rate_limits.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: 12 hosted assertions passed on 2026-10-08 (service execution; anon/authenticated denial; private API storage denial; configured 5-per-minute quota; invalid non-fingerprint rejection) | No | Active private HMAC-fingerprint limiter. The QA Next.js host's server-only `NATIVE_BFF_RATE_LIMIT_KEY` and exact HTTPS Supabase Auth redirect allowlist remain unverified; do not use the BFF |
-| `0024_partner_offer_drafts.sql` | Yes | Yes | No | No | No | Partner-scoped descriptive drafts and Admin-only atomic offer approval are repository-only; no campaign, inventory, price, or payment authority is delegated |
-| `0025_impact_opportunity_moderation.sql` | Yes | Yes | No | No | No | New Impact opportunity submission, low-risk classification, and Admin approval before publication are repository-only; existing published rows remain legacy-compatible |
+| `0024_partner_offer_drafts.sql` | Yes | Yes | Yes, owner-confirmed | Not separately validated in this batch | No | Partner-scoped descriptive drafts and Admin-only atomic offer approval; no campaign, inventory, price, or payment authority is delegated |
+| `0025_impact_opportunity_moderation.sql` | Yes | Yes | Yes, owner-confirmed | Yes, DEV/QA only: schema probe and direct-publication rejection passed; Impact Batches 1-3 passed 65 assertions and Batch 5 passed 8 assertions on 2026-10-10. Batch 4 was not applicable because its one-time cutover is already active | No | New Impact opportunity submission, low-risk classification, and Admin approval before publication are hosted in DEV/QA; existing published rows remain legacy-compatible |
 
 For every future migration, update every column explicitly. Apply tracked
 prerequisites in order, keep historical migrations immutable, and never create
@@ -390,19 +390,20 @@ absent; and aggregate Giver Impact outcomes are absent. The existing accepted
 3:1 reciprocity implementation must not be treated as the final configurable
 policy model.
 
-The first implementation slice is now present in repository migration
-`0025_impact_opportunity_moderation.sql`. New opportunities can be submitted
-for review, direct Organization publication is rejected, and Admin approval is
-required before publication. The migration adds a simple allowed-low-risk or
-restricted-not-publishable state and preserves existing published rows as
-legacy compatibility records. Local web actions and Admin/Organization
-surfaces use the new boundary; hosted application and validation remain
-pending.
+The first implementation slice is now present in and applied to DEV/QA through
+migration `0025_impact_opportunity_moderation.sql`. New opportunities can be
+submitted for review, direct Organization publication is rejected, and Admin
+approval is required before publication. The migration adds a simple
+allowed-low-risk or restricted-not-publishable state and preserves existing
+published rows as legacy compatibility records. Local web actions and
+Admin/Organization surfaces use the new boundary. Focused hosted validation
+passed on 2026-10-10; the remaining Impact V1 behavior is not implemented by
+this slice.
 
 This reconciliation included the first approved implementation slice. No
 attendance, participant-projection, incident, no-show, reciprocity-policy, or
-Giver-aggregate behavior changed, and migration `0025` has not been applied to
-hosted environments.
+Giver-aggregate behavior changed. Migration `0025` is applied and validated in
+DEV/QA only; no Production environment exists.
 
 Impact Batch 1 foundation implemented in migration `0011_impact_batch1_foundation.sql`.
 
