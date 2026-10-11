@@ -39,7 +39,12 @@ for (const account of accounts) {
   const { error: profileError } = await supabase.from("profiles").upsert({ id: user.id, email: account.email, display_name: account.name, role: account.appRole }, { onConflict: "id" });
   if (profileError) fail(`could not set role for ${account.email}: ${profileError.message}`);
   if (account.resetUnverified) {
-    const { error } = await supabase.from("student_profiles").delete().eq("user_id", user.id);
+    const [studentProfile, organizationAccess, partnerAccess] = await Promise.all([
+      supabase.from("student_profiles").delete().eq("user_id", user.id),
+      supabase.from("organization_users").delete().eq("user_id", user.id),
+      supabase.from("partner_users").delete().eq("user_id", user.id),
+    ]);
+    const error = studentProfile.error || organizationAccess.error || partnerAccess.error;
     if (error) fail(`could not reset ${account.email}: ${error.message}`);
   }
   if (account.verification) {

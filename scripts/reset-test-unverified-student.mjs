@@ -57,4 +57,10 @@ if (paths.length) {
 const { error: studentDeleteError } = await supabase.from('student_profiles').delete().eq('user_id', fixture.id);
 if (studentDeleteError) fail(`could not remove fixture student profile: ${studentDeleteError.message}`);
 
+const [{ error: organizationAccessError }, { error: partnerAccessError }] = await Promise.all([
+  supabase.from('organization_users').delete().eq('user_id', fixture.id),
+  supabase.from('partner_users').delete().eq('user_id', fixture.id),
+]);
+if (organizationAccessError || partnerAccessError) fail(`could not remove fixture operational access: ${organizationAccessError?.message ?? partnerAccessError?.message}`);
+
 console.log(`Reset ${fixtureEmail}: removed ${claimIds.length} fixture claim(s), ${verifications.length} verification record(s), and ${paths.length} private fixture document(s); released ${[...activeByCampaign.values()].reduce((total, amount) => total + amount, 0)} active reservation(s).`);

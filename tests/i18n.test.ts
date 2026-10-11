@@ -45,4 +45,11 @@ describe('web i18n foundation', () => {
     expect(webT('ar', 'partner.cameraDetected')).toBe('تم اكتشاف رمز QR. جارٍ التحقق…');
     expect(localizedWebCategory('ar', 'cinema', 'Cinema')).toBe('سينما');
   });
+
+  it('keeps the unverified Student handoff and safe access-denial guidance explicit', () => {
+    expect(webT('en', 'handoff.unverifiedTitle')).toBe('Verification is your next step');
+    expect(webT('en', 'handoff.unverifiedNext')).toContain('Verify your account');
+    expect(webT('en', 'access.organization.copy')).toContain('Organization Operator assignment');
+    for (const locale of webLocales) expect(webT(locale, 'access.account')).toBeTruthy();
+  });
 });

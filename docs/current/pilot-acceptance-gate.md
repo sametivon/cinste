@@ -1,6 +1,7 @@
 # CINSTE Pilot Acceptance Gate
 
-Status: gate prepared; no manual pass executed yet. This document is not
+Status: repository correction complete; controlled QA fixture reset and rerun
+are pending. This document is not
 Production, legal, payment, or App Store acceptance.
 
 Scope: controlled pilot validation using the current QA web host, hosted DEV/QA
@@ -28,7 +29,7 @@ local/QA secret store; never commit them to this document or the repository.
 
 | Fixture label | Required state | Purpose |
 | --- | --- | --- |
-| `student-unverified` | 18+ test Student with pending/unverified verification | Signup, onboarding, verification guidance, protected-route denial, empty/error states. |
+| `student-unverified` | Student-only test account with no Student profile or verification, and no active Partner or Organization assignment | Signup, onboarding, verification guidance, protected-route denial, empty/error states. |
 | `student-verified` | Admin-verified 18+ Student with at least one eligible Core offer and one low-risk Impact opportunity | Core discovery/claim, Impact discovery/join/cancel/history, completed contribution and reciprocity presentation. |
 | `student-impact-history` | Verified Student with completed, attended-only, cancelled, no-show/late-cancel, excused, and disputed Impact records where safe fixtures exist | History clarity, authoritative status, incident/dispute/review states, no self-completion. |
 | `giver-web` | Stored `giver` profile with active offers and mock checkout access | Public acquisition, Giver signup/login, catalog, mock checkout, success/failure, My Giving states. |
@@ -64,11 +65,13 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** use `student-unverified` with
+**Next exact step:** after the repository correction is deployed, reset
+`student-unverified` through the approved QA reset command, then use
 `unverified.student@cinste.test` on the QA host. Verify Student routing,
-verification guidance, protected-access denial, sign-out/sign-in persistence,
-and absence of Giver, Partner, Organization, or Admin access. Do not submit or
-approve verification.
+explicit verification guidance, and denial of Partner, Organization, and Admin
+access. `/giver` is a public acquisition/catalog route; verify that it grants
+no Giver-only funding or outcome authority. Do not submit or approve
+verification.
 
 1. Confirm the QA host, current commit SHA, mobile bundle, locale, viewport or
    device, and fixture readiness.
@@ -105,13 +108,13 @@ approve verification.
 
 ## Run log
 
-No fresh manual run is claimed by this document yet. Add one row per journey;
-attach screenshots or redacted notes outside the repository when they contain
-account identifiers.
+The first result below is superseded by the pending corrected-fixture rerun.
+Add one row per journey; attach screenshots or redacted notes outside the
+repository when they contain account identifiers.
 
 | Date/time | Commit | Fixture | Surface/route | Viewport/device | Result | Severity/defect | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | Not run | — | — |
+| 2026-10-11 (owner-reported; time not recorded) | hosted QA deployment (commit not recorded) | `student-unverified` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop browser | Rerun required | The account had Organization workspace access. Repository review found direct-assignment RLS, existing revocation coverage, and fixture reset/bootstrap omissions; the correction removes stale Partner/Organization memberships. `/giver` is an intended public acquisition/catalog route; its Giver-only funding action remains server-role-gated. P2 handoff and denial guidance are corrected locally. | Owner-provided screenshots and redacted route results in session; no account identifiers stored here |
 
 ## Exit criteria for the next implementation decision
 
