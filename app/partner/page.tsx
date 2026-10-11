@@ -7,6 +7,7 @@ import { getWebLocale } from '@/lib/i18n/server';
 import { formatWebDate, webT } from '@/lib/i18n/web';
 import { partnerOfferCopies } from '@/lib/i18n/partner-offers';
 import { savePartnerOfferDraft } from './actions';
+import { WorkspaceUnavailable } from '@/components/workspace-unavailable';
 
 export default async function Partner({ searchParams }: { searchParams: Promise<{ token?: string; result?: string; error?: string }> }) {
   const [q, locale] = await Promise.all([searchParams, getWebLocale()]);
@@ -14,7 +15,7 @@ export default async function Partner({ searchParams }: { searchParams: Promise<
   const { data: { user } } = await db.auth.getUser();
   if (!user) redirect('/login');
   const { data: memberships } = await db.from('partner_users').select('partner_id,partners(name)').eq('user_id', user.id);
-  if (!memberships?.length) redirect('/?error=Partner access required');
+  if (!memberships?.length) return <WorkspaceUnavailable workspace="partner" locale={locale} />;
   let inspected: PartnerInspection | null = null;
   if (q.token) { const { data } = await db.rpc('inspect_redemption', { p_token: q.token }); inspected = data?.[0] ?? null; }
   const [{ data: history }, { data: categories }, { data: drafts }] = await Promise.all([

@@ -1,7 +1,7 @@
 # CINSTE Pilot Acceptance Gate
 
-Status: repository correction complete; controlled QA fixture reset and rerun
-are pending. This document is not
+Status: clean Student fixture authorization pass recorded; UX correction passes
+local validation and awaits hosted signed-in rerun. This document is not
 Production, legal, payment, or App Store acceptance.
 
 Scope: controlled pilot validation using the current QA web host, hosted DEV/QA
@@ -65,13 +65,15 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** after the repository correction is deployed, reset
-`student-unverified` through the approved QA reset command, then use
-`unverified.student@cinste.test` on the QA host. Verify Student routing,
-explicit verification guidance, and denial of Partner, Organization, and Admin
-access. `/giver` is a public acquisition/catalog route; verify that it grants
-no Giver-only funding or outcome authority. Do not submit or approve
-verification.
+**Next exact step:** after the UX correction deploys, sign in as
+`unverified.student@cinste.test` on the QA host. Confirm that `/account` stays
+on the account hub and shows only the Student workspace. Check the dedicated
+unverified state and explicit app action on `/student`. Check dedicated denial
+states and both recovery links on `/organization`, `/partner`, and `/admin`.
+Check that `/giver` shows public catalog content without Giver history or
+funding controls. Run the corresponding Giver fixture through the pilot
+checkout copy and Giver-only workspace state. Record the deployment commit,
+viewport, locale, and actual result. Do not submit or approve verification.
 
 1. Confirm the QA host, current commit SHA, mobile bundle, locale, viewport or
    device, and fixture readiness.
@@ -108,13 +110,15 @@ verification.
 
 ## Run log
 
-The first result below is superseded by the pending corrected-fixture rerun.
+The first result below used the wrong fixture. The second result is the clean
+fixture pass. The UX correction still needs a hosted rerun.
 Add one row per journey; attach screenshots or redacted notes outside the
 repository when they contain account identifiers.
 
 | Date/time | Commit | Fixture | Surface/route | Viewport/device | Result | Severity/defect | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-10-11 (owner-reported; time not recorded) | hosted QA deployment (commit not recorded) | `student-unverified` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop browser | Rerun required | The account had Organization workspace access. Repository review found direct-assignment RLS, existing revocation coverage, and fixture reset/bootstrap omissions; the correction removes stale Partner/Organization memberships. `/giver` is an intended public acquisition/catalog route; its Giver-only funding action remains server-role-gated. P2 handoff and denial guidance are corrected locally. | Owner-provided screenshots and redacted route results in session; no account identifiers stored here |
+| 2026-10-11 (owner-reported; time not recorded) | hosted QA deployment (commit not recorded) | Wrong fixture (account not recorded) | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop browser | Superseded | Organization data appeared during this pass. The owner later identified the account as the wrong fixture. This row provides no evidence about `student-unverified` authorization. | Owner-provided screenshots and redacted route results in session; no account identifiers stored here |
+| 2026-10-11 (owner-reported; time not recorded) | hosted QA deployment (commit not recorded) | `unverified.student@cinste.test` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | viewport and locale not recorded | Authorization PASS for protected workspaces; UX FAIL/P2 | `/account` redirected to `/student`; the Student state was sparse. Organization, Partner, and Admin denied access but redirected to landing banners. The public Giver page showed Giver-account language and local MVP payment copy. The earlier Organization exposure was caused by testing the wrong fixture. | Owner-provided manual QA in session; hosted UX correction rerun pending |
 
 ## Exit criteria for the next implementation decision
 

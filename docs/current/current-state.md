@@ -120,19 +120,27 @@ workstream. The next task is a controlled QA fixture and cross-role acceptance
 pass across the available Student, Giver, Partner, Organization, and Admin
 surfaces. It must record available versus missing surfaces instead of treating
 repository tests or mock funding as pilot acceptance.
-The execution artifact is `docs/current/pilot-acceptance-gate.md`. The first
-`student-unverified` manual check was owner-reported on 2026-10-11 and found
-an Organization workspace on a fixture intended to be Student-only. Repository
-review found that Organization records remain RLS-limited to direct active
-assignments, including existing revocation coverage; the fixture bootstrap and
-reset scripts did not remove stale Partner/Organization assignments. The
-repository correction now removes those memberships. `/giver` is an intended
-public acquisition/catalog route, while its Giver-only funding action remains
-server-role-gated. The Student handoff now names the unverified next step, and
-Partner/Admin/Organization denials render visible safe guidance. Deploy the
-correction, run the approved non-production fixture reset, and rerun this one
-fixture before continuing the acceptance pass. Do not submit or approve
-verification.
+The execution artifact is `docs/current/pilot-acceptance-gate.md`. The owner
+completed a clean `unverified.student@cinste.test` QA pass on 2026-10-11. The
+earlier Organization exposure came from using the wrong fixture. With the
+named Student-only fixture, `/organization`, `/partner`, and `/admin` deny
+access. Their authorization checks pass for that fixture; their landing-page
+banner denial states failed pilot UX. `/account` redirected the one-workspace
+Student account to `/student`. `/student` identified verification as the next
+step but lacked a clear account-state presentation. The public `/giver` page
+showed authenticated Giver history language and local-development payment copy
+to the Student fixture. These are UX/state defects, not confirmed new
+authorization failures.
+
+The repository correction keeps `/account` as an account hub, gives the
+unverified Student a dedicated verification state with an explicit app action,
+renders one shared role-aware denial state at the protected route, and keeps
+Giver history/funding controls for stored Giver accounts while retaining a
+public read-only catalog. Pilot checkout copy states that no real payment is
+charged. Local web typecheck, focused route/i18n tests, and production build
+pass. Hosted deployment and fresh signed-in QA of the changed states remain
+pending. Continue the pilot acceptance pass after that rerun. Do not submit or
+approve Student verification for this fixture.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is

@@ -4,13 +4,15 @@ import { createClient } from '@/lib/supabase/server';
 import { AdminNav } from '@/components/admin-nav';
 import { OperationalForm, SubmitButton } from '@/components/operational-form';
 import { reviewVerification } from './actions';
+import { WorkspaceUnavailable } from '@/components/workspace-unavailable';
+import { getWebLocale } from '@/lib/i18n/server';
 
 const date = (value: string | null) => value ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : 'Not recorded';
 const labels: Record<string, string> = { active: 'Active', pending: 'Pending', pending_review: 'Pending review', failed: 'Failed', overdue: 'Overdue review', disputed: 'Disputed', suspended: 'Suspended' };
 
 export default async function Admin() {
   const db = await createClient(); const { data: { user } } = await db.auth.getUser(); if (!user) redirect('/login');
-  const { data: me } = await db.from('profiles').select('role').eq('id', user.id).single(); if (me?.role !== 'admin') redirect('/?error=Admin access required');
+  const { data: me } = await db.from('profiles').select('role').eq('id', user.id).single(); if (me?.role !== 'admin') return <WorkspaceUnavailable workspace="admin" locale={await getWebLocale()} />;
   const [{ data: pendingVerifications, error: verificationError }, { data: impactParticipation, error: participationError }, { data: reviewRequests, error: reviewError }, { data: lowInventory, error: campaignError }, { data: pendingOrganizations, error: organizationError }, { data: paymentExceptions, error: paymentError }] = await Promise.all([
     db.from('student_verifications').select('id,full_name,status,submitted_at,universities(name)').eq('status', 'pending').order('submitted_at').limit(20),
     db.from('impact_participations').select('id,status,joined_at,impact_opportunities(title,organizations(name))').in('status', ['overdue', 'disputed']).order('joined_at').limit(20),
