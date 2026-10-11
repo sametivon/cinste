@@ -1,7 +1,7 @@
 # CINSTE Pilot Acceptance Gate
 
-Status: pilot-readiness execution artifact. This document is not Production,
-legal, payment, or App Store acceptance.
+Status: gate prepared; no manual pass executed yet. This document is not
+Production, legal, payment, or App Store acceptance.
 
 Scope: controlled pilot validation using the current QA web host, hosted DEV/QA
 Supabase, local/QA mobile bundle, and approved test accounts. Real payments,
@@ -63,6 +63,12 @@ evidence recorded in the run log below.
 | Cross-cutting | Web/mobile | Loading, empty, error, narrow viewport, localization, sign-out/session restoration | `PENDING` | Test RO/EN at minimum on web and mobile; record literal/mixed-language or layout defects. |
 
 ## Required manual run order
+
+**Next exact step:** use `student-unverified` with
+`unverified.student@cinste.test` on the QA host. Verify Student routing,
+verification guidance, protected-access denial, sign-out/sign-in persistence,
+and absence of Giver, Partner, Organization, or Admin access. Do not submit or
+approve verification.
 
 1. Confirm the QA host, current commit SHA, mobile bundle, locale, viewport or
    device, and fixture readiness.

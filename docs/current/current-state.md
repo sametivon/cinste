@@ -120,8 +120,11 @@ workstream. The next task is a controlled QA fixture and cross-role acceptance
 pass across the available Student, Giver, Partner, Organization, and Admin
 surfaces. It must record available versus missing surfaces instead of treating
 repository tests or mock funding as pilot acceptance.
-The execution artifact is `docs/current/pilot-acceptance-gate.md`; no fresh
-manual run is claimed yet.
+The execution artifact is `docs/current/pilot-acceptance-gate.md`; the gate is
+prepared but no manual pass has been executed yet. The next exact manual step
+is the `student-unverified` fixture check on the QA host using
+`unverified.student@cinste.test`; do not submit or approve verification during
+that check.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is
@@ -365,15 +368,14 @@ and Admin-controlled Organization provisioning already exist.
 
 ## Next recommended action
 
-**NEXT: execute the Pilot acceptance gate in
-`docs/current/pilot-acceptance-gate.md`.** Use controlled Student, Giver,
-Partner, Organization, and Admin accounts plus representative Core and low-risk
-Impact records. Verify discovery, signup/login, onboarding, authorization, first
-value, return paths, operational handoffs, empty/error states, mobile/web
-layout, and role privacy boundaries. Record each surface as passed, failed,
-missing, or blocked by an external dependency. This single pass will identify
-which UI cleanup, onboarding, pilot onboarding, Impact templates, and missing
-role surfaces actually need implementation next.
+**NEXT: execute the first Pilot acceptance gate step in
+`docs/current/pilot-acceptance-gate.md`.** Use the `student-unverified` fixture
+(`unverified.student@cinste.test`) on the QA host. Verify Student routing,
+verification guidance, protected-access denial, sign-out/sign-in persistence,
+and absence of Giver, Partner, Organization, or Admin access. Do not submit or
+approve verification. After this result is recorded, continue with the
+remaining controlled Student, Giver, Partner, Organization, and Admin journeys
+and classify each surface as passed, failed, missing, or externally blocked.
 
 The pass must explicitly mark native Partner/Organization operations, native
 Giver funding/PKCE, real payments, legal surfaces, and Production checks as
