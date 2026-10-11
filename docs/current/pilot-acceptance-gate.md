@@ -1,7 +1,7 @@
 # CINSTE Pilot Acceptance Gate
 
-Status: clean Student fixture authorization pass recorded; UX correction passes
-local validation and awaits hosted signed-in rerun. This document is not
+Status: clean Student fixture authorization and corrected UX pass on the hosted
+web routes; other role/device journeys and catalog fixture quality remain open. This is not
 Production, legal, payment, or App Store acceptance.
 
 Scope: controlled pilot validation using the current QA web host, hosted DEV/QA
@@ -65,15 +65,12 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** after the UX correction deploys, sign in as
-`unverified.student@cinste.test` on the QA host. Confirm that `/account` stays
-on the account hub and shows only the Student workspace. Check the dedicated
-unverified state and explicit app action on `/student`. Check dedicated denial
-states and both recovery links on `/organization`, `/partner`, and `/admin`.
-Check that `/giver` shows public catalog content without Giver history or
-funding controls. Run the corresponding Giver fixture through the pilot
-checkout copy and Giver-only workspace state. Record the deployment commit,
-viewport, locale, and actual result. Do not submit or approve verification.
+**Next exact step:** use the approved `giver-web` fixture on the QA host to
+check the Giver-only workspace, mock checkout wording, success/failure, and My
+Giving. Then continue the remaining role/device run order below. Resolve the
+QA-named active offers through fixture-data ownership before a pilot-facing
+catalog pass; do not hide them by name in application code. Do not submit or
+approve verification for `student-unverified`.
 
 1. Confirm the QA host, current commit SHA, mobile bundle, locale, viewport or
    device, and fixture readiness.
@@ -110,8 +107,8 @@ viewport, locale, and actual result. Do not submit or approve verification.
 
 ## Run log
 
-The first result below used the wrong fixture. The second result is the clean
-fixture pass. The UX correction still needs a hosted rerun.
+The first result below used the wrong fixture. The later signed-in result is
+the hosted rerun with the clean fixture.
 Add one row per journey; attach screenshots or redacted notes outside the
 repository when they contain account identifiers.
 
@@ -121,6 +118,8 @@ repository when they contain account identifiers.
 | 2026-10-11 (owner-reported; time not recorded) | hosted QA deployment (commit not recorded) | `unverified.student@cinste.test` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | viewport and locale not recorded | Authorization PASS for protected workspaces; UX FAIL/P2 | `/account` redirected to `/student`; the Student state was sparse. Organization, Partner, and Admin denied access but redirected to landing banners. The public Giver page showed Giver-account language and local MVP payment copy. The earlier Organization exposure was caused by testing the wrong fixture. | Owner-provided manual QA in session; hosted UX correction rerun pending |
 | 2026-10-11 | `783e48c` | Signed out | `/giver` | English / desktop browser | Public acquisition layout PASS; catalog FAIL/P2 | The page separates public discovery from Giver history and funding controls. Active offers from inactive QA partners still appear. A repository filter now matches the funding RPC's active-partner rule; hosted recheck is pending. | Agent browser check on `cinste.vercel.app` |
 | 2026-10-11 | `8e5245f` | Signed out | `/giver` | English / desktop browser | Public acquisition layout PASS; fixture data FAIL/P2 | The active-partner filter removed inactive-partner offers. QA-named offers with active partners remain visible. Fixture-data cleanup or a dedicated clean QA data set is required before a pilot-facing catalog pass. | Agent browser DOM and viewport check on `cinste.vercel.app` |
+| 2026-10-11 19:00 UTC | `8e5245f` code; Vercel deployment `dpl_6XnZYBxohcCso823uMh39YL6JudX` Ready at QA alias | `unverified.student@cinste.test` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop 1920 px browser | Student fixture web UX PASS; protected-route authorization PASS; catalog fixture data FAIL/P2 | `/account` stayed on a Student-only hub and showed unverified status. `/student` named the unverified state, explained the verification requirement, and offered the app action. Each denied route stayed on its own page with role-specific reason and Account/Home links; Account and Home recovery navigation worked. Student `/giver` showed discovery with explicit Student/Giver separation and no history or funding controls. QA-named offers with active partners remain visible. No verification was submitted. | Agent signed-in DOM checks and viewport screenshots on `cinste.vercel.app`; Vercel CLI alias inspection |
+| 2026-10-11 19:00 UTC | Same QA alias deployment | `unverified.student@cinste.test` | `/student`, `/admin` | Romanian / desktop 1920 px browser | Localization spot-check PASS | Student verification state and Admin denial state rendered Romanian headings, explanations, and recovery actions after switching the web locale. This does not cover every language or viewport. | Agent signed-in DOM checks on `cinste.vercel.app` |
 
 ## Exit criteria for the next implementation decision
 

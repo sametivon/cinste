@@ -145,9 +145,16 @@ existing server-authoritative funding RPC. Commit `8e5245f` reached the QA
 host, and the public catalog still renders. It no longer shows offers whose
 partner is inactive. Some QA-named offers remain because their partner is
 active. This is hosted fixture-data quality work; the application must not
-hide offers by name. Fresh signed-in QA of the changed states remains pending.
-Continue the pilot acceptance pass after that rerun. Do not submit or approve
-Student verification for this fixture.
+hide offers by name. On 2026-10-11, signed-in browser QA with
+`unverified.student@cinste.test` on `cinste.vercel.app` confirmed that
+`/account` stays on the Student-only hub, `/student` explicitly presents the
+unverified state and verification action, and `/organization`, `/partner`, and
+`/admin` each show a dedicated role-aware denial on their own route with
+working Account/Home recovery links. `/giver` presents public discovery to
+this Student account without Giver history or funding controls. The remaining
+catalog fixture-data quality defect is recorded in the pilot gate. Continue
+the pilot acceptance pass with the remaining role fixtures and device checks;
+do not submit or approve Student verification for this fixture.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is
