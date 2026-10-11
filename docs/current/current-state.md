@@ -141,8 +141,11 @@ charged. Local web typecheck, focused route/i18n tests, and production build
 pass. Commit `783e48c` reached the QA host. A public browser check confirmed
 the acquisition layout but found offers from inactive QA partners in the
 catalog. The repository query now requires an active partner, matching the
-existing server-authoritative funding RPC. This last filter needs deployment
-and hosted recheck. Fresh signed-in QA of the changed states remains pending.
+existing server-authoritative funding RPC. Commit `8e5245f` reached the QA
+host, and the public catalog still renders. It no longer shows offers whose
+partner is inactive. Some QA-named offers remain because their partner is
+active. This is hosted fixture-data quality work; the application must not
+hide offers by name. Fresh signed-in QA of the changed states remains pending.
 Continue the pilot acceptance pass after that rerun. Do not submit or approve
 Student verification for this fixture.
 
