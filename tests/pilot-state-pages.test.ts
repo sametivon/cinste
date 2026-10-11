@@ -17,15 +17,17 @@ import { webLocales } from '@/lib/i18n/web';
 
 function client(role: string, student: { verification_status: string } | null = null) {
   const rpc = vi.fn(async () => ({ data: [], error: null }));
+  const offerQuery = { eq: vi.fn() };
+  offerQuery.eq.mockReturnValueOnce(offerQuery).mockResolvedValueOnce({ data: [{ id: 'offer', name: 'Cinema', giver_price_bani: 1000, partners: { name: 'Partner' }, categories: null }] });
   const from = vi.fn((table: string) => ({
     select: () => ({
-      eq: () => table === 'offers' ? Promise.resolve({ data: [{ id: 'offer', name: 'Cinema', giver_price_bani: 1000, partners: { name: 'Partner' }, categories: null }] }) : {
+      eq: () => table === 'offers' ? offerQuery.eq('active', true) : {
         maybeSingle: async () => ({ data: table === 'profiles' ? { role } : student, error: null }),
       },
     }),
   }));
   mocks.createClient.mockResolvedValue({ auth: { getUser: async () => ({ data: { user: { id: 'fixture' } } }) }, from, rpc });
-  return { from, rpc };
+  return { from, rpc, offerQuery };
 }
 
 describe('pilot account and workspace states', () => {
@@ -63,7 +65,7 @@ describe('pilot account and workspace states', () => {
   });
 
   it('shows a Student only the public Giver catalog and does not request private outcomes', async () => {
-    const { rpc } = client('student');
+    const { rpc, offerQuery } = client('student');
     const page = renderToStaticMarkup(await Giver({ searchParams: Promise.resolve({}) }));
     expect(page).toContain('Explore giving');
     expect(page).toContain('Experiences you can give');
@@ -72,6 +74,7 @@ describe('pilot account and workspace states', () => {
     expect(page).not.toContain('You have not treated anyone yet');
     expect(page).not.toContain('name="quantity"');
     expect(rpc).not.toHaveBeenCalled();
+    expect(offerQuery.eq).toHaveBeenCalledWith('partners.active', true);
   });
 
   it('retains authenticated Giver history and pilot checkout access', async () => {

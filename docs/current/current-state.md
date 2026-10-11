@@ -138,9 +138,13 @@ renders one shared role-aware denial state at the protected route, and keeps
 Giver history/funding controls for stored Giver accounts while retaining a
 public read-only catalog. Pilot checkout copy states that no real payment is
 charged. Local web typecheck, focused route/i18n tests, and production build
-pass. Hosted deployment and fresh signed-in QA of the changed states remain
-pending. Continue the pilot acceptance pass after that rerun. Do not submit or
-approve Student verification for this fixture.
+pass. Commit `783e48c` reached the QA host. A public browser check confirmed
+the acquisition layout but found offers from inactive QA partners in the
+catalog. The repository query now requires an active partner, matching the
+existing server-authoritative funding RPC. This last filter needs deployment
+and hosted recheck. Fresh signed-in QA of the changed states remains pending.
+Continue the pilot acceptance pass after that rerun. Do not submit or approve
+Student verification for this fixture.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is

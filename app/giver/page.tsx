@@ -15,7 +15,7 @@ export default async function Giver({ searchParams }: { searchParams: Promise<{ 
   const { data: profile } = user ? await db.from('profiles').select('role').eq('id', user.id).maybeSingle() : { data: null };
   const isGiver = profile?.role === 'giver';
   const [{ data: offers }, outcomeResult, communityOutcomeResult] = await Promise.all([
-    db.from('offers').select('id,name,description,giver_price_bani,fulfillment_type,partners(name),categories(name,slug)').eq('active', true),
+    db.from('offers').select('id,name,description,giver_price_bani,fulfillment_type,partners!inner(name),categories(name,slug)').eq('active', true).eq('partners.active', true),
     isGiver ? db.rpc('list_my_giving_outcomes') : Promise.resolve({ data: [], error: null }),
     isGiver ? db.rpc('list_community_impact_outcomes') : Promise.resolve({ data: [], error: null }),
   ]);
