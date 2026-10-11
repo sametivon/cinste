@@ -156,6 +156,15 @@ catalog fixture-data quality defect is recorded in the pilot gate. Continue
 the pilot acceptance pass with the remaining role fixtures and device checks;
 do not submit or approve Student verification for this fixture.
 
+A 2026-10-11 signed-in Giver web check on the QA alias using `giver@cinste.test`
+confirmed a Giver-only `/account` workspace, My Giving with privacy-suppressed
+outcome wording, and pilot checkout wording that says no real payment is
+charged. No checkout or funding mutation was run. The fixture has many
+repeated historical Cappuccino cards, and active QA-named offers remain in
+the catalog; these are hosted fixture-data quality defects, not authorization
+evidence. The Giver web journey remains pending mock checkout success/failure
+and return-path validation.
+
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is
 now a regular module, leaving the server-action file with async action exports

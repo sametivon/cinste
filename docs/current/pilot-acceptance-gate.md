@@ -65,9 +65,11 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** use the approved `giver-web` fixture on the QA host to
-check the Giver-only workspace, mock checkout wording, success/failure, and My
-Giving. Then continue the remaining role/device run order below. Resolve the
+**Next exact step:** after separate approval for a hosted mock funding mutation,
+run one `giver-web` checkout on the QA host and check its result and return
+path. The Giver-only workspace, My Giving, and pilot wording have already
+passed a signed-in read-only check. Then continue the remaining role/device
+run order below. Resolve the
 QA-named active offers through fixture-data ownership before a pilot-facing
 catalog pass; do not hide them by name in application code. Do not submit or
 approve verification for `student-unverified`.
@@ -120,6 +122,7 @@ repository when they contain account identifiers.
 | 2026-10-11 | `8e5245f` | Signed out | `/giver` | English / desktop browser | Public acquisition layout PASS; fixture data FAIL/P2 | The active-partner filter removed inactive-partner offers. QA-named offers with active partners remain visible. Fixture-data cleanup or a dedicated clean QA data set is required before a pilot-facing catalog pass. | Agent browser DOM and viewport check on `cinste.vercel.app` |
 | 2026-10-11 19:00 UTC | `8e5245f` code; Vercel deployment `dpl_6XnZYBxohcCso823uMh39YL6JudX` Ready at QA alias | `unverified.student@cinste.test` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop 1920 px browser | Student fixture web UX PASS; protected-route authorization PASS; catalog fixture data FAIL/P2 | `/account` stayed on a Student-only hub and showed unverified status. `/student` named the unverified state, explained the verification requirement, and offered the app action. Each denied route stayed on its own page with role-specific reason and Account/Home links; Account and Home recovery navigation worked. Student `/giver` showed discovery with explicit Student/Giver separation and no history or funding controls. QA-named offers with active partners remain visible. No verification was submitted. | Agent signed-in DOM checks and viewport screenshots on `cinste.vercel.app`; Vercel CLI alias inspection |
 | 2026-10-11 19:00 UTC | Same QA alias deployment | `unverified.student@cinste.test` | `/student`, `/admin` | Romanian / desktop 1920 px browser | Localization spot-check PASS | Student verification state and Admin denial state rendered Romanian headings, explanations, and recovery actions after switching the web locale. This does not cover every language or viewport. | Agent signed-in DOM checks on `cinste.vercel.app` |
+| 2026-10-11 19:22 UTC | `f01ad9f` docs revision with `8e5245f` code; Vercel deployment `dpl_4nKK8Jpc9QBsG9JtcwCVtWaCcvDM` Ready at QA alias | `giver@cinste.test` | `/account`, `/giver` | English / desktop 1920 px browser | Giver read-only web state PASS; checkout PENDING; fixture data FAIL/P2 | `/account` stayed on a Giver-only hub. `/giver` showed My Giving, privacy-suppressed outcome wording, and a checkout section stating no real payment will be charged during the pilot. No funding control was activated. Many repeated historical Cappuccino cards and active QA-named catalog offers remain. | Agent signed-in DOM and viewport checks on `cinste.vercel.app`; Vercel CLI alias inspection |
 
 ## Exit criteria for the next implementation decision
 
