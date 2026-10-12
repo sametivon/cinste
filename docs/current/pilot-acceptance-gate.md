@@ -65,10 +65,10 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** deploy the Giver route-title correction, then recheck the
-Student-facing `/giver` title and body on `cinste.vercel.app`. The checkout
-success and failed-order recovery states passed hosted browser checks on
-2026-10-12. Continue the Partner, Organization, Admin, and device journeys.
+**Next exact step:** continue the Partner, Organization, Admin, and device
+journeys. The Giver route-title correction is Ready and passed a hosted browser
+check on `cinste.vercel.app`. The checkout success and failed-order recovery
+states also passed hosted browser checks on 2026-10-12.
 Resolve QA-named active offers through fixture-data ownership before a
 pilot-facing catalog pass. Do not hide them by name in application code. Do not
 submit or approve verification for `student-unverified`.
@@ -129,6 +129,7 @@ repository when they contain account identifiers.
 | 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `student-pending`; `student-verified` | `/student`, `/account` | English / desktop browser | State rendering PASS; full Student journey PENDING | Pending Student showed “Your verification is under review” and a clear next step. The verified Student reached the mobile handoff. Its account hub also listed Organization Operator access. The role model permits this combination, so confirm whether the fixture assignment is intentional before treating it as a Student-only fixture. No verification action was taken. | Agent browser DOM checks on `cinste.vercel.app` |
 | 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `partner-assigned` | `/partner`, `/admin` | English / desktop browser | Workspace access PASS; operational journey PENDING; data clarity FAIL/P2 | The assigned Café Partner opened its workspace. Recent-history fields displayed “Unavailable.” A Partner account visiting `/admin` received the dedicated Admin denial state with Account/Home links. No scan, redemption, or draft submission was performed. | Agent browser DOM checks on `cinste.vercel.app` |
 | 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `admin-ops` | `/admin` | English / desktop browser | Admin overview PASS; acceptance PENDING; fixture data FAIL/P2 | The overview loaded with 36 attention items and QA-labelled Student, Impact, Organization, and inventory records. No review or moderation action was taken. Clear the QA data through its owner before using this queue for pilot acceptance. | Agent browser DOM check on `cinste.vercel.app` |
+| 2026-10-12 07:35 UTC | `7206e6f`; Vercel deployment `dpl_3PSPsfdLcM8Vcz9mHKgvBwXxmQvu` Ready, Vercel target `Production`, alias `cinste.vercel.app` | `student-unverified` | `/giver` | English / desktop browser | Giver public/workspace title separation PASS; catalog fixture data FAIL/P2 | The browser title and public page heading both said “Explore giving.” The page identified the signed-in account as Student and stated that giving history and funding require a separate Giver account. QA-named offers remain visible. Vercel labels the deployment `Production`; this alias serves the pilot host and does not establish a separate Production Supabase. | Agent browser DOM check on `cinste.vercel.app`; Vercel CLI inspect |
 
 ## Exit criteria for the next implementation decision
 

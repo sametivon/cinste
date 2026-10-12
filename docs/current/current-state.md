@@ -187,8 +187,11 @@ returns the Giver to `/giver`. The Student-only fixture still sees a Student
 account hub, explicit unverified status and next action, shared denial pages
 for Organization, Partner, and Admin, and public Giver discovery without
 history or funding controls. The public Giver page still lists QA-named offers.
-Its browser title still said “My Giving.” The repository now uses
-“Explore giving”; hosted deployment and browser recheck remain pending.
+Its browser title said “My Giving” on the earlier deployment. Commit
+`7206e6f` changed it to “Explore giving.” The Ready Vercel deployment now
+serves that title at `cinste.vercel.app`. Vercel labels the deployment
+`Production`; the alias serves the pilot host and does not establish a
+separate Production Supabase.
 
 The pending Student fixture showed its under-review state and next action.
 The verified Student fixture reached `/student`, but its account hub also
@@ -319,7 +322,7 @@ not establish Production readiness.
 | Local | Implementation and targeted local/disposable-database checks | Configured per developer; local evidence is not hosted evidence |
 | Hosted development/QA Supabase | Non-production Auth/Postgres/Storage and hosted assertions | Exists; migrations through `0037` are owner-confirmed applied. Batch 2 passed 19 assertions, Batch 3 passed 41 assertions after the `0034` rejoin-guard correction, Batch 5 passed 8 assertions, Giver aggregate validation passed 7 assertions, 18+ validation passed 3 assertions, and email-contact validation passed 6 assertions on 2026-10-10. |
 | Production Supabase | Isolated production Auth/Postgres/Storage/RPC | Does not exist; no migration is applied to Production |
-| Web deployment | QA public and operational web surfaces | Owner-created Vercel QA host exists at `https://cinste.vercel.app`; its stable domain returned HTTP 200 on 2026-10-08. The Vercel `Production` deployment label uses QA configuration and is not an isolated business Production environment |
+| Web deployment | QA public and operational web surfaces | Owner-created Vercel host `https://cinste.vercel.app` serves the pilot alias. Deployment `dpl_3PSPsfdLcM8Vcz9mHKgvBwXxmQvu` is Ready and carries Vercel target `Production`; this is not an isolated business Production environment or a separate Production Supabase. |
 | Mobile / TestFlight | Mobile-first Student and Giver product plus approved Partner/Organization operations | Windows is the primary development machine; owner tests on iPhone through Expo Go. An older MacBook is reserved for genuine iOS build/signing/TestFlight/release work. No Apple Developer Program membership, real bundle/team identity, QA/native-device deployment, signed build, or TestFlight release evidence exists |
 | Scheduler | Claim and Impact maintenance | DEV/QA job is registered but intentionally inactive; real worker/concurrency validation, monitoring, and Production activation are pending |
 | Payments | Funding authority | Mock-only; no real provider, signed webhook, or reconciliation |
