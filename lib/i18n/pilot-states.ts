@@ -2,6 +2,7 @@ import type { WebLocale } from './web';
 
 export const pilotStates = {
   ro: {
+    giverSuccessOne: 'Un student poate primi o experiență din partea ta.', giverSuccessPilotNote: 'Aceasta este o contribuție de test. Nu s-a încasat nicio plată reală.',
     accountTitle: 'Contul meu', accountIntro: 'Vezi spațiile disponibile pentru acest cont și alege unde continui.',
     studentStatus: 'Cont de student neverificat',
     studentTitle: 'Contul tău de student este neverificat', studentWhy: 'Verificarea confirmă că ești student și este necesară înainte să poți revendica experiențe CINSTE.', studentNext: 'Deschide aplicația CINSTE, alege „Verifică-ți contul” și trimite documentul de student.',
@@ -14,6 +15,7 @@ export const pilotStates = {
     checkoutTitle: 'Finalizarea contribuției pilot', checkoutNote: 'Nu se va încasa o plată reală. Această confirmare înregistrează o contribuție de test.', checkoutConfirm: 'Confirmă contribuția pilot', checkoutDecline: 'Înregistrează o încercare nereușită', checkoutFailed: 'Încercarea nereușită a fost înregistrată.',
   },
   en: {
+    giverSuccessOne: 'One student can receive an experience from you.', giverSuccessPilotNote: 'This is a test contribution. No real payment was charged.',
     accountTitle: 'My account', accountIntro: 'See the workspaces available to this account and choose where to continue.',
     studentStatus: 'Unverified Student account',
     studentTitle: 'Your Student account is currently unverified', studentWhy: 'Verification confirms your student status. It is required before you can claim CINSTE experiences.', studentNext: 'Open the CINSTE app, choose “Verify your account”, and submit your Student document.',
@@ -26,6 +28,7 @@ export const pilotStates = {
     checkoutTitle: 'Complete your pilot contribution', checkoutNote: 'No real payment will be charged. Confirmation records a test contribution.', checkoutConfirm: 'Confirm pilot contribution', checkoutDecline: 'Record an unsuccessful attempt', checkoutFailed: 'The unsuccessful attempt was recorded.',
   },
   tr: {
+    giverSuccessOne: 'Bir öğrenci sizden bir deneyim alabilir.', giverSuccessPilotNote: 'Bu bir test katkısıdır. Gerçek ödeme alınmadı.',
     accountTitle: 'Hesabım', accountIntro: 'Bu hesaba açık çalışma alanlarını görün ve devam etmek istediğiniz yeri seçin.',
     studentStatus: 'Doğrulanmamış Öğrenci hesabı',
     studentTitle: 'Öğrenci hesabınız henüz doğrulanmadı', studentWhy: 'Doğrulama öğrenci durumunuzu onaylar. CINSTE deneyimlerini almadan önce gereklidir.', studentNext: 'CINSTE uygulamasını açın, “Hesabını doğrula” seçeneğini seçin ve öğrenci belgenizi gönderin.',
@@ -38,6 +41,7 @@ export const pilotStates = {
     checkoutTitle: 'Pilot katkınızı tamamlayın', checkoutNote: 'Gerçek ödeme alınmaz. Onay, bir test katkısını kaydeder.', checkoutConfirm: 'Pilot katkısını onayla', checkoutDecline: 'Başarısız denemeyi kaydet', checkoutFailed: 'Başarısız deneme kaydedildi.',
   },
   ar: {
+    giverSuccessOne: 'يمكن لطالب واحد الحصول على تجربة منك.', giverSuccessPilotNote: 'هذه مساهمة تجريبية. لم تُحصّل أي دفعة حقيقية.',
     accountTitle: 'حسابي', accountIntro: 'اطلع على مساحات العمل المتاحة لهذا الحساب واختر وجهتك التالية.',
     studentStatus: 'حساب طالب غير موثّق',
     studentTitle: 'حساب الطالب الخاص بك غير موثّق حالياً', studentWhy: 'يؤكد التحقق أنك طالب، وهو مطلوب قبل الحصول على تجارب CINSTE.', studentNext: 'افتح تطبيق CINSTE، واختر «تحقق من حسابك»، ثم أرسل مستند الطالب.',

@@ -165,6 +165,18 @@ the catalog; these are hosted fixture-data quality defects, not authorization
 evidence. The Giver web journey remains pending mock checkout success/failure
 and return-path validation.
 
+On 2026-10-12, the owner approved one hosted mock checkout with the Giver QA
+fixture. The browser created a one-item Cappuccino test order for RON 15.00,
+confirmed it without a real payment, reached the success state with one
+experience available, and returned to `/giver`, where My Giving showed the new
+one-experience entry. This is a DEV/QA mock-funding success check, not payment
+acceptance. The success page exposed `1 students` and did not repeat the
+no-charge qualification. A scoped copy correction now handles the singular
+case and names the contribution as a no-charge test in RO/EN/TR/AR. Focused
+tests and web typecheck pass locally; hosted recheck of this new copy remains
+pending. Mock failure/retry, native funding, other role fixtures, and catalog
+fixture-data quality remain open.
+
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is
 now a regular module, leaving the server-action file with async action exports

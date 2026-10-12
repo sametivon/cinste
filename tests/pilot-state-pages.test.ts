@@ -11,6 +11,7 @@ vi.mock('@/app/actions', () => ({ createOrder: vi.fn() }));
 import Account from '@/app/account/page';
 import Student from '@/app/student/page';
 import Giver from '@/app/giver/page';
+import GiverSuccess from '@/app/giver/success/[orderId]/page';
 import { WorkspaceUnavailable } from '@/components/workspace-unavailable';
 import { pilotStates } from '@/lib/i18n/pilot-states';
 import { webLocales } from '@/lib/i18n/web';
@@ -84,6 +85,19 @@ describe('pilot account and workspace states', () => {
     expect(page).toContain('name="quantity"');
     expect(page).toContain('No real payment will be charged during this pilot');
     expect(rpc).toHaveBeenCalledTimes(2);
+  });
+
+  it('uses singular and no-charge copy after one mock contribution', async () => {
+    const orderQuery = { eq: vi.fn(), maybeSingle: vi.fn(async () => ({ data: { giver_order_items: [{ quantity: 1 }], campaigns: [{ quantity_available: 1 }], total_bani: 1500 } })) };
+    orderQuery.eq.mockReturnValue(orderQuery);
+    mocks.createClient.mockResolvedValue({ from: () => ({ select: () => orderQuery }) });
+    const page = renderToStaticMarkup(await GiverSuccess({ params: Promise.resolve({ orderId: 'order' }) }));
+    expect(page).toContain('One student can receive an experience from you.');
+    expect(page).toContain('No real payment was charged.');
+    expect(page).not.toContain('1 students');
+    orderQuery.maybeSingle.mockResolvedValueOnce({ data: { giver_order_items: [{ quantity: 3 }], campaigns: [{ quantity_available: 3 }], total_bani: 4500 } });
+    const pluralPage = renderToStaticMarkup(await GiverSuccess({ params: Promise.resolve({ orderId: 'order' }) }));
+    expect(pluralPage).toContain('3 students can receive an experience from you.');
   });
 
   it('keeps the pilot state copy complete across web locales', () => {

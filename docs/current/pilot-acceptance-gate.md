@@ -65,14 +65,13 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** after separate approval for a hosted mock funding mutation,
-run one `giver-web` checkout on the QA host and check its result and return
-path. The Giver-only workspace, My Giving, and pilot wording have already
-passed a signed-in read-only check. Then continue the remaining role/device
-run order below. Resolve the
-QA-named active offers through fixture-data ownership before a pilot-facing
-catalog pass; do not hide them by name in application code. Do not submit or
-approve verification for `student-unverified`.
+**Next exact step:** after the singular/no-charge success-copy correction
+deploys, recheck the existing mock order's success page without creating a new
+order. A separate approved mock attempt is needed to test failure/retry. Then
+continue the remaining role/device run order below. Resolve QA-named active
+offers through fixture-data ownership before a pilot-facing catalog pass; do
+not hide them by name in application code. Do not submit or approve
+verification for `student-unverified`.
 
 1. Confirm the QA host, current commit SHA, mobile bundle, locale, viewport or
    device, and fixture readiness.
@@ -123,6 +122,7 @@ repository when they contain account identifiers.
 | 2026-10-11 19:00 UTC | `8e5245f` code; Vercel deployment `dpl_6XnZYBxohcCso823uMh39YL6JudX` Ready at QA alias | `unverified.student@cinste.test` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop 1920 px browser | Student fixture web UX PASS; protected-route authorization PASS; catalog fixture data FAIL/P2 | `/account` stayed on a Student-only hub and showed unverified status. `/student` named the unverified state, explained the verification requirement, and offered the app action. Each denied route stayed on its own page with role-specific reason and Account/Home links; Account and Home recovery navigation worked. Student `/giver` showed discovery with explicit Student/Giver separation and no history or funding controls. QA-named offers with active partners remain visible. No verification was submitted. | Agent signed-in DOM checks and viewport screenshots on `cinste.vercel.app`; Vercel CLI alias inspection |
 | 2026-10-11 19:00 UTC | Same QA alias deployment | `unverified.student@cinste.test` | `/student`, `/admin` | Romanian / desktop 1920 px browser | Localization spot-check PASS | Student verification state and Admin denial state rendered Romanian headings, explanations, and recovery actions after switching the web locale. This does not cover every language or viewport. | Agent signed-in DOM checks on `cinste.vercel.app` |
 | 2026-10-11 19:22 UTC | `f01ad9f` docs revision with `8e5245f` code; Vercel deployment `dpl_4nKK8Jpc9QBsG9JtcwCVtWaCcvDM` Ready at QA alias | `giver@cinste.test` | `/account`, `/giver` | English / desktop 1920 px browser | Giver read-only web state PASS; checkout PENDING; fixture data FAIL/P2 | `/account` stayed on a Giver-only hub. `/giver` showed My Giving, privacy-suppressed outcome wording, and a checkout section stating no real payment will be charged during the pilot. No funding control was activated. Many repeated historical Cappuccino cards and active QA-named catalog offers remain. | Agent signed-in DOM and viewport checks on `cinste.vercel.app`; Vercel CLI alias inspection |
+| 2026-10-12 07:14 UTC | `45c786e` repository revision served by QA alias before copy correction | `giver@cinste.test`; mock order `8c68c527-846a-426f-ae90-b4afe0002543` | `/giver`, `/checkout/[orderId]`, `/giver/success/[orderId]` | English / desktop 1920 px browser | Mock checkout success and return PASS; success copy FAIL/P2; failure/retry PENDING | Owner-approved one-item Cappuccino test order for RON 15.00 reached checkout, stated no real payment would be charged, confirmed as a test contribution, and showed one available experience. Return link reached `/giver`, where a new one-experience My Giving entry appeared. Success page said `1 students` and omitted the no-charge reminder. Repository copy fix is local-only pending deployment. This is not real-payment acceptance. | Agent browser UI state and screenshot on `cinste.vercel.app` |
 
 ## Exit criteria for the next implementation decision
 
