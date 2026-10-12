@@ -13,6 +13,7 @@ import Student from '@/app/student/page';
 import Giver from '@/app/giver/page';
 import GiverSuccess from '@/app/giver/success/[orderId]/page';
 import Checkout from '@/app/checkout/[orderId]/page';
+import { metadata as giverMetadata } from '@/app/giver/layout';
 import { WorkspaceUnavailable } from '@/components/workspace-unavailable';
 import { pilotStates } from '@/lib/i18n/pilot-states';
 import { webLocales } from '@/lib/i18n/web';
@@ -77,6 +78,10 @@ describe('pilot account and workspace states', () => {
     expect(page).not.toContain('name="quantity"');
     expect(rpc).not.toHaveBeenCalled();
     expect(offerQuery.eq).toHaveBeenCalledWith('partners.active', true);
+  });
+
+  it('uses a neutral route title for public Giver discovery', () => {
+    expect(giverMetadata.title).toBe('Explore giving · CINSTE');
   });
 
   it('retains authenticated Giver history and pilot checkout access', async () => {

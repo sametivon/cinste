@@ -177,9 +177,28 @@ session then recorded a failed mock order. The server kept it failed and added
 no inventory, but the checkout still offered a confirmation action that could
 not retry that terminal order. The checkout page now shows the failure state
 and directs the Giver to `/giver` for a fresh order. Focused tests and web
-typecheck pass locally; hosted checks of the new success and failure recovery
-copy are pending. Native funding, other role fixtures, and catalog fixture-data
-quality remain open.
+typecheck passed locally. Hosted checks passed on 2026-10-12. Native funding,
+other role fixtures, and catalog fixture-data quality remain open.
+
+On 2026-10-12, hosted browser checks on `cinste.vercel.app` confirmed the
+`4c78382` checkout correction. The success page uses singular copy and states
+that no real payment was charged. The failed order has no confirm action and
+returns the Giver to `/giver`. The Student-only fixture still sees a Student
+account hub, explicit unverified status and next action, shared denial pages
+for Organization, Partner, and Admin, and public Giver discovery without
+history or funding controls. The public Giver page still lists QA-named offers.
+Its browser title still said “My Giving.” The repository now uses
+“Explore giving”; hosted deployment and browser recheck remain pending.
+
+The pending Student fixture showed its under-review state and next action.
+The verified Student fixture reached `/student`, but its account hub also
+listed Organization Operator access. The role model permits an Organization
+assignment beside a Student role. Treat this fixture as multi-workspace until
+the fixture owner confirms that assignment is intentional. The assigned Café
+Partner opened `/partner`; its recent-history fields displayed “Unavailable.”
+The Admin fixture opened `/admin` and showed QA-labelled queue records. No
+redemption, verification, moderation, or other operational action was taken.
+These checks do not complete either role's acceptance journey.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is

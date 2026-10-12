@@ -65,14 +65,13 @@ evidence recorded in the run log below.
 
 ## Required manual run order
 
-**Next exact step:** after the singular/no-charge success-copy and failed-order
-recovery correction deploys, recheck both existing Giver orders. Confirm the
-paid order's success copy, then confirm the failed order shows its result and a
-link back to `/giver` without a confirm action. Continue the remaining
-role/device run order below. Resolve QA-named active offers through fixture-data
-ownership before a pilot-facing catalog pass; do not hide them by name in
-application code. Do not submit or approve verification for
-`student-unverified`.
+**Next exact step:** deploy the Giver route-title correction, then recheck the
+Student-facing `/giver` title and body on `cinste.vercel.app`. The checkout
+success and failed-order recovery states passed hosted browser checks on
+2026-10-12. Continue the Partner, Organization, Admin, and device journeys.
+Resolve QA-named active offers through fixture-data ownership before a
+pilot-facing catalog pass. Do not hide them by name in application code. Do not
+submit or approve verification for `student-unverified`.
 
 1. Confirm the QA host, current commit SHA, mobile bundle, locale, viewport or
    device, and fixture readiness.
@@ -125,6 +124,11 @@ repository when they contain account identifiers.
 | 2026-10-11 19:22 UTC | `f01ad9f` docs revision with `8e5245f` code; Vercel deployment `dpl_4nKK8Jpc9QBsG9JtcwCVtWaCcvDM` Ready at QA alias | `giver@cinste.test` | `/account`, `/giver` | English / desktop 1920 px browser | Giver read-only web state PASS; checkout PENDING; fixture data FAIL/P2 | `/account` stayed on a Giver-only hub. `/giver` showed My Giving, privacy-suppressed outcome wording, and a checkout section stating no real payment will be charged during the pilot. No funding control was activated. Many repeated historical Cappuccino cards and active QA-named catalog offers remain. | Agent signed-in DOM and viewport checks on `cinste.vercel.app`; Vercel CLI alias inspection |
 | 2026-10-12 07:14 UTC | `45c786e` repository revision served by QA alias before copy correction | `giver@cinste.test`; mock order `8c68c527-846a-426f-ae90-b4afe0002543` | `/giver`, `/checkout/[orderId]`, `/giver/success/[orderId]` | English / desktop 1920 px browser | Mock checkout success and return PASS; success copy FAIL/P2; failure/retry PENDING | One-item Cappuccino test order for RON 15.00 reached checkout, stated no real payment would be charged, confirmed as a test contribution, and showed one available experience. Return link reached `/giver`, where a new one-experience My Giving entry appeared. Success page said `1 students` and omitted the no-charge reminder. | Agent browser UI state and screenshot on `cinste.vercel.app` |
 | 2026-10-12 07:16 UTC | `f134b27` served by QA alias | `giver@cinste.test`; failed mock order `2cf62c73-2626-4ba5-a2bc-5575bfb9f22b` | `/giver`, `/checkout/[orderId]?failed=1` | English / desktop 1920 px browser | Failure recorded; retry UX FAIL/P2 | The failed attempt returned to checkout with “The unsuccessful attempt was recorded.” The server kept the order failed, but the page still showed “Confirm pilot contribution,” which could not retry that terminal order. A local correction now shows the failure state and directs the Giver to `/giver` for a fresh order; hosted recheck is pending. No real payment was charged and no inventory was added. | Agent browser UI state and screenshot on `cinste.vercel.app` |
+| 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `giver@cinste.test`; existing paid and failed mock orders | `/giver/success/[orderId]`, `/checkout/[orderId]?failed=1`, `/giver` | English / desktop browser | Checkout copy and failure recovery PASS; mock-funding journey remains partial | The paid order showed singular copy, a no-real-payment statement, RON 15.00, and one available experience. The failed order showed its terminal result and no confirm action. The recovery destination `/giver` loaded. This is mock-funding evidence, not payment acceptance. Existing repeated Cappuccino history remains. | Agent browser DOM checks on `cinste.vercel.app` |
+| 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `student-unverified` | `/account`, `/student`, `/organization`, `/partner`, `/admin`, `/giver` | English / desktop browser | Student account, verification, denial, and role separation PASS; catalog fixture data FAIL/P2 | The account stayed on the Student-only hub. The Student page named the unverified state, explained why verification is required, and gave the app action. Organization, Partner, and Admin each showed a route-specific denial with Account/Home links. Giver discovery showed no history or funding controls. QA-named offers remain. The browser title still said “My Giving”; a neutral repository title is now in review and is not yet deployed. | Agent browser DOM checks on `cinste.vercel.app` |
+| 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `student-pending`; `student-verified` | `/student`, `/account` | English / desktop browser | State rendering PASS; full Student journey PENDING | Pending Student showed “Your verification is under review” and a clear next step. The verified Student reached the mobile handoff. Its account hub also listed Organization Operator access. The role model permits this combination, so confirm whether the fixture assignment is intentional before treating it as a Student-only fixture. No verification action was taken. | Agent browser DOM checks on `cinste.vercel.app` |
+| 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `partner-assigned` | `/partner`, `/admin` | English / desktop browser | Workspace access PASS; operational journey PENDING; data clarity FAIL/P2 | The assigned Café Partner opened its workspace. Recent-history fields displayed “Unavailable.” A Partner account visiting `/admin` received the dedicated Admin denial state with Account/Home links. No scan, redemption, or draft submission was performed. | Agent browser DOM checks on `cinste.vercel.app` |
+| 2026-10-12 07:35 UTC | `4c78382` served by QA alias | `admin-ops` | `/admin` | English / desktop browser | Admin overview PASS; acceptance PENDING; fixture data FAIL/P2 | The overview loaded with 36 attention items and QA-labelled Student, Impact, Organization, and inventory records. No review or moderation action was taken. Clear the QA data through its owner before using this queue for pilot acceptance. | Agent browser DOM check on `cinste.vercel.app` |
 
 ## Exit criteria for the next implementation decision
 
