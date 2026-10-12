@@ -171,11 +171,15 @@ confirmed it without a real payment, reached the success state with one
 experience available, and returned to `/giver`, where My Giving showed the new
 one-experience entry. This is a DEV/QA mock-funding success check, not payment
 acceptance. The success page exposed `1 students` and did not repeat the
-no-charge qualification. A scoped copy correction now handles the singular
-case and names the contribution as a no-charge test in RO/EN/TR/AR. Focused
-tests and web typecheck pass locally; hosted recheck of this new copy remains
-pending. Mock failure/retry, native funding, other role fixtures, and catalog
-fixture-data quality remain open.
+no-charge qualification. The scoped correction now handles the singular case
+and labels the contribution as a no-charge test in RO/EN/TR/AR. The same QA
+session then recorded a failed mock order. The server kept it failed and added
+no inventory, but the checkout still offered a confirmation action that could
+not retry that terminal order. The checkout page now shows the failure state
+and directs the Giver to `/giver` for a fresh order. Focused tests and web
+typecheck pass locally; hosted checks of the new success and failure recovery
+copy are pending. Native funding, other role fixtures, and catalog fixture-data
+quality remain open.
 
 The Vercel deployment for `15022d5` failed during page-data collection because
 the Partner server-action module exported its validation schema. The schema is

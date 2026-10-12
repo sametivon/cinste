@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { completeMockPayment } from '@/app/actions';
@@ -18,11 +19,10 @@ export default async function Checkout({ params, searchParams }: { params: Promi
       {order.giver_order_items.map((item: any) => <p className="mt-3" key={item.offers.name}><b>{item.quantity}× {item.offers.name}</b> · {formatWebMoney(locale, item.quantity * item.unit_price_bani)}</p>)}
       <p className="mt-5 text-2xl font-black">{webT(locale, 'checkout.total')}: {formatWebMoney(locale, order.total_bani)}</p>
       {query.fundingError === 'unavailable' && <p className="mt-4 text-coral" role="alert">{fundingT(locale, 'unavailable')}</p>}
-      {query.failed && <p className="mt-4 text-coral" role="alert">{copy.checkoutFailed}</p>}
-      <div className="mt-6 flex flex-wrap gap-3">
+      {order.status === 'failed' ? <><p className="mt-4 text-coral" role="alert">{copy.checkoutFailed}</p><Link className="btn mt-6" href="/giver">{webT(locale, 'giver.fund')}</Link></> : <div className="mt-6 flex flex-wrap gap-3">
         <form action={completeMockPayment}><input type="hidden" name="orderId" value={id}/><input type="hidden" name="success" value="true"/><button className="btn">{copy.checkoutConfirm}</button></form>
         <form action={completeMockPayment}><input type="hidden" name="orderId" value={id}/><input type="hidden" name="success" value="false"/><button className="btn secondary">{copy.checkoutDecline}</button></form>
-      </div>
+      </div>}
     </div>
   </main>;
 }

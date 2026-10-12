@@ -12,6 +12,7 @@ import Account from '@/app/account/page';
 import Student from '@/app/student/page';
 import Giver from '@/app/giver/page';
 import GiverSuccess from '@/app/giver/success/[orderId]/page';
+import Checkout from '@/app/checkout/[orderId]/page';
 import { WorkspaceUnavailable } from '@/components/workspace-unavailable';
 import { pilotStates } from '@/lib/i18n/pilot-states';
 import { webLocales } from '@/lib/i18n/web';
@@ -98,6 +99,17 @@ describe('pilot account and workspace states', () => {
     orderQuery.maybeSingle.mockResolvedValueOnce({ data: { giver_order_items: [{ quantity: 3 }], campaigns: [{ quantity_available: 3 }], total_bani: 4500 } });
     const pluralPage = renderToStaticMarkup(await GiverSuccess({ params: Promise.resolve({ orderId: 'order' }) }));
     expect(pluralPage).toContain('3 students can receive an experience from you.');
+  });
+
+  it('directs a failed mock order to a fresh attempt instead of confirming the terminal order', async () => {
+    const orderQuery = { eq: vi.fn(), maybeSingle: vi.fn(async () => ({ data: { status: 'failed', giver_order_items: [{ quantity: 1, unit_price_bani: 1500, offers: { name: 'Cappuccino' } }], total_bani: 1500 } })) };
+    orderQuery.eq.mockReturnValue(orderQuery);
+    mocks.createClient.mockResolvedValue({ from: () => ({ select: () => orderQuery }) });
+    const page = renderToStaticMarkup(await Checkout({ params: Promise.resolve({ orderId: 'order' }), searchParams: Promise.resolve({ failed: '1' }) }));
+    expect(page).toContain('The unsuccessful attempt was recorded.');
+    expect(page).toContain('href="/giver"');
+    expect(page).toContain('Treat someone else');
+    expect(page).not.toContain('Confirm pilot contribution');
   });
 
   it('keeps the pilot state copy complete across web locales', () => {
