@@ -31,6 +31,18 @@ invoicing, CAEN-dependent commercial behavior, or Production release work.
 
 ## Last completed work
 
+On 2026-10-12, the public CINSTE landing page was reshaped around balanced
+Student and Giver paths that converge at one experience and continue to
+community. Mobile uses a separate single-column hero composition; the broader
+page gives each role a perspective, reconnects them in the journey and impact
+sections, and varies the experience and closing layouts. The hero uses a small
+SVG path animation with a static reduced-motion fallback; no Three.js/WebGL
+dependency was added. The implementation preserves the existing localized
+copy and design tokens. Local typecheck and production build pass. Browser
+review covered the desktop layout, 390px mobile hero, and Arabic RTL mobile
+layout without horizontal overflow. This is repository/local evidence only;
+no hosted, deployed, or physical-device acceptance was performed.
+
 The legal/compliance workstream was reconciled against owner-provided pilot
 inputs on 2026-10-10. The pilot uses the identified Romanian PFA, is currently
 non-VAT-registered, intends a platform/facilitator model with Partner-fulfilled
