@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion, MotionConfig, useReducedMotion } from "motion/react";
+import type { ReactNode } from "react";
 import type { WebLocale } from "@/lib/i18n/web";
 import { publicRoleDestinations } from "@/lib/auth-routing";
 import { landingCopy } from "./copy";
@@ -16,10 +17,12 @@ function Mark({ className = "" }: { className?: string }) {
   </svg>;
 }
 
-function Arrow() {
-  return <svg className="lp-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>;
+function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const reduced = useReducedMotion();
+  return <motion.div className={className} initial={false}
+    whileInView={reduced ? undefined : { y: [12, 0] }}
+    viewport={{ once: true, amount: 0.15 }}
+    transition={{ duration: 0.32, delay, ease: [0.2, 0.8, 0.2, 1] }}>{children}</motion.div>;
 }
 
 function ExperienceArt({ kind }: { kind: "cinema" | "care" | "activity" }) {
@@ -43,27 +46,9 @@ function ExperienceArt({ kind }: { kind: "cinema" | "care" | "activity" }) {
   </svg>;
 }
 
-function HeroScene({ giver, student, experience, community }: { giver: string; student: string; experience: string; community: string }) {
-  const reduced = useReducedMotion();
-  const pathMotion = reduced ? undefined : { pathLength: [0, 1] };
-  return <div className="lp-scene">
-    <svg className="lp-scene-map" viewBox="0 0 120 100" preserveAspectRatio="none" fill="none" aria-hidden="true">
-      <motion.path className="lp-scene-path lp-scene-path-giver" d="M9 15C28 15 41 30 56 48" initial={false} whileInView={pathMotion} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.62, ease: [0.2, 0.8, 0.2, 1] }} />
-      <motion.path className="lp-scene-path lp-scene-path-student" d="M111 15C92 15 79 30 64 48" initial={false} whileInView={pathMotion} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.62, delay: 0.1, ease: [0.2, 0.8, 0.2, 1] }} />
-      <motion.path className="lp-scene-path lp-scene-path-community" d="M60 53C60 68 60 79 60 92" initial={false} whileInView={pathMotion} viewport={{ once: true, amount: 0.35 }} transition={{ duration: 0.62, delay: 0.24, ease: [0.2, 0.8, 0.2, 1] }} />
-      <circle cx="9" cy="15" r="2.4" className="lp-scene-origin-giver" />
-      <circle cx="111" cy="15" r="2.4" className="lp-scene-origin-student" />
-      <circle cx="60" cy="92" r="2.8" className="lp-scene-origin-community" />
-    </svg>
-    <span className="lp-scene-label lp-scene-giver">{giver}</span>
-    <span className="lp-scene-label lp-scene-student">{student}</span>
-    <div className="lp-scene-experience"><Mark /><span>{experience}</span></div>
-    <span className="lp-scene-label lp-scene-community">{community}</span>
-  </div>;
-}
-
 export function Landing({ locale }: { locale: WebLocale }) {
   const t = landingCopy[locale];
+  const reduced = useReducedMotion();
   const experiences = [
     { kind: "cinema" as const, title: t.cinema, body: t.cinemaText },
     { kind: "care" as const, title: t.care, body: t.careText },
@@ -75,77 +60,57 @@ export function Landing({ locale }: { locale: WebLocale }) {
       <main id="landing-content" tabIndex={-1}>
         <section className="lp-wrap lp-hero" aria-labelledby="hero-title">
           <div className="lp-hero-copy">
+            <p className="lp-eyebrow"><span className="lp-dot" />{t.eyebrow}</p>
             <h1 id="hero-title">{t.title}<br /><em>{t.accent}</em></h1>
             <p className="lp-intro">{t.intro}</p>
-            <div className="lp-actions">
-              <Link className="lp-button" href={publicRoleDestinations.student}>{t.student}<Arrow /></Link>
-              <Link className="lp-button" href={publicRoleDestinations.giver}>{t.give}<Arrow /></Link>
-            </div>
-            <div className="lp-hero-meta"><p className="lp-caption">{t.note}</p><a className="lp-text-link" href="#how-it-works">{t.how}<Arrow /></a></div>
+            <div className="lp-actions"><Link className="lp-button" href={publicRoleDestinations.student}>{t.student}<span aria-hidden="true">→</span></Link><Link className="lp-button lp-secondary" href={publicRoleDestinations.giver}>{t.give}</Link></div>
+            <p className="lp-caption">{t.note}</p>
+            <a className="lp-text-link" href="#how-it-works">{t.how}<span aria-hidden="true"> ↓</span></a>
           </div>
-          <HeroScene giver={t.roles[0][0]} student={t.student} experience={t.story[1]} community={t.story[3]} />
-        </section>
-
-        <div className="lp-category-band"><ul className="lp-wrap" aria-label={t.example}>{t.categories.map((category) => <li key={category}>{category}</li>)}</ul></div>
-
-        <section className="lp-wrap lp-section lp-paths" aria-labelledby="paths-title">
-          <h2 id="paths-title">{t.rolesTitle}</h2>
-          <div className="lp-path-pair">
-            <article className="lp-path lp-path-student">
-              <h3>{t.student}</h3>
-              <p>{t.studentRole}</p>
-              <Link className="lp-text-link" href={publicRoleDestinations.student}>{t.studentAction}<Arrow /></Link>
-            </article>
-            <article className="lp-path lp-path-giver">
-              <h3>{t.roles[0][0]}</h3>
-              <p>{t.roles[0][1]}</p>
-              <Link className="lp-text-link" href={publicRoleDestinations.giver}>{t.roles[0][2]}<Arrow /></Link>
-            </article>
-          </div>
-          <ul className="lp-future-roles">
-            {t.roles.slice(1).map(([title, body, status]) => <li key={title}><span><strong>{title}</strong><span>{body}</span></span><small>{status}</small></li>)}
-          </ul>
-          <p className="lp-caption lp-workspace-note">{t.workspace}</p>
-        </section>
-
-        <section id="how-it-works" className="lp-journey lp-section" aria-labelledby="journey-title">
-          <div className="lp-wrap">
-            <h2 id="journey-title">{t.stepsTitle}</h2>
-            <ol className="lp-steps">{t.steps.map(([title, body], index) => <li key={title}>
-              <span className={`lp-step-number lp-step-${index + 1}`} aria-hidden="true">0{index + 1}</span>
-              <h3>{title}</h3><p>{body}</p>
-            </li>)}</ol>
+          <div className="lp-scene" aria-label={t.example}>
+            <div className="lp-scene-disc" />
+            <svg className="lp-thread" viewBox="0 0 500 480" fill="none" aria-hidden="true">
+              <motion.path d="M28 300C50 450 470 468 457 239C452 132 294 91 222 148C114 233 102 85 171 33"
+                stroke="var(--lp-primary)" strokeWidth="2" strokeDasharray="6 10"
+                initial={false} whileInView={reduced ? undefined : { pathLength: [0, 1] }} viewport={{ once: true }}
+                transition={{ duration: 0.32 }} />
+            </svg>
+            <Reveal className="lp-ticket" delay={0.08}>
+              <div className="lp-ticket-top"><span>CINSTE</span><Mark /></div>
+              <ExperienceArt kind="cinema" />
+              <h2>{t.cinema}</h2><p>{t.cinemaText}</p>
+              <div className="lp-ticket-stub"><span>{t.example}</span><span aria-hidden="true">01 / 03</span></div>
+            </Reveal>
+            <Reveal className="lp-mini-card" delay={0.16}><span className="lp-mini-art" aria-hidden="true">✳</span><div><strong>{t.activity}</strong><p>{t.activityText}</p></div></Reveal>
+            <div className="lp-echo-note"><Mark /><span>{t.impactNote}</span></div>
           </div>
         </section>
 
-        <section className="lp-discovery lp-section" aria-labelledby="discovery-title">
-          <div className="lp-wrap">
-            <div className="lp-discovery-heading"><h2 id="discovery-title">{t.discoveryTitle}</h2><p>{t.discoveryBody}</p></div>
-            <div className="lp-discovery-showcase">
-              <article className="lp-feature-experience"><ExperienceArt kind={experiences[0].kind} /><div><h3>{experiences[0].title}</h3><p>{experiences[0].body}</p></div></article>
-              <div className="lp-other-experiences">{experiences.slice(1).map(({ kind, title, body }) => <article className={`lp-other-experience ${kind}`} key={kind}><ExperienceArt kind={kind} /><div><h3>{title}</h3><p>{body}</p></div></article>)}</div>
-            </div>
+        <div className="lp-category-band"><div className="lp-wrap">{t.categories.map((category) => <span key={category}>{category}<span aria-hidden="true">✳</span></span>)}</div></div>
+
+        <section id="how-it-works" className="lp-wrap lp-section">
+          <Reveal className="lp-section-heading"><p className="lp-eyebrow">{t.how}</p><h2>{t.stepsTitle}</h2></Reveal>
+          <ol className="lp-steps">{t.steps.map(([title, body], index) => <li key={title}><Reveal delay={index * 0.04}><span className="lp-step-number">0{index + 1}</span><h3>{title}</h3><p>{body}</p></Reveal></li>)}</ol>
+        </section>
+
+        <section className="lp-discovery lp-section">
+          <div className="lp-wrap"><Reveal className="lp-discovery-heading"><div><p className="lp-eyebrow">{t.discovery}</p><h2>{t.discoveryTitle}</h2></div><p>{t.discoveryBody}</p></Reveal>
+            <div className="lp-experiences">{experiences.map((experience, index) => <Reveal key={experience.kind} className={`lp-experience ${experience.kind}`} delay={index * 0.04}>
+              <ExperienceArt kind={experience.kind} /><div><span className="lp-caption">0{index + 1}</span><h3>{experience.title}</h3><p>{experience.body}</p></div>
+            </Reveal>)}</div>
           </div>
         </section>
 
-        <section id="impact" className="lp-impact lp-section" aria-labelledby="impact-title">
-          <div className="lp-wrap lp-impact-inner">
-            <div className="lp-impact-art" aria-hidden="true"><Mark /><span /><span /><span /></div>
-          <div className="lp-impact-copy"><h2 id="impact-title">{t.impactTitle}</h2><p>{t.impactBody}</p><strong>{t.impactNote}</strong><div className="lp-actions"><Link className="lp-button" href={publicRoleDestinations.student}>{t.student}<Arrow /></Link><Link className="lp-button" href={publicRoleDestinations.giver}>{t.give}<Arrow /></Link></div></div>
-          </div>
+        <section id="impact" className="lp-wrap lp-section lp-impact">
+          <Reveal className="lp-impact-art"><Mark className="lp-impact-mark" /><div className="lp-story">{t.story.map((label, i) => <div key={label}><span aria-hidden="true">0{i + 1}</span>{label}</div>)}</div></Reveal>
+          <Reveal className="lp-impact-copy"><p className="lp-eyebrow">{t.impact}</p><h2>{t.impactTitle}</h2><p>{t.impactBody}</p><strong className="lp-impact-note">{t.impactNote}</strong><Link className="lp-text-link" href={publicRoleDestinations.student}>{t.student} <span aria-hidden="true">→</span></Link></Reveal>
         </section>
 
-        <section className="lp-wrap lp-final" aria-labelledby="final-title">
-          <Mark />
-          <h2 id="final-title">{t.finalTitle}</h2>
-          <p>{t.finalBody}</p>
-          <div className="lp-actions">
-            <Link href={publicRoleDestinations.student} className="lp-button">{t.student}<Arrow /></Link>
-            <Link href={publicRoleDestinations.giver} className="lp-button">{t.give}<Arrow /></Link>
-          </div>
-        </section>
+        <section className="lp-wrap lp-section lp-roles"><h2>{t.rolesTitle}</h2><Reveal className="lp-role"><span className="lp-role-index">01</span><h3>{t.student}</h3><p>{t.studentRole}</p><Link className="lp-text-link" href={publicRoleDestinations.student}>{t.studentAction} <span aria-hidden="true">→</span></Link></Reveal>{t.roles.map(([title, body, link], i) => <Reveal className="lp-role" key={title}><span className="lp-role-index">0{i + 2}</span><h3>{title}</h3><p>{body}</p>{i === 0 ? <Link className="lp-text-link" href={publicRoleDestinations.giver}>{link} <span aria-hidden="true">→</span></Link> : <span className="lp-caption">{link}</span>}</Reveal>)}<p className="lp-caption">{t.workspace}</p></section>
+
+        <section className="lp-wrap lp-final"><Mark /><p className="lp-eyebrow">CINSTE</p><h2>{t.finalTitle}</h2><p>{t.finalBody}</p><div className="lp-actions"><Link href={publicRoleDestinations.giver} className="lp-button">{t.give}<span aria-hidden="true">→</span></Link><Link href={publicRoleDestinations.student} className="lp-button lp-secondary">{t.student}</Link></div></section>
       </main>
-      <footer className="lp-wrap lp-footer"><a href="/" className="lp-wordmark" aria-label="CINSTE"><Mark />CINSTE</a><p>{t.footer}</p><a href="#how-it-works" className="lp-text-link">{t.how}<Arrow /></a><span className="lp-caption">© {new Date().getFullYear()} CINSTE</span></footer>
+      <footer className="lp-wrap lp-footer"><a href="/" className="lp-wordmark" aria-label="CINSTE"><Mark />CINSTE</a><p>{t.footer}</p><a href="#how-it-works" className="lp-text-link">{t.how}</a><span className="lp-caption">© {new Date().getFullYear()} CINSTE</span></footer>
     </div>
   </MotionConfig>;
 }
