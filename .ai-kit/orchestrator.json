@@ -18,7 +18,7 @@
       "id": "P0-001",
       "title": "Add repository validation CI",
       "priority": 1,
-      "status": "planned",
+      "status": "complete",
       "depends_on": ["ORCH-001"],
       "risk": "medium",
       "paths": [".github/"],
