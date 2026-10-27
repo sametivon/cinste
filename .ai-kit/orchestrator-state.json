@@ -1,16 +1,22 @@
 {
   "schema_version": 1,
-  "run_id": "45aa2a79-1920-4ec8-ac35-dde2b9b24070",
-  "current_task": "P0-001",
-  "status": "retryable_failure",
-  "attempts": 1,
-  "last_result": "worker_failed_1",
+  "run_id": null,
+  "current_task": null,
+  "status": "idle",
+  "attempts": 0,
+  "last_result": "Previous pilot attempts stopped before worker execution; runner corrected.",
   "history": [
     {
       "run_id": "45aa2a79-1920-4ec8-ac35-dde2b9b24070",
       "task_id": "P0-001",
       "result": "worker_failed_1",
       "log": "C:\\Users\\Sam\\Desktop\\cinste\\.ai-kit\\runs\\45aa2a79-1920-4ec8-ac35-dde2b9b24070.log"
+    },
+    {
+      "run_id": "02e8a6aa-f5f5-4845-a878-aba636e66c1b",
+      "task_id": "P0-001",
+      "result": "worker_failed_1",
+      "log": "C:\\Users\\Sam\\Desktop\\cinste\\.ai-kit\\runs\\02e8a6aa-f5f5-4845-a878-aba636e66c1b.log"
     }
   ]
 }

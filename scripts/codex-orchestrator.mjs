@@ -102,12 +102,23 @@ function main() {
     return;
   }
 
+  const maxAttempts = registry.max_retries + 1;
+  if (state.current_task === task.id && state.attempts >= maxAttempts) {
+    state.status = 'blocked';
+    state.last_result = `Retry budget exhausted after ${state.attempts} attempts.`;
+    save(statePath, state);
+    console.log(`BLOCKED ${task.id}: retry budget exhausted`);
+    return;
+  }
+
   const dirty = changedPaths();
   if (dirty.length) throw new Error(`Tracked changes exist. Reconcile before delegation: ${dirty.join(', ')}`);
 
   const runId = randomUUID();
   const worktree = join(runDir, runId, 'worktree');
   const logPath = join(runDir, `${runId}.log`);
+  const lastMessagePath = join(runDir, `${runId}.last-message`);
+  const branch = `codex/${task.id.toLowerCase()}-${runId.slice(0, 8)}`;
   mkdirSync(dirname(worktree), { recursive: true });
   mkdirSync(runDir, { recursive: true });
   state.run_id = runId;
@@ -116,17 +127,18 @@ function main() {
   state.attempts += 1;
   save(statePath, state);
 
-  const worktreeResult = spawnSync('git', ['worktree', 'add', '--detach', worktree, 'HEAD'], { cwd: root, encoding: 'utf8' });
+  const worktreeResult = spawnSync('git', ['worktree', 'add', '-b', branch, worktree, 'HEAD'], { cwd: root, encoding: 'utf8' });
   if (worktreeResult.status !== 0) throw new Error(worktreeResult.stderr.trim() || 'Could not create isolated worktree.');
-  const worker = spawnSync('codex', ['--approve-for-me', '--no-alt-screen', '--sandbox', 'workspace-write', '--cd', worktree, 'exec', '--output-last-message', logPath, promptFor(task)], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const worker = spawnSync('codex', ['--approve-for-me', '--no-alt-screen', '--cd', worktree, 'exec', '--output-last-message', lastMessagePath, promptFor(task)], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   const workerStatus = worker.status ?? 1;
-  writeFileSync(logPath, `${worker.stdout ?? ''}${worker.stderr ?? ''}`, 'utf8');
+  const lastMessage = existsSync(lastMessagePath) ? readFileSync(lastMessagePath, 'utf8') : '';
+  writeFileSync(logPath, `${worker.stdout ?? ''}${worker.stderr ?? ''}${lastMessage}`, 'utf8');
   const result = workerStatus === 0 ? 'worker_completed_review_required' : `worker_failed_${workerStatus}`;
   state.status = workerStatus === 0 ? 'review_required' : 'retryable_failure';
   state.last_result = result;
-  state.history.push({ run_id: runId, task_id: task.id, result, log: logPath });
+  state.history.push({ run_id: runId, task_id: task.id, result, branch, worktree, log: logPath });
   save(statePath, state);
-  spawnSync('git', ['worktree', 'remove', '--force', worktree], { cwd: root, encoding: 'utf8' });
+  if (workerStatus !== 0) spawnSync('git', ['worktree', 'remove', '--force', worktree], { cwd: root, encoding: 'utf8' });
   console.log(`${state.status.toUpperCase()} ${task.id} ${runId}`);
   process.exitCode = workerStatus;
 }
