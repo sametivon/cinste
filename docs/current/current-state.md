@@ -134,12 +134,28 @@ runs before client creation. See `docs/guides/hosted-qa-targets.md`.
 P0-002 implementation validation passed web typecheck, 87 web tests, 155 offline
 QA target tests, mobile typecheck, 54 mobile tests, and the disposable-database
 scheduler, provisioning, funding, and native BFF suites (18, 8, 6, and 3 tests).
-Independent review approved commit `83a64b1`. Integration task `t_04ca7b01`
-reconciles that commit with later main changes and requires fresh local checks
-plus passing GitHub `web` and `mobile` checks on the exact pushed SHA. Hermes
-Kanban records publication and CI evidence. No hosted script operation,
-migration application, deployment, or Production action is part of this task.
-P0-003 and P0-004 status remains owned by Hermes Kanban, not this ledger.
+Independent review approved commit `83a64b1`. P0-002 is integrated at
+`3dfbfd66be694a2828441b0ae9596bdffe19f0cc` on `origin/main`. Required GitHub
+`web` and `mobile` checks passed on that exact SHA in run `40547818031`.
+
+P0-003 integration task `t_8309e64f` combines reviewed commits `4fbd2e3` and
+`e48bcdb` on top of P0-002 and later main history. `scripts/safety-gate.mjs`
+checks declared paths, sensitive changes, immutable historical migrations, and
+ordered new migrations. It rejects all `assume-unchanged` and `skip-worktree`
+index entries without changing their flags. The merge gate repeats inspection
+after every validation command, including failed commands. The 44 regression
+tests cover both flags at each of the nine validation boundaries. Independent
+re-review `t_6b4feffe` approved the corrected tip. Both QA target and change-safety
+test scripts remain in `npm test`. See `docs/guides/change-safety.md`.
+
+The read-only CI `safety` job adds migration audit and disposable security tests.
+Branch protection was rechecked during integration: only `web` and `mobile`
+are required. A passing safety job is not yet an enforced required-check policy.
+Exact integrated-SHA local gate, publication, and CI results are recorded on
+Hermes Kanban; do not treat this pre-publication ledger as CI evidence.
+No migration file, hosted DEV/QA database, Production, payment, or scheduler
+runtime state changes in this integration. The DEV/QA scheduler stays inactive.
+P0-004 remains the dependent continuation workstream, not part of this task.
 
 P0-001 is now implemented: `.github/workflows/validation.yml` runs separate
 read-only web and mobile Node 22 validation jobs on pull requests and pushes
@@ -1187,11 +1203,11 @@ for commit `38bd07f`. Each later integrated SHA needs its own CI evidence.
 The bounded pilot task `t_ab3e5f9b` passed. It delegated to Codex, completed in
 a scratch workspace, and did not edit files or access hosted systems.
 
-The initial autonomous delivery state is:
+The autonomous delivery state is:
 
-- `t_095b4dcc`: P0-002 implementation complete at local commit `83a64b1`.
-- `t_596d992e`: P0-003 implementation complete at local commit `4fbd2e3`.
-- Separate read-only review and dependent integration cards gate both commits.
+- `t_095b4dcc`: P0-002 reviewed and integrated at `3dfbfd6`; exact-SHA CI passed.
+- `t_596d992e`: P0-003 implementation plus R1 correction reviewed at `e48bcdb`.
+- `t_8309e64f`: P0-003 integration; exact-SHA validation and CI evidence on Kanban.
 - `t_4f3c6cfb`: backlog steward waits for both reviewed integrations.
 
 Each implementation needs tests, an independent read-only review, and an

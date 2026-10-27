@@ -52,6 +52,14 @@ blocks a task after two consecutive failures.
 
 ## Task rules
 
+Before delegation, run the development path contract through
+`npm run safety:gate -- delegate --contract <ABSOLUTE_CONTRACT_PATH>`.
+Include the approved contract and the report in the card. During development,
+run `check` against the recorded target commit. Before an authorized merge,
+require the clean-commit `merge` gate and its validation output. The gate does
+not grant merge authority. See `docs/guides/change-safety.md` for the contract,
+commands, migration invariants, and CI limits.
+
 Create every task on the `cinste` board. Use an isolated worktree for code
 changes. Use `completion-contract OWNER/REPO` only when publication is
 explicitly approved.

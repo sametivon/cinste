@@ -11,6 +11,27 @@ permissions:
   contents: read
 
 jobs:
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check changed paths and immutable migration history
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: npm run safety:gate -- audit --base "$BASE_REF"
+      - run: npm run test:change-safety
+      - run: npm run test:scheduler
+      - run: npm run test:provisioning
+      - run: npm run test:funding
+      - run: npm run test:native-giver-bff
+
   web:
     runs-on: ubuntu-latest
     steps:
