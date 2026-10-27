@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "max_retries": 1,
+  "max_parallel_tasks": 1,
+  "tasks": [
+    {
+      "id": "ORCH-001",
+      "title": "Establish the persistent Codex orchestrator",
+      "priority": 0,
+      "status": "complete",
+      "depends_on": [],
+      "risk": "low",
+      "paths": [".ai-kit/", "scripts/codex-orchestrator.mjs", "tests/codex-orchestrator.test.mjs", "docs/guides/ai-ile-calisma.md", "docs/current/current-state.md", "package.json"],
+      "validation": ["node --test tests/codex-orchestrator.test.mjs"],
+      "description": "Keep task selection, delegation, validation, and continuation state in the repository."
+    },
+    {
+      "id": "P0-001",
+      "title": "Add repository validation CI",
+      "priority": 1,
+      "status": "planned",
+      "depends_on": ["ORCH-001"],
+      "risk": "medium",
+      "paths": [".github/"],
+      "validation": ["npm run typecheck", "npm test", "npm --prefix apps/mobile run typecheck", "npm --prefix apps/mobile test"],
+      "description": "Add read-only CI checks for web and mobile validation. Requires owner review before merge because CI permissions are external infrastructure."
+    },
+    {
+      "id": "P0-002",
+      "title": "Add QA target allow-list checks",
+      "priority": 2,
+      "status": "planned",
+      "depends_on": ["ORCH-001"],
+      "risk": "security",
+      "paths": ["scripts/", "docs/"],
+      "validation": ["node --test tests/codex-orchestrator.test.mjs"],
+      "description": "Prevent hosted fixture and integration scripts from targeting Production. Requires security review."
+    },
+    {
+      "id": "P0-003",
+      "title": "Add migration and changed-path safety gates",
+      "priority": 3,
+      "status": "planned",
+      "depends_on": ["ORCH-001"],
+      "risk": "security",
+      "paths": ["scripts/", "tests/", ".ai-kit/"],
+      "validation": ["node --test tests/codex-orchestrator.test.mjs"],
+      "description": "Detect migration, RLS, RPC, Auth, payment, scheduler, deletion, and deep-link changes before delegation or merge. Requires security review."
+    },
+    {
+      "id": "P0-004",
+      "title": "Add autonomous backlog continuation",
+      "priority": 4,
+      "status": "planned",
+      "depends_on": ["P0-001", "P0-002", "P0-003"],
+      "risk": "medium",
+      "paths": [".ai-kit/", "scripts/", "docs/"],
+      "validation": ["node --test tests/codex-orchestrator.test.mjs"],
+      "description": "Run one ready task per invocation, persist evidence, retry once, and stop at human gates."
+    }
+  ]
+}

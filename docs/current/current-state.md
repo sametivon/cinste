@@ -115,6 +115,20 @@ Production evidence.
 
 ## Current active workstream
 
+The repository-local Codex autonomous development loop is implemented in
+`scripts/codex-orchestrator.mjs`. It reuses the existing `.ai-kit` task and
+validation conventions, stores continuation state in
+`.ai-kit/orchestrator-state.json`, delegates one low-risk planned task at a
+time in an isolated worktree, and stops at owner or security review gates.
+The initial P0 registry is in `.ai-kit/orchestrator.json`. It does not merge,
+push, deploy, apply migrations, reset hosted fixtures, activate the scheduler,
+or use Production credentials.
+
+The bounded pilot is the read-only `orchestrator:pilot` command. P0 CI,
+environment allow-list, changed-path safety, and continuation tasks remain
+planned because they require external CI/security decisions or further
+implementation.
+
 Pilot-readiness inspection and manual acceptance planning is now the active
 workstream. The next task is a controlled QA fixture and cross-role acceptance
 pass across the available Student, Giver, Partner, Organization, and Admin
