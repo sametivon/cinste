@@ -102,15 +102,23 @@ hermes kanban log <TASK_ID>
 
 ## Continuous operation
 
-After the pilot passes, add approved backlog cards to the `cinste` board. Run
-the gateway in a controlled Windows session. Keep the gateway stopped when no
-autonomous work is approved. Do not install an auto-start task without explicit
-approval.
+The pilot passed. The Windows login item starts the gateway after user login.
+The gateway uses the Startup-folder fallback because Scheduled Task elevation
+was not used. The active gateway continues without a restart.
+
+Hermes runs the `CINSTE backlog audit` cron job every six hours. The job reads
+the repository and the `cinste` board. It creates only evidence-based cards and
+uses stable idempotency keys. It does not edit repository files.
 
 Hermes can continue across separate sessions because the Kanban board and
 worker history persist in Hermes user data. Codex handles the task-local code,
 test, and debug session. Hermes remains the source of task status.
 
-The repository CI workflow remains the validation authority for pushed code.
-Hermes must not merge pull requests, push branches, deploy, apply migrations,
-reset hosted fixtures, activate schedulers, or use Production credentials.
+Each implementation needs local tests, an independent read-only review, and a
+dependent integration task. The integration task can push reviewed development
+commits. Repository CI remains the validation authority for pushed code.
+
+Completion requires all implementable cards to be integrated and validated.
+The board can keep external evidence cards blocked with exact requirements.
+Hermes must not deploy Production, apply live migrations, run real financial
+transactions, or perform irreversible external actions without owner approval.

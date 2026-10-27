@@ -1141,18 +1141,32 @@ manifest. The former repository-local Codex runner and continuation state were
 removed to prevent a second source of task truth. The repository CI workflow
 remains the validation authority for pushed code.
 
-Hermes is configured to use the Codex App-Server runtime. The Kanban dispatcher
-has a global and per-profile concurrency cap of one. The failure circuit breaker
-allows one retry and blocks after the second consecutive failure. The gateway is
-not running. Provider authentication is not complete.
+Hermes is authenticated to OpenAI Codex and uses the Codex App-Server runtime.
+The configured model is `gpt-6.1-sol`. Hermes uses the explicit Windows Codex
+launcher path. The Kanban dispatcher has global and per-profile concurrency
+caps of one. The failure circuit breaker blocks after two consecutive failures.
 
-The bounded pilot task is `t_ab3e5f9b`. The remaining seeded backlog is:
+The gateway runs as PID-managed local process and has a Windows login item at
+`%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Hermes_Gateway.vbs`.
+The login item uses the official Startup-folder fallback. It starts the gateway
+after user login without replacing an active gateway.
 
-- `t_095b4dcc`: P0-002 QA target allow-list checks, blocked for security review.
-- `t_596d992e`: P0-003 migration and changed-path safety gates, blocked for security review.
-- `t_4f3c6cfb`: P0-004 autonomous backlog continuation, waiting on both security tasks.
+Cron job `2409abaf051e` (`CINSTE backlog audit`) runs every six hours. It reads
+repository state and updates only the Hermes board. Its first run exposed a
+Windows Codex path error. The explicit `model.codex_bin` setting corrected it.
 
-The pilot must run in a scratch workspace and must not edit files, access hosted
-systems, request secrets, merge, push, deploy, apply migrations, reset fixtures,
-or activate schedulers. Production actions and security-sensitive changes stay
-behind explicit human approval.
+The bounded pilot task `t_ab3e5f9b` passed. It delegated to Codex, completed in
+a scratch workspace, and did not edit files or access hosted systems.
+
+The initial autonomous delivery state is:
+
+- `t_095b4dcc`: P0-002 implementation complete at local commit `83a64b1`.
+- `t_596d992e`: P0-003 implementation complete at local commit `4fbd2e3`.
+- Separate read-only review and dependent integration cards gate both commits.
+- `t_4f3c6cfb`: backlog steward waits for both reviewed integrations.
+
+Each implementation needs tests, an independent read-only review, and an
+integration task. Completion means all implementable cards are integrated and
+validated. External evidence cards can remain blocked with exact requirements.
+Production deployment, live database application, real financial transactions,
+and irreversible external actions require explicit owner approval.
