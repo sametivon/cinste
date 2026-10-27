@@ -1154,6 +1154,14 @@ after user login without replacing an active gateway.
 Cron job `2409abaf051e` (`CINSTE backlog audit`) runs every six hours. It reads
 repository state and updates only the Hermes board. Its first run exposed a
 Windows Codex path error. The explicit `model.codex_bin` setting corrected it.
+The repaired run completed and created source-backed implementation, review,
+integration, decision, and evidence cards without duplicating completed work.
+
+GitHub `main` branch protection now requires strict `web` and `mobile` checks,
+linear history, and resolved conversations. Force pushes and branch deletion
+are disabled. Admin enforcement is off so reviewed autonomous integrations can
+use the repository publication workflow. Run `40538142870` passed both checks
+for commit `38bd07f`. Each later integrated SHA needs its own CI evidence.
 
 The bounded pilot task `t_ab3e5f9b` passed. It delegated to Codex, completed in
 a scratch workspace, and did not edit files or access hosted systems.
