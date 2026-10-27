@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { requireHostedQaTarget } from './lib/qa-target.mjs';
+
+requireHostedQaTarget();
 
 const fixtureEmail = 'unverified.student@cinste.test';
 

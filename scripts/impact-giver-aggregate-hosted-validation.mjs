@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { requireHostedQaTarget } from './lib/qa-target.mjs';
+
+requireHostedQaTarget();
 
 if (process.env.NODE_ENV === 'production') throw new Error('Impact aggregate validation refuses NODE_ENV=production.');
 for (const name of ['NEXT_PUBLIC_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_SERVICE_ROLE_KEY']) if (!process.env[name]) throw new Error(`Missing ${name}`);

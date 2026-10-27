@@ -158,16 +158,15 @@ Current evidence should be read as follows:
 
 - **Affected surface:** Auth users, fixture records, claims, inventory, and any
   Supabase project whose service-role key is placed in a local environment.
-- **Current state:** bootstrap, reset, maintenance, and hosted integration
-  scripts refuse `NODE_ENV=production`; QA fixture users are marked before some
-  destructive resets. The scripts still accept whichever Supabase URL and
-  service-role key are supplied, and integration runners create/modify hosted
-  data. A mistaken production URL with a non-production `NODE_ENV` would bypass
-  the intended protection.
-- **Required action:** before production credentials exist, require an explicit
-  non-production project reference/allow-list for every mutating QA script;
-  move fixture credentials to a non-committed secret source; ensure production
-  CI/deployment environments cannot run these commands; and add a release
+- **Current state:** P0-002 adds a shared preflight to every hosted fixture,
+  maintenance, and integration script. It requires a separate explicit DEV/QA
+  project-reference allow-list and run acknowledgement before client creation.
+  It rejects Production process/deployment markers and CI. Offline tests are
+  part of `npm test`. See `docs/guides/hosted-qa-targets.md`. This is local
+  repository evidence, not hosted or Production acceptance. The operator must
+  keep Production references out of the list and keep credentials isolated.
+- **Remaining action:** move fixture credentials to a non-committed secret
+  source; verify Production CI/deployment secret separation; and add a release
   check that `/dev/testing` is absent in the production build.
 - **Security review before implementation:** **Yes.**
 

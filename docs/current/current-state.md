@@ -118,18 +118,34 @@ Production evidence.
 Hermes Agent is the autonomous development coordinator. Its `cinste` Kanban
 board owns task status, dependencies, worker claims, retries, and evidence.
 `.ai-kit/orchestrator.json` is a seed manifest only. Hermes delegates code,
-test, and debug work to isolated Codex sessions. Hermes does not merge, push,
-deploy, apply migrations, reset hosted fixtures, activate the scheduler, or use
-Production credentials.
+test, and debug work to isolated Codex sessions. Reviewed integration tasks may
+publish validated changes to `origin/main` and must verify the required checks
+on the exact remote SHA. Hermes does not deploy, apply live migrations, reset
+hosted fixtures, activate the scheduler, or use Production credentials.
 
-The bounded pilot is a read-only scratch task on the Hermes board. P0
-environment allow-list, changed-path safety, and continuation tasks remain
-dependency-gated until automated security validation completes.
+The read-only pilot inspection is complete. The owner authorized autonomous
+security-sensitive development for the bounded P0 tasks on 2026-10-27. Live
+database changes, Production deployment, real financial transactions, and
+irreversible external actions remain blocked. P0-002 now has a shared QA target
+preflight for all 16 hosted scripts. It requires an explicit project-reference
+allow-list and run acknowledgement, rejects Production and CI execution, and
+runs before client creation. See `docs/guides/hosted-qa-targets.md`.
+
+P0-002 implementation validation passed web typecheck, 87 web tests, 155 offline
+QA target tests, mobile typecheck, 54 mobile tests, and the disposable-database
+scheduler, provisioning, funding, and native BFF suites (18, 8, 6, and 3 tests).
+Independent review approved commit `83a64b1`. Integration task `t_04ca7b01`
+reconciles that commit with later main changes and requires fresh local checks
+plus passing GitHub `web` and `mobile` checks on the exact pushed SHA. Hermes
+Kanban records publication and CI evidence. No hosted script operation,
+migration application, deployment, or Production action is part of this task.
+P0-003 and P0-004 status remains owned by Hermes Kanban, not this ledger.
 
 P0-001 is now implemented: `.github/workflows/validation.yml` runs separate
 read-only web and mobile Node 22 validation jobs on pull requests and pushes
 to `main`, with `contents: read` permission only. GitHub-hosted execution and
-required branch protection remain externally pending.
+strict required branch protection for `web` and `mobile` are now evidenced in
+the coordinator record below. Each integration requires its own exact-SHA checks.
 
 Pilot-readiness inspection and manual acceptance planning is now the active
 workstream. The next task is a controlled QA fixture and cross-role acceptance
@@ -1129,6 +1145,11 @@ Editor and passed 61 owner-run hosted DEV/QA assertions on 2026-10-08. It is not
 applied to Production; no separate Production environment exists.
 
 ## HERMES AUTONOMOUS DEVELOPMENT COORDINATOR (2026-10-27)
+
+The following installation record predates the owner's 2026-10-27 P0 development
+authorization above. Its pilot restrictions and seeded task statuses are
+historical. Read the active workstream above and Hermes Kanban for current scope
+and status.
 
 Hermes Agent v0.22.5 is installed through the official Windows installer at
 `C:\Users\Sam\AppData\Local\hermes`. The active Hermes Kanban board is

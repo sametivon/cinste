@@ -1,4 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
+import { requireHostedQaTarget } from './lib/qa-target.mjs';
+
+requireHostedQaTarget();
 
 // This runner is deliberately fail-closed. It is for the already-applied
 // 0022 contract in an isolated, non-production DEV/QA project only.

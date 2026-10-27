@@ -1,4 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
+import { requireHostedQaTarget } from './lib/qa-target.mjs';
+
+requireHostedQaTarget();
 
 const password = "cinste-local-2026";
 const accounts = [

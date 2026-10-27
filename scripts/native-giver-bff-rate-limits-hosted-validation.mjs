@@ -1,5 +1,8 @@
 import { createHash } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
+import { requireHostedQaTarget } from './lib/qa-target.mjs';
+
+requireHostedQaTarget();
 
 // Deliberately limited to a non-production project. This validates only the
 // already-applied 0023 database contract; it neither calls the BFF nor changes
