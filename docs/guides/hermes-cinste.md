@@ -43,7 +43,7 @@ hermes doctor
 Start the gateway only when autonomous execution is approved:
 
 ```powershell
-hermes gateway start
+hermes gateway run
 ```
 
 The gateway dispatcher runs ready tasks. The current CINSTE safety cap allows
@@ -102,9 +102,10 @@ hermes kanban log <TASK_ID>
 
 ## Continuous operation
 
-After the pilot passes, add approved backlog cards to the `cinste` board. Start
+After the pilot passes, add approved backlog cards to the `cinste` board. Run
 the gateway in a controlled Windows session. Keep the gateway stopped when no
-autonomous work is approved.
+autonomous work is approved. Do not install an auto-start task without explicit
+approval.
 
 Hermes can continue across separate sessions because the Kanban board and
 worker history persist in Hermes user data. Codex handles the task-local code,
