@@ -118,8 +118,9 @@ function main() {
 
   const worktreeResult = spawnSync('git', ['worktree', 'add', '--detach', worktree, 'HEAD'], { cwd: root, encoding: 'utf8' });
   if (worktreeResult.status !== 0) throw new Error(worktreeResult.stderr.trim() || 'Could not create isolated worktree.');
-  const worker = spawnSync('codex', ['exec', '--cd', worktree, '--sandbox', 'workspace-write', '--ask-for-approval', 'never', '--output-last-message', logPath, promptFor(task)], { cwd: root, encoding: 'utf8', stdio: 'inherit' });
+  const worker = spawnSync('codex', ['--approve-for-me', '--no-alt-screen', '--sandbox', 'workspace-write', '--cd', worktree, 'exec', '--output-last-message', logPath, promptFor(task)], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   const workerStatus = worker.status ?? 1;
+  writeFileSync(logPath, `${worker.stdout ?? ''}${worker.stderr ?? ''}`, 'utf8');
   const result = workerStatus === 0 ? 'worker_completed_review_required' : `worker_failed_${workerStatus}`;
   state.status = workerStatus === 0 ? 'review_required' : 'retryable_failure';
   state.last_result = result;
