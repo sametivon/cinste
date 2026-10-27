@@ -20,6 +20,10 @@ task and reports whether it can run unattended.
 worktree. The worker receives the repository rules, task paths, and validation
 commands. The orchestrator records the run and stops at review-required work.
 
+On Windows, set `CINSTE_CODEX_LAUNCHER` only when the Codex PowerShell shim is
+not at the standard npm user path. The default is the installed
+`%APPDATA%\\npm\\codex.ps1` launcher.
+
 The orchestrator does not merge, push, deploy, apply migrations, reset hosted
 fixtures, activate the scheduler, or use Production credentials.
 

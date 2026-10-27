@@ -8,6 +8,9 @@ const root = resolve(import.meta.dirname, '..');
 const registryPath = join(root, '.ai-kit', 'orchestrator.json');
 const statePath = join(root, '.ai-kit', 'orchestrator-state.json');
 const runDir = process.env.CINSTE_ORCHESTRATOR_RUN_DIR ?? join(tmpdir(), 'cinste-codex-orchestrator');
+const codexLauncher = process.platform === 'win32'
+  ? (process.env.CINSTE_CODEX_LAUNCHER ?? join(process.env.APPDATA ?? 'C:\\Users\\Public', 'npm', 'codex.ps1'))
+  : 'codex';
 
 const sensitivePathPatterns = [
   /(^|[\\/])supabase[\\/]migrations[\\/]/i,
@@ -130,10 +133,13 @@ function main() {
 
   const worktreeResult = spawnSync('git', ['worktree', 'add', '-b', branch, worktree, 'HEAD'], { cwd: root, encoding: 'utf8' });
   if (worktreeResult.status !== 0) throw new Error(worktreeResult.stderr.trim() || 'Could not create isolated worktree.');
-  const worker = spawnSync('codex', ['--approve-for-me', '--no-alt-screen', '--cd', worktree, 'exec', '--output-last-message', lastMessagePath, promptFor(task)], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const codexArgs = process.platform === 'win32'
+    ? ['-NoProfile', '-File', codexLauncher, '--approve-for-me', '--no-alt-screen', '--cd', worktree, 'exec', '--output-last-message', lastMessagePath, promptFor(task)]
+    : ['--approve-for-me', '--no-alt-screen', '--cd', worktree, 'exec', '--output-last-message', lastMessagePath, promptFor(task)];
+  const worker = spawnSync(process.platform === 'win32' ? 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe' : codexLauncher, codexArgs, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   const workerStatus = worker.status ?? 1;
   const lastMessage = existsSync(lastMessagePath) ? readFileSync(lastMessagePath, 'utf8') : '';
-  writeFileSync(logPath, `${worker.stdout ?? ''}${worker.stderr ?? ''}${lastMessage}`, 'utf8');
+  writeFileSync(logPath, `${worker.error?.message ?? ''}\n${worker.stdout ?? ''}${worker.stderr ?? ''}${lastMessage}`, 'utf8');
   const result = workerStatus === 0 ? 'worker_completed_review_required' : `worker_failed_${workerStatus}`;
   state.status = workerStatus === 0 ? 'review_required' : 'retryable_failure';
   state.last_result = result;
