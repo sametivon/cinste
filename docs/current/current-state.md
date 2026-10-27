@@ -124,10 +124,15 @@ The initial P0 registry is in `.ai-kit/orchestrator.json`. It does not merge,
 push, deploy, apply migrations, reset hosted fixtures, activate the scheduler,
 or use Production credentials.
 
-The bounded pilot is the read-only `orchestrator:pilot` command. P0 CI,
+The bounded pilot is the read-only `orchestrator:pilot` command. P0
 environment allow-list, changed-path safety, and continuation tasks remain
 planned because they require external CI/security decisions or further
 implementation.
+
+P0-001 is now implemented: `.github/workflows/validation.yml` runs separate
+read-only web and mobile Node 22 validation jobs on pull requests and pushes
+to `main`, with `contents: read` permission only. GitHub-hosted execution and
+required branch protection remain externally pending.
 
 Pilot-readiness inspection and manual acceptance planning is now the active
 workstream. The next task is a controlled QA fixture and cross-role acceptance
