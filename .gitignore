@@ -28,3 +28,4 @@ apps/mobile/.git-mobile-backup/
 /.idea/
 .ai-kit/adopt-log.json
 .ai-kit/runs/
+.worktrees/
