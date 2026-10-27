@@ -27,7 +27,9 @@ fixtures, activate the scheduler, or use Production credentials.
 
 - `.ai-kit/orchestrator.json` is the task registry.
 - `.ai-kit/orchestrator-state.json` is the continuation state.
-- `.ai-kit/runs/` contains local worker logs and is ignored by Git.
+- The temporary run directory contains worker logs and worktrees. Set
+  `CINSTE_ORCHESTRATOR_RUN_DIR` to a durable local path when review branches
+  must survive a machine restart.
 
 Task status is durable. A later session can run `orchestrator:status` or
 `orchestrator:plan` and continue from the stored state.

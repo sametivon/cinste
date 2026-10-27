@@ -2,11 +2,12 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { dirname, join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 
 const root = resolve(import.meta.dirname, '..');
 const registryPath = join(root, '.ai-kit', 'orchestrator.json');
 const statePath = join(root, '.ai-kit', 'orchestrator-state.json');
-const runDir = join(root, '.ai-kit', 'runs');
+const runDir = process.env.CINSTE_ORCHESTRATOR_RUN_DIR ?? join(tmpdir(), 'cinste-codex-orchestrator');
 
 const sensitivePathPatterns = [
   /(^|[\\/])supabase[\\/]migrations[\\/]/i,
