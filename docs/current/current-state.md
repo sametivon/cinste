@@ -115,19 +115,16 @@ Production evidence.
 
 ## Current active workstream
 
-The repository-local Codex autonomous development loop is implemented in
-`scripts/codex-orchestrator.mjs`. It reuses the existing `.ai-kit` task and
-validation conventions, stores continuation state in
-`.ai-kit/orchestrator-state.json`, delegates one low-risk planned task at a
-time in an isolated worktree, and stops at owner or security review gates.
-The initial P0 registry is in `.ai-kit/orchestrator.json`. It does not merge,
-push, deploy, apply migrations, reset hosted fixtures, activate the scheduler,
-or use Production credentials.
+Hermes Agent is the autonomous development coordinator. Its `cinste` Kanban
+board owns task status, dependencies, worker claims, retries, and evidence.
+`.ai-kit/orchestrator.json` is a seed manifest only. Hermes delegates code,
+test, and debug work to isolated Codex sessions. Hermes does not merge, push,
+deploy, apply migrations, reset hosted fixtures, activate the scheduler, or use
+Production credentials.
 
-The bounded pilot is the read-only `orchestrator:pilot` command. P0
+The bounded pilot is a read-only scratch task on the Hermes board. P0
 environment allow-list, changed-path safety, and continuation tasks remain
-planned because they require external CI/security decisions or further
-implementation.
+blocked or dependency-gated because they require security review.
 
 P0-001 is now implemented: `.github/workflows/validation.yml` runs separate
 read-only web and mobile Node 22 validation jobs on pull requests and pushes
@@ -1130,3 +1127,32 @@ financial/inventory/event side effects on denial. Migration `0022` is
 owner-confirmed manually applied to hosted DEV/QA through the Supabase SQL
 Editor and passed 61 owner-run hosted DEV/QA assertions on 2026-10-08. It is not
 applied to Production; no separate Production environment exists.
+
+## HERMES AUTONOMOUS DEVELOPMENT COORDINATOR (2026-10-27)
+
+Hermes Agent v0.22.5 is installed through the official Windows installer at
+`C:\Users\Sam\AppData\Local\hermes`. The active Hermes Kanban board is
+`cinste`. Its SQLite database is outside the repository at
+`C:\Users\Sam\AppData\Local\hermes\kanban\boards\cinste\kanban.db`.
+
+Hermes owns live task status, dependencies, worker claims, retries, comments,
+and completion evidence. `.ai-kit/orchestrator.json` remains only as a seed
+manifest. The former repository-local Codex runner and continuation state were
+removed to prevent a second source of task truth. The repository CI workflow
+remains the validation authority for pushed code.
+
+Hermes is configured to use the Codex App-Server runtime. The Kanban dispatcher
+has a global and per-profile concurrency cap of one. The failure circuit breaker
+allows one retry and blocks after the second consecutive failure. The gateway is
+not running. Provider authentication is not complete.
+
+The bounded pilot task is `t_ab3e5f9b`. The remaining seeded backlog is:
+
+- `t_095b4dcc`: P0-002 QA target allow-list checks, blocked for security review.
+- `t_596d992e`: P0-003 migration and changed-path safety gates, blocked for security review.
+- `t_4f3c6cfb`: P0-004 autonomous backlog continuation, waiting on both security tasks.
+
+The pilot must run in a scratch workspace and must not edit files, access hosted
+systems, request secrets, merge, push, deploy, apply migrations, reset fixtures,
+or activate schedulers. Production actions and security-sensitive changes stay
+behind explicit human approval.
