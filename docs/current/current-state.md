@@ -124,7 +124,7 @@ Production credentials.
 
 The bounded pilot is a read-only scratch task on the Hermes board. P0
 environment allow-list, changed-path safety, and continuation tasks remain
-blocked or dependency-gated because they require security review.
+dependency-gated until automated security validation completes.
 
 P0-001 is now implemented: `.github/workflows/validation.yml` runs separate
 read-only web and mobile Node 22 validation jobs on pull requests and pushes

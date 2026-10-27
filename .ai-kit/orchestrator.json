@@ -37,7 +37,7 @@
       "risk": "security",
       "paths": ["scripts/", "docs/"],
       "validation": ["npm test", "npm run typecheck"],
-      "description": "Prevent hosted fixture and integration scripts from targeting Production. Requires security review."
+      "description": "Prevent hosted fixture and integration scripts from targeting Production. Requires automated security review."
     },
     {
       "id": "P0-003",
@@ -48,7 +48,7 @@
       "risk": "security",
       "paths": ["scripts/", "tests/", ".ai-kit/"],
       "validation": ["npm test", "npm run typecheck"],
-      "description": "Detect migration, RLS, RPC, Auth, payment, scheduler, deletion, and deep-link changes before delegation or merge. Requires security review."
+      "description": "Detect migration, RLS, RPC, Auth, payment, scheduler, deletion, and deep-link changes before delegation or merge. Requires automated security review."
     },
     {
       "id": "P0-004",

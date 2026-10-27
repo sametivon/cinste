@@ -64,9 +64,9 @@ hermes kanban create "Task title" `
   --completion-contract local-only
 ```
 
-Keep Production changes, migration application, role or RLS changes, payment
-authority, Auth or deep-link trust, scheduler identity, deletion, and external
-deployment in `blocked` or `review` until a human approves them.
+Run automated security review for Production-sensitive development changes.
+Keep Production deployment, live migration application, real financial
+transactions, and irreversible external actions blocked for human approval.
 
 Do not mark a task complete only because a worker produced a commit. Require
 the task contract, validation output, and review evidence.

@@ -22,10 +22,13 @@ authority. Follow a more specific `AGENTS.md` in a subdirectory as well.
 3. Stop and ask for the smallest missing decision when product behavior is
    genuinely undefined, external access is required, or a destructive action
    is not explicitly authorized.
-4. Stop and request a security review before material changes to authorization,
-   RLS/RPC privilege, payment authority, role provisioning, Auth/deep-link
-   trust, sensitive telemetry, deletion, scheduler identity, or Production
-   security controls.
+4. Run automated security review and proportionate validation before material
+   changes to authorization, RLS/RPC privilege, payment authority, role
+   provisioning, Auth/deep-link trust, sensitive telemetry, deletion, scheduler
+   identity, or other security-sensitive development. Do not require human
+   approval for development changes. Stop for Production deployment, live
+   database application, real financial transactions, or irreversible external
+   actions.
 5. Run proportionate validation. Update `current-state.md` when project state
    changed materially. Commit, push, and stop.
 
